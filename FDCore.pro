@@ -19,7 +19,14 @@ SOURCES += \
     src/FileUtils.cpp
 
 HEADERS += \
-    include/FDCore/FileUtils.h
+    include/FDCore/AssociativeContainer.h \
+    include/FDCore/CRTPTrait.h \
+    include/FDCore/ComparableTrait.h \
+    include/FDCore/EnumFlag.h \
+    include/FDCore/FileUtils.h \
+    include/FDCore/Identifiable.h \
+    include/FDCore/NonCopyableTrait.h \
+    include/FDCore/TypeInformation.h
 
 unix {
     target.path = /usr/lib

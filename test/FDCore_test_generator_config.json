@@ -1,0 +1,19 @@
+{
+    "name": "FDCore_test",
+    "type": "app",
+    "cpp_version": "c++17",
+    "qt": false,
+    "lib_dirs": [
+        "build/lib",
+        "../thirdparty/googletest/build/lib"
+    ],
+    "libs": [
+        "lgtest",
+        "lFDCore"
+    ],
+    "includes": [
+        "include",
+        "../thirdparty/googletest/googletest/"
+    ],
+    "output_file": "FDCore_test.pro"
+}
