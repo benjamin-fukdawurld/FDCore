@@ -5,6 +5,7 @@
 
 #include <FDCore/ComparableTrait.h>
 #include <type_traits>
+#include <utility>
 
 namespace FDCore
 {
@@ -52,6 +53,13 @@ namespace FDCore
 
         public:
             Identifiable() : m_id(IdGenerator::generate(this))
+            {}
+
+            Identifiable(const Identifiable<IdType, IdGenerator, Compare> &) : Identifiable()
+            {}
+
+            Identifiable(const Identifiable<IdType, IdGenerator, Compare> &&other) :
+                m_id(std::move(other.m_id))
             {}
 
             id_type getId() const { return m_id; }
