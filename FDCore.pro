@@ -26,7 +26,8 @@ HEADERS += \
     include/FDCore/FileUtils.h \
     include/FDCore/Identifiable.h \
     include/FDCore/NonCopyableTrait.h \
-    include/FDCore/TypeInformation.h
+    include/FDCore/TypeInformation.h \
+    include/FDCore/Singleton.h
 
 unix {
     target.path = /usr/lib
