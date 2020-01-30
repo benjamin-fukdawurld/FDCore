@@ -224,12 +224,30 @@ namespace FDCore
                 return result;
             }
 
+            /**
+             * @brief Checks if the container as a cell with the given key
+             *
+             * @param k the key value to check
+             * @return true if there is a cell with this key false otherwise
+             */
             bool contains(const key_type &k) const
             {
                 return find(k) != end();
             }
 
+
+            /**
+             * @brief Get the allocator object
+             *
+             * @return the container's allocator
+             */
             allocator_type get_allocator() const { return m_container.get_allocator(); }
+
+            /**
+             * @brief Returns the hasher
+             *
+             * @return the conainer's hasher
+             */
             hasher hash_function() const { return m_hash; }
 
             iterator begin() { return m_container.begin(); }
