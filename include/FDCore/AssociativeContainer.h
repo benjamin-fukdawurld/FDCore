@@ -186,10 +186,36 @@ namespace FDCore
                 return std::find_if(begin(), end(), pred);
             }
 
+            /**
+             * @brief Finds all cells in the container that matches a predicate
+             *
+             * @tparam Predicate the predicate type. This type must match the same requirements as std::find
+             * @param pred the predicate to check the cells
+             * @return an array of iterators to the matched cells as std::vector<iterator>
+             */
             template<typename Predicate>
             std::vector<iterator> find_all_if(Predicate pred)
             {
                 std::vector<iterator> result;
+                auto it = begin();
+                auto last = end();
+                while((it = std::find_if(it, last, pred)) != last)
+                    result.push_back(it);
+
+                return result;
+            }
+
+            /**
+             * @brief Finds all cells in the container that matches a predicate
+             *
+             * @tparam Predicate the predicate type. This type must match the same requirements as std::find
+             * @param pred the predicate to check the cells
+             * @return an array of iterators to the matched cells as std::vector<iterator>
+             */
+            template<typename Predicate>
+            std::vector<const_iterator> find_all_if(Predicate pred) const
+            {
+                std::vector<const_iterator> result;
                 auto it = begin();
                 auto last = end();
                 while((it = std::find_if(it, last, pred)) != last)
