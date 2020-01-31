@@ -250,42 +250,172 @@ namespace FDCore
              */
             hasher hash_function() const { return m_hash; }
 
+            /**
+             * @brief Returns an iterator to the beginning of the container
+             *
+             * @return An iterator to the beginning of the container
+             */
             iterator begin() { return m_container.begin(); }
+
+            /**
+             * @brief Returns an iterator to the beginning of the container
+             *
+             * @return An iterator to the beginning of the container
+             */
             const_iterator begin() const { return m_container.begin(); }
+
+            /**
+             * @brief Returns an iterator to the beginning of the container
+             *
+             * @return An iterator to the beginning of the container
+             */
             const_iterator cbegin() const { return m_container.cbegin(); }
 
+            /**
+             * @brief Returns an iterator to the end of the container
+             *
+             * @return An iterator to the end of the container
+             */
             iterator end() { return m_container.end(); }
+
+            /**
+             * @brief Returns an iterator to the end of the container
+             *
+             * @return An iterator to the end of the container
+             */
             const_iterator end() const { return m_container.end(); }
+
+            /**
+             * @brief Returns an iterator to the end of the container
+             *
+             * @return An iterator to the end of the container
+             */
             const_iterator cend() const { return m_container.cend(); }
 
+            /**
+             * @brief Returns a reverse iterator to the beginning of the container
+             *
+             * @return A reverse iterator to the beginning of the container
+             */
             reverse_iterator rbegin() { return m_container.rbegin(); }
+
+            /**
+             * @brief Returns a reverse iterator to the beginning of the container
+             *
+             * @return A reverse iterator to the beginning of the container
+             */
             const_reverse_iterator rbegin() const { return m_container.rbegin(); }
+
+            /**
+             * @brief Returns a reverse iterator to the beginning of the container
+             *
+             * @return A reverse iterator to the beginning of the container
+             */
             const_reverse_iterator crbegin() const { return m_container.crbegin(); }
 
+            /**
+             * @brief Returns a reverse iterator to the end of the container
+             *
+             * @return A reverse iterator to the end of the container
+             */
             reverse_iterator rend() { return m_container.rend(); }
+
+            /**
+             * @brief Returns a reverse iterator to the end of the container
+             *
+             * @return A reverse iterator to the end of the container
+             */
             const_reverse_iterator rend() const { return m_container.rend(); }
+
+            /**
+             * @brief Returns a reverse iterator to the end of the container
+             *
+             * @return A reverse iterator to the end of the container
+             */
             const_reverse_iterator crend() const { return m_container.crend(); }
 
+            /**
+             * @brief Returns a pointer to the first element of the container
+             *
+             * @return A pointer to the first element of the container
+             */
             pointer data() { return m_container.data(); }
+
+            /**
+             * @brief Returns a pointer to the first element of the container
+             *
+             * @return A pointer to the first element of the container
+             */
             const_pointer data() const { return m_container.data(); }
 
+            /**
+             * @brief Checks whether the container is empty or not
+             *
+             * @return true if the container is empty false otherwise
+             */
             bool empty() const { return m_container.empty(); }
+
+            /**
+             * @brief Returns the number of elements
+             *
+             * @return the number of elements
+             */
             size_type size() const { return m_container.size(); }
+
+            /**
+             * @brief Returns the maximum possible number of elements
+             *
+             * @return the maximum possible number of elements
+             */
             size_type max_size() const { return m_container.max_size(); }
+
+            /**
+             * @brief Returns the number of elements that can be held in currently allocated storage
+             *
+             * @return the number of elements that can be held in currently allocated storage
+             */
             size_type capacity() const { return m_container.capacity(); }
 
+            /**
+             * @brief Reserves storage, if size is less than or equal to the current size of the container it does nothing
+             *
+             * @param size the number of element to reserve
+             */
             void reserve(size_t size) { m_container.reserve(size); }
+
+            /**
+             * @brief Reduces memory usage by freeing unused memory
+             *
+             */
             void shrink_to_fit() { m_container.shrink_to_fit(); }
 
+            /**
+             * @brief Clears the content of the container
+             *
+             */
             void clear() { m_container.clear(); }
 
+            /**
+             * @brief Inserts a value within a given key
+             *
+             * @param k the key of the new cell
+             * @param value the value of the new cell
+             * @return an iterator pointing to the inserted value
+             */
             iterator insert(const key_type &k, const value_type &value)
             {
                 cell_type cell(k, value, m_hash);
                 iterator it = std::lower_bound(m_container.begin(), m_container.end(), cell);
-                m_container.insert(it, std::move(cell));
+                return m_container.insert(it, std::move(cell));
             }
 
+            /**
+             * @brief Inserts a value within a given key
+             *
+             * @param k the key of the new cell
+             * @param value the value of the new cell
+             * @return an iterator pointing to the inserted value
+             */
             iterator insert(key_type &&k, value_type &&value)
             {
                 cell_type cell(std::move(k), std::move(value), m_hash);
@@ -293,29 +423,62 @@ namespace FDCore
                 return m_container.insert(it, std::move(cell));
             }
 
+            /**
+             * @brief Erase an element from the container given its key
+             *
+             * @param k the key of the element to erase
+             * @return an iterator following the removed element
+             */
             iterator erase(const key_type &k)
             {
                 return m_container.erase(find(k));
             }
 
+            /**
+             * @brief Erase an element from the container if it matches a predicate
+             *
+             * @tparam
+             * @tparam Predicate the predicate type. This type must match the same requirements as std::find
+             * @param pred the predicate to check the cells
+             * @return an iterator following the removed element
+             */
             template<typename Predicate>
             iterator erase_if(Predicate pred)
             {
                 return m_container.erase(find_if(pred));
             }
 
+            /**
+             * @brief Counts the number of elements with the key @p key
+             *
+             * @param k the key to search
+             * @return the number of element with the key @p key
+             */
             size_type count(const key_type &k) const
             {
                 return std::count(begin(), end(), KeyType{ k, m_hash });
             }
 
+            /**
+             * @brief Counts the number of elements that match a predicate
+             *
+             * @tparam Predicate the predicate type. This type must match the same requirements as std::count_if
+             * @param pred the predicate to check the cells
+             * @return the number of element with the key @p key
+             */
             template<typename Predicate>
             size_type count_if(Predicate pred) const
             {
                 return std::count_if(begin(), end(), pred);
             }
 
+            /**
+             * @brief Swaps the container's content with another container
+             *
+             * @param other the container to swap
+             */
             void swap(AssociativeContainer &other) { m_container.swap(other); }
+
 
             std::optional<reference> at(const key_type &k)
             {
