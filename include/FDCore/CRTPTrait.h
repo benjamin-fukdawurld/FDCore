@@ -26,14 +26,14 @@ namespace FDCore
              *
              * @return a reference to this object a Derived&
              */
-            Derived &asDerived() { return static_cast<Derived&>(*this); }
+            Derived &asDerived() { return reinterpret_cast<Derived&>(*this); }
 
             /**
              * @brief Returns a const reference to this object as the Derived type; its equivalent to static_cast<const Derived&>(*this)
              *
              * @return a reference to this object a const Derived&
              */
-            const Derived &asDerived() const { return static_cast<const Derived&>(*this); }
+            const Derived &asDerived() const { return reinterpret_cast<const Derived&>(*this); }
     };
 
 }
