@@ -219,7 +219,7 @@ namespace FDCore
 
             bool operator[](EnumType type) const
             {
-                return (m_value & static_cast<StorageType>(type)) != 0;
+                return (m_value & static_cast<StorageType>(type)) == static_cast<StorageType>(type);
             }
 
             bool operator[](StorageType flag) const
