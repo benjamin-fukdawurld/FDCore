@@ -46,7 +46,7 @@ namespace FDCore
              */
             bool operator==(const Comparable &other) const
             {
-                return static_cast<Derived*>(this)->compare(other) == 0;
+                return static_cast<const Derived*>(this)->compare(other) == 0;
             }
 
             /**
@@ -57,7 +57,7 @@ namespace FDCore
              */
             bool operator<(const Comparable &other) const
             {
-                return static_cast<Derived*>(this)->compare(other) < 0;
+                return static_cast<const Derived*>(this)->compare(other) < 0;
             }
 
             /**
@@ -79,7 +79,7 @@ namespace FDCore
              */
             bool operator>(const Comparable &other) const
             {
-                return static_cast<Derived*>(this)->compare(other) > 0;
+                return static_cast<const Derived*>(this)->compare(other) > 0;
             }
 
             /**
