@@ -138,6 +138,11 @@ namespace FDCore
             hasher m_hash; ///< the hasher of the container
 
         public:
+            /**
+             * @brief Returns an hash value for a given key
+             * @param key the key to hash
+             * @return an hash value for a given key
+             */
             size_t hashKey(key_type key) { return m_hash(key); }
             
             /**
@@ -425,11 +430,26 @@ namespace FDCore
                 return m_container.insert(it, std::move(cell));
             }
 
+            /**
+             * @brief Erases a cell from the container
+             * @param it an iterator on the cell to erase
+             * @return An iterator pointing to the new location
+             * of the element that followed the last element erased by the function call.
+             * This is the container end if the operation erased the last element in the sequence.
+             */
             iterator erase(const_iterator it)
             {
                 return m_container.erase(it);
             }
 
+            /**
+             * @brief Erases cells from the container
+             * @param first the begining of the sequence to erase
+             * @param last the end of the sequence to erase
+             * @return An iterator pointing to the new location
+             * of the element that followed the last element erased by the function call.
+             * This is the container end if the operation erased the last element in the sequence.
+             */
             iterator erase(const_iterator first, const_iterator last)
             {
                 return m_container.erase(first, last);
@@ -491,6 +511,12 @@ namespace FDCore
              */
             void swap(AssociativeContainer &other) { m_container.swap(other); }
 
+            /**
+             * @brief Returns a pointer to the cell that has a given key
+             * @param k the key to search
+             * @return a pointer to the cell that has a given key if there is no such key in the
+             * container a null pointer is returned
+             */
             pointer at(const key_type &k)
             {
                 iterator it = find(k);
@@ -500,6 +526,12 @@ namespace FDCore
                 return &(*it);
             }
 
+            /**
+             * @brief Returns a const pointer to the cell that has a given key
+             * @param k the key to search
+             * @return a const pointer to the cell that has a given key if there is no such key in the
+             * container a null pointer is returned
+             */
             const_pointer at(const key_type &k) const
             {
                 const_iterator it = find(k);
@@ -509,11 +541,23 @@ namespace FDCore
                 return &(*it);
             }
 
+            /**
+             * @brief Returns a pointer to the cell that has a given key
+             * @param k the key to search
+             * @return a pointer to the cell that has a given key if there is no such key in the
+             * container a null pointer is returned
+             */
             pointer operator[](const key_type &k)
             {
                 return at(k);
             }
 
+            /**
+             * @brief Returns a const pointer to the cell that has a given key
+             * @param k the key to search
+             * @return a const pointer to the cell that has a given key if there is no such key in the
+             * container a null pointer is returned
+             */
             const_pointer operator[](const key_type &k) const
             {
                 return at(k);
