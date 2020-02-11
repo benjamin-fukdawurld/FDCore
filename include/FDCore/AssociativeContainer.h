@@ -43,7 +43,7 @@ namespace FDCore
          * @param other the KeyType to compare with the current one
          * @return the result of this->hash - other.hash as int64_t
          */
-        int64_t compare(const KeyType &other) { return hash - other.hash; }
+        int64_t compare(const KeyType &other) const { return hash - other.hash; }
     };
 
     /**
@@ -90,7 +90,7 @@ namespace FDCore
          * @param key the key to compare with the current cell
          * @return the result of this->key.compare(key) int64_t
          */
-        int64_t compare(const KeyType<Key, Hash> &key) { return key.compare(key); }
+        int64_t compare(const KeyType<Key, Hash> &key) const { return key.compare(key); }
 
         /**
          * @brief Compares a cell with a key
@@ -98,7 +98,7 @@ namespace FDCore
          * @param key the key to compare with the current cell
          * @return the result of this->key.compare(key) int64_t
          */
-        int64_t compare(const KeyValueType &other) { return compare(other.key); }
+        int64_t compare(const KeyValueType &other) const { return compare(other.key); }
     };
 
     /**
@@ -138,6 +138,8 @@ namespace FDCore
             hasher m_hash; ///< the hasher of the container
 
         public:
+            size_t hashKey(key_type key) { return m_hash(key); }
+            
             /**
              * @brief Finds a cell in the container given its key
              *
@@ -423,6 +425,16 @@ namespace FDCore
                 return m_container.insert(it, std::move(cell));
             }
 
+            iterator erase(const_iterator it)
+            {
+                return m_container.erase(it);
+            }
+
+            iterator erase(const_iterator first, const_iterator last)
+            {
+                return m_container.erase(first, last);
+            }
+
             /**
              * @brief Erase an element from the container given its key
              *
@@ -479,31 +491,30 @@ namespace FDCore
              */
             void swap(AssociativeContainer &other) { m_container.swap(other); }
 
-
-            std::optional<reference> at(const key_type &k)
+            pointer at(const key_type &k)
             {
                 iterator it = find(k);
                 if(it == end())
-                    return std::nullopt;
+                    return nullptr;
 
-                return std::optional<reference>{ *it };
+                return &(*it);
             }
 
-            std::optional<const_reference> at(const key_type &k) const
+            const_pointer at(const key_type &k) const
             {
                 const_iterator it = find(k);
                 if(it == end())
-                    return std::nullopt;
+                    return nullptr;
 
-                return std::optional<const_reference>{ *it };
+                return &(*it);
             }
 
-            std::optional<reference> operator[](const key_type &k)
+            pointer operator[](const key_type &k)
             {
                 return at(k);
             }
 
-            std::optional<const_reference> operator[](const key_type &k) const
+            const_pointer operator[](const key_type &k) const
             {
                 return at(k);
             }
