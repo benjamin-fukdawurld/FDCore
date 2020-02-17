@@ -18,9 +18,9 @@ namespace FDCore
     template<typename Key, typename Hash = std::hash<Key>>
     struct KeyType : public ComparableTrait<KeyType<Key, Hash>>
     {
-        const size_t hash; ///< the hash value of the key
+        size_t hash; ///< the hash value of the key
         #ifdef DEBUG
-        const Key key ///< the key itself. This value is used only for debug purpose and is not present in release mode
+        Key key ///< the key itself. This value is used only for debug purpose and is not present in release mode
         #endif
 
         /**
