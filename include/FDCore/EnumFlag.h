@@ -58,7 +58,7 @@ namespace FDCore
                      *
                      * @return true if the field is acctivated, false otherwise
                      */
-                    operator bool() const { return m_flags.operator==(m_value); }
+                    operator bool() const { return m_flags.operator&(m_value); }
             };
 
         protected:
@@ -103,7 +103,7 @@ namespace FDCore
              * @param type The field to activate
              * @return A reference to this object
              */
-            EnumFlag &operator|=(EnumType type)
+            EnumFlag<EnumType, StorageType> &operator|=(EnumType type)
             {
                 m_value |= static_cast<StorageType>(type);
                 return *this;
@@ -115,7 +115,7 @@ namespace FDCore
              * @param flag The fields to activate
              * @return A reference to this object
              */
-            EnumFlag &operator|=(StorageType flag)
+            EnumFlag<EnumType, StorageType> &operator|=(StorageType flag)
             {
                 m_value |= flag;
                 return *this;
@@ -127,9 +127,9 @@ namespace FDCore
              * @param type The field to activate
              * @return A new EnumFlag
              */
-            EnumFlag operator|(EnumType type) const
+            EnumFlag<EnumType, StorageType> operator|(EnumType type) const
             {
-                return EnumFlag(m_value | static_cast<StorageType>(type));
+                return EnumFlag<EnumType, StorageType>(m_value | static_cast<StorageType>(type));
             }
 
             /**
@@ -138,68 +138,68 @@ namespace FDCore
              * @param flag The fields to activate
              * @return A new EnumFlag
              */
-            EnumFlag operator|(StorageType flag) const
+            EnumFlag<EnumType, StorageType> operator|(StorageType flag) const
             {
-                return EnumFlag(m_value | flag);
+                return EnumFlag<EnumType, StorageType>(m_value | flag);
             }
 
-            EnumFlag &operator&=(EnumType type)
+            EnumFlag<EnumType, StorageType> &operator&=(EnumType type)
             {
                 m_value &= static_cast<StorageType>(type);
                 return *this;
             }
 
-            EnumFlag &operator&=(StorageType flag)
+            EnumFlag<EnumType, StorageType> &operator&=(StorageType flag)
             {
                 m_value &= flag;
                 return *this;
             }
 
-            EnumFlag operator&(EnumType type) const
+            EnumFlag<EnumType, StorageType> operator&(EnumType type) const
             {
-                return EnumFlag(m_value & static_cast<StorageType>(type));
+                return EnumFlag<EnumType, StorageType>(m_value & static_cast<StorageType>(type));
             }
 
-            EnumFlag operator&(StorageType flag) const
+            EnumFlag<EnumType, StorageType> operator&(StorageType flag) const
             {
-                return EnumFlag(m_value & flag);
+                return EnumFlag<EnumType, StorageType>(m_value & flag);
             }
 
-            EnumFlag &operator^=(EnumType type)
+            EnumFlag<EnumType, StorageType> &operator^=(EnumType type)
             {
                 m_value ^= static_cast<StorageType>(type);
                 return *this;
             }
 
-            EnumFlag &operator^=(StorageType flag)
+            EnumFlag<EnumType, StorageType> &operator^=(StorageType flag)
             {
                 m_value ^= flag;
                 return *this;
             }
 
-            EnumFlag operator^(EnumType type) const
+            EnumFlag<EnumType, StorageType> operator^(EnumType type) const
             {
-                return EnumFlag(m_value ^ static_cast<StorageType>(type));
+                return EnumFlag<EnumType, StorageType>(m_value ^ static_cast<StorageType>(type));
             }
 
-            EnumFlag operator^(StorageType flag) const
+            EnumFlag<EnumType, StorageType> operator^(StorageType flag) const
             {
-                return EnumFlag(m_value ^ flag);
+                return EnumFlag<EnumType, StorageType>(m_value ^ flag);
             }
 
-            EnumFlag &operator-=(EnumType type)
+            EnumFlag<EnumType, StorageType> &operator-=(EnumType type)
             {
                 return *this &= ~static_cast<StorageType>(type);
             }
 
-            EnumFlag &operator-=(StorageType flag)
+            EnumFlag<EnumType, StorageType> &operator-=(StorageType flag)
             {
                 return *this &= ~static_cast<StorageType>(flag);
             }
 
-            EnumFlag operator~() const
+            EnumFlag<EnumType, StorageType> operator~() const
             {
-                return EnumFlag(~m_value);
+                return EnumFlag<EnumType, StorageType>(~m_value);
             }
 
             bool operator==(EnumType type) const
