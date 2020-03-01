@@ -206,8 +206,10 @@ namespace FDCore
                 std::vector<iterator> result;
                 auto it = begin();
                 auto last = end();
-                while((it = std::find_if(it, last, pred)) != last)
+                while((it = std::find_if(it, last, pred)) != last) {
                     result.push_back(it);
+                    ++it;
+                }
 
                 return result;
             }
@@ -225,8 +227,10 @@ namespace FDCore
                 std::vector<const_iterator> result;
                 auto it = begin();
                 auto last = end();
-                while((it = std::find_if(it, last, pred)) != last)
+                while((it = std::find_if(it, last, pred)) != last) {
                     result.push_back(it);
+                    ++it;
+                }
 
                 return result;
             }
