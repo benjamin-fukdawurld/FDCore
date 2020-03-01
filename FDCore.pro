@@ -26,6 +26,7 @@ HEADERS += \
     include/FDCore/FileUtils.h \
     include/FDCore/Identifiable.h \
     include/FDCore/NonCopyableTrait.h \
+    include/FDCore/TimeManager.h \
     include/FDCore/TypeInformation.h \
     include/FDCore/Singleton.h
 
