@@ -33,8 +33,10 @@ namespace FDCore \
     }; \
 } \
 
+#define generateTemplateTypeName_str(name) #name
+#define generateTemplateTypeName(type, template_type) generateTemplateTypeName_str(type<template_type>)
 #define generateTemplateTypeCode(type, template_type) \
-    generateTemplateTypeCodeWithName(type, template_type, type<template_type>)
+    generateTemplateTypeCodeWithName(type, template_type, generateTemplateTypeName(type, template_type))
 
 namespace FDCore
 {
