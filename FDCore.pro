@@ -28,7 +28,9 @@ HEADERS += \
     include/FDCore/NonCopyableTrait.h \
     include/FDCore/TimeManager.h \
     include/FDCore/TypeInformation.h \
-    include/FDCore/Singleton.h
+    include/FDCore/Singleton.h \
+    include/FDCore/CopyOnWrite.h \
+    include/FDCore/CallOnEdit.h
 
 unix {
     target.path = /usr/lib
