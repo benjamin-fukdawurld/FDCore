@@ -10,9 +10,9 @@ CONFIG += console c++17
 CONFIG -= app_bundle
 CONFIG -= qt
 
-DESTDIR = ../build/bin
-MAKEFILE = ../build/makefiles/$${TARGET}
-OBJECTS_DIR = ../build/.obj/$${TARGET}
+DESTDIR = ../../build/bin
+MAKEFILE = ../../build/makefiles/$${TARGET}
+OBJECTS_DIR = ../../build/.obj/$${TARGET}
 
 LIBS += \
     -L../../build/lib \
@@ -23,8 +23,12 @@ LIBS += \
     -lgtest \
     -lFDCore \
 
-INCLUDEPATH += \
+DEPENDPATH += \
     include \
+    ../../thirdparty/googletest/googletest/include \
+
+INCLUDEPATH += \
+    ../include \
     ../../thirdparty/googletest/googletest/include \
 
 SOURCES += \
