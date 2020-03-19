@@ -15,24 +15,20 @@ MAKEFILE = ../build/makefiles/$${TARGET}
 OBJECTS_DIR = ../build/.obj/$${TARGET}
 
 LIBS += \
-    -L../build/lib \
-    -L../thirdparty/googletest/build/lib \
+    -L../../build/lib \
+    -L../../thirdparty/googletest/build/lib \
 
 LIBS += \
     -pthread \
     -lgtest \
     -lFDCore \
 
-DEPENDPATH += \
-    include \
-    ../thirdparty/googletest/googletest/include \
-
 INCLUDEPATH += \
     include \
-    ../thirdparty/googletest/googletest/include \
+    ../../thirdparty/googletest/googletest/include \
 
 SOURCES += \
-    test/main.cpp
+    main.cpp
 
 HEADERS += \
-    test/FileUtils_test.h
+    FileUtils_test.h
