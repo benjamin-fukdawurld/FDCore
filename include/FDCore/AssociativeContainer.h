@@ -54,8 +54,7 @@ namespace FDCore
      * @tparam Hash the hashing strategy to use. The expected type is similar to std::unordered_map hash, default value: std::hash<Key>
      */
     template<typename Key, typename T, class Hash = std::hash<Key>>
-    struct KeyValueType : public ComparableTrait<KeyValueType<Key, T, Hash>>,
-                          public ComparableTrait<KeyType<Key, Hash>>
+    struct KeyValueType : public ComparableTrait<KeyValueType<Key, T, Hash>>
     {
         KeyType<Key, Hash> key; ///< the key of the cell
         T value; ///< the value of the cell
@@ -90,15 +89,7 @@ namespace FDCore
          * @param key the key to compare with the current cell
          * @return the result of this->key.compare(key) int64_t
          */
-        int64_t compare(const KeyType<Key, Hash> &key) const { return key.compare(key); }
-
-        /**
-         * @brief Compares a cell with a key
-         *
-         * @param key the key to compare with the current cell
-         * @return the result of this->key.compare(key) int64_t
-         */
-        int64_t compare(const KeyValueType &other) const { return compare(other.key); }
+        int64_t compare(const KeyValueType &other) const { return key.compare(other.key); }
     };
 
     /**
@@ -153,7 +144,11 @@ namespace FDCore
              */
             iterator find(const key_type &k)
             {
-                return std::lower_bound(begin(), end(), KeyType{ k, m_hash });
+                return std::lower_bound(begin(), end(), KeyType{ k, m_hash },
+                                        [](const cell_type &a, const cell_key_type b)
+                                        {
+                                            return a.key < b;
+                                        });
             }
 
             /**
@@ -164,7 +159,11 @@ namespace FDCore
              */
             const_iterator find(const key_type &k) const
             {
-                return std::lower_bound(begin(), end(), KeyType{ k, m_hash });
+                return std::lower_bound(begin(), end(), KeyType{ k, m_hash },
+                                        [](const cell_type &a, const cell_key_type b)
+                                        {
+                                            return a.key < b;
+                                        });
             }
 
             /**
