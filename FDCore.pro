@@ -1,7 +1,6 @@
 TARGET = FDCore
 TEMPLATE = lib
 CONFIG += console c++17
-CONFIG += staticlib
 CONFIG -= app_bundle
 CONFIG -= qt
 
