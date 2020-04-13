@@ -37,7 +37,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = FDCore_test1.0.0
-DISTDIR = /home/benjamin/dev/FanatikDevelopment/build/.obj/FDCore_test/FDCore_test1.0.0
+DISTDIR = /home/benjamin/dev/FanatikDevelopment/build/obj/FDCore_test/FDCore_test1.0.0
 LINK          = g++
 LFLAGS        = 
 LIBS          = $(SUBLIBS) -L../../build/lib -L../../thirdparty/googletest/build/lib -pthread -lgtest -lFDCore   
@@ -48,12 +48,12 @@ STRIP         = strip
 
 ####### Output directory
 
-OBJECTS_DIR   = ../../build/.obj/FDCore_test/
+OBJECTS_DIR   = ../../build/obj/FDCore_test/
 
 ####### Files
 
 SOURCES       = main.cpp 
-OBJECTS       = ../../build/.obj/FDCore_test/main.o
+OBJECTS       = ../../build/obj/FDCore_test/main.o
 DIST          = ../../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.13.2/gcc_64/mkspecs/common/unix.conf \
 		../../../../Qt/5.13.2/gcc_64/mkspecs/common/linux.conf \
@@ -682,7 +682,7 @@ compiler_clean:
 
 ####### Compile
 
-../../build/.obj/FDCore_test/main.o: main.cpp ../../thirdparty/googletest/googletest/include/gtest/gtest.h \
+../../build/obj/FDCore_test/main.o: main.cpp ../../thirdparty/googletest/googletest/include/gtest/gtest.h \
 		../../thirdparty/googletest/googletest/include/gtest/internal/gtest-internal.h \
 		../../thirdparty/googletest/googletest/include/gtest/internal/gtest-port.h \
 		../../thirdparty/googletest/googletest/include/gtest/internal/custom/gtest-port.h \
@@ -704,7 +704,7 @@ compiler_clean:
 		../../thirdparty/googletest/googletest/include/gtest/gtest_pred_impl.h \
 		FileUtils_test.h \
 		../include/FDCore/FileUtils.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../build/.obj/FDCore_test/main.o main.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../build/obj/FDCore_test/main.o main.cpp
 
 ####### Install
 

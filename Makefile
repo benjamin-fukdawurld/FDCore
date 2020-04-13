@@ -37,7 +37,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = FDCore1.0.0
-DISTDIR = /home/benjamin/dev/FanatikDevelopment/build/.obj/FDCore/FDCore1.0.0
+DISTDIR = /home/benjamin/dev/FanatikDevelopment/build/obj/FDCore/FDCore1.0.0
 LINK          = g++
 LFLAGS        = -shared -Wl,-soname,libFDCore.so.1
 LIBS          = $(SUBLIBS)    
@@ -48,14 +48,14 @@ STRIP         = strip
 
 ####### Output directory
 
-OBJECTS_DIR   = ../build/.obj/FDCore/
+OBJECTS_DIR   = ../build/obj/FDCore/
 
 ####### Files
 
 SOURCES       = src/FileUtils.cpp \
 		src/ThreadPool.cpp 
-OBJECTS       = ../build/.obj/FDCore/FileUtils.o \
-		../build/.obj/FDCore/ThreadPool.o
+OBJECTS       = ../build/obj/FDCore/FileUtils.o \
+		../build/obj/FDCore/ThreadPool.o
 DIST          = ../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../Qt/5.13.2/gcc_64/mkspecs/common/unix.conf \
 		../../../Qt/5.13.2/gcc_64/mkspecs/common/linux.conf \
@@ -724,11 +724,11 @@ compiler_clean:
 
 ####### Compile
 
-../build/.obj/FDCore/FileUtils.o: src/FileUtils.cpp include/FDCore/FileUtils.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../build/.obj/FDCore/FileUtils.o src/FileUtils.cpp
+../build/obj/FDCore/FileUtils.o: src/FileUtils.cpp include/FDCore/FileUtils.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../build/obj/FDCore/FileUtils.o src/FileUtils.cpp
 
-../build/.obj/FDCore/ThreadPool.o: src/ThreadPool.cpp include/FDCore/ThreadPool.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../build/.obj/FDCore/ThreadPool.o src/ThreadPool.cpp
+../build/obj/FDCore/ThreadPool.o: src/ThreadPool.cpp include/FDCore/ThreadPool.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../build/obj/FDCore/ThreadPool.o src/ThreadPool.cpp
 
 ####### Install
 
