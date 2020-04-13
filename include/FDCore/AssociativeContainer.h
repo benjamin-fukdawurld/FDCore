@@ -144,11 +144,20 @@ namespace FDCore
              */
             iterator find(const key_type &k)
             {
-                return std::lower_bound(begin(), end(), KeyType{ k, m_hash },
-                                        [](const cell_type &a, const cell_key_type b)
-                                        {
-                                            return a.key < b;
-                                        });
+                size_t h = m_hash(k);
+                return find_if([h](const cell_type &cell){ return cell.key.hash == h; });
+            }
+
+            /**
+             * @brief Finds a cell in the container given its key from the end
+             *
+             * @param k the key to search for
+             * @return an iterator on the found result or an iterator on the end of the container
+             */
+            iterator find_last(const key_type &k)
+            {
+                size_t h = m_hash(k);
+                return find_last_if([h](const cell_type &cell){ return cell.key.hash == h; });
             }
 
             /**
@@ -159,11 +168,20 @@ namespace FDCore
              */
             const_iterator find(const key_type &k) const
             {
-                return std::lower_bound(begin(), end(), KeyType{ k, m_hash },
-                                        [](const cell_type &a, const cell_key_type b)
-                                        {
-                                            return a.key < b;
-                                        });
+                size_t h = m_hash(k);
+                return find_if([h](const cell_type &cell){ return cell.key.hash == h; });
+            }
+
+            /**
+             * @brief Finds a cell in the container given its key from the end
+             *
+             * @param k the key to search for
+             * @return an iterator on the found result if any or an iterator on the end of the container
+             */
+            const_iterator find_last(const key_type &k) const
+            {
+                size_t h = m_hash(k);
+                return find_if([h](const cell_type &cell){ return cell.key.hash == h; });
             }
 
             /**
@@ -180,6 +198,22 @@ namespace FDCore
             }
 
             /**
+             * @brief Finds the first cell in the container that matches a predicate from the end
+             *
+             * @tparam Predicate the predicate type. This type must match the same requirements as std::find
+             * @param pred the predicate to check the cells
+             * @return an iterator on the first cell that matches the predicate if any or the end of the container
+             */
+            template<typename Predicate>
+            iterator find_last_if(Predicate pred)
+            {
+                reverse_iterator rit = std::find_if(rbegin(), rend(), pred);
+                auto it = begin();
+                std::advance(it, std::distance(rend(), rit));
+                return it;
+            }
+
+            /**
              * @brief Finds the first cell in the container that matches a predicate
              *
              * @tparam Predicate the predicate type. This type must match the same requirements as std::find
@@ -190,6 +224,22 @@ namespace FDCore
             const_iterator find_if(Predicate pred) const
             {
                 return std::find_if(begin(), end(), pred);
+            }
+
+            /**
+             * @brief Finds the first cell in the container that matches a predicate from the end
+             *
+             * @tparam Predicate the predicate type. This type must match the same requirements as std::find
+             * @param pred the predicate to check the cells
+             * @return an iterator on the first cell that matches the predicate if any or the end of the container
+             */
+            template<typename Predicate>
+            const_iterator find_last_if(Predicate pred) const
+            {
+                reverse_iterator rit = std::find_if(rbegin(), rend(), pred);
+                auto it = begin();
+                std::advance(it, std::distance(rend(), rit));
+                return it;
             }
 
             /**
