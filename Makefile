@@ -52,8 +52,10 @@ OBJECTS_DIR   = ../build/.obj/FDCore/
 
 ####### Files
 
-SOURCES       = src/FileUtils.cpp 
-OBJECTS       = ../build/.obj/FDCore/FileUtils.o
+SOURCES       = src/FileUtils.cpp \
+		src/ThreadPool.cpp 
+OBJECTS       = ../build/.obj/FDCore/FileUtils.o \
+		../build/.obj/FDCore/ThreadPool.o
 DIST          = ../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../Qt/5.13.2/gcc_64/mkspecs/common/unix.conf \
 		../../../Qt/5.13.2/gcc_64/mkspecs/common/linux.conf \
@@ -255,7 +257,9 @@ DIST          = ../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		include/FDCore/TypeInformation.h \
 		include/FDCore/Singleton.h \
 		include/FDCore/CopyOnWrite.h \
-		include/FDCore/CallOnEdit.h src/FileUtils.cpp
+		include/FDCore/CallOnEdit.h \
+		include/FDCore/ThreadPool.h src/FileUtils.cpp \
+		src/ThreadPool.cpp
 QMAKE_TARGET  = FDCore
 DESTDIR       = ../build/lib/
 TARGET        = libFDCore.so.1.0.0
@@ -722,6 +726,9 @@ compiler_clean:
 
 ../build/.obj/FDCore/FileUtils.o: src/FileUtils.cpp include/FDCore/FileUtils.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../build/.obj/FDCore/FileUtils.o src/FileUtils.cpp
+
+../build/.obj/FDCore/ThreadPool.o: src/ThreadPool.cpp include/FDCore/ThreadPool.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../build/.obj/FDCore/ThreadPool.o src/ThreadPool.cpp
 
 ####### Install
 

@@ -15,7 +15,8 @@ INCLUDEPATH += \
     include \
 
 SOURCES += \
-    src/FileUtils.cpp
+    src/FileUtils.cpp \
+    src/ThreadPool.cpp
 
 HEADERS += \
     include/FDCore/AssociativeContainer.h \
@@ -29,7 +30,8 @@ HEADERS += \
     include/FDCore/TypeInformation.h \
     include/FDCore/Singleton.h \
     include/FDCore/CopyOnWrite.h \
-    include/FDCore/CallOnEdit.h
+    include/FDCore/CallOnEdit.h \
+    include/FDCore/ThreadPool.h
 
 unix {
     target.path = /usr/lib
