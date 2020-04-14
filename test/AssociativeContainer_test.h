@@ -15,7 +15,8 @@
 
 class FDCore_AssociativeContainer_int_str : public ::testing::Test
 {
-    public:
+    protected:
+        typedef const FDCore::AssociativeContainer<int, std::string>::cell_type const_cell_type;
         FDCore::AssociativeContainer<int, std::string> container;
 
     public:
@@ -26,6 +27,14 @@ class FDCore_AssociativeContainer_int_str : public ::testing::Test
         const FDCore::AssociativeContainer<int, std::string> &getContainer() const
         {
             return container;
+        }
+
+        void printContainer() const
+        {
+            for(auto &[key, value]: container)
+            {
+                std::cerr << key.key << ": " << value << std::endl;
+            }
         }
 };
 
@@ -83,12 +92,11 @@ TEST_F(FDCore_AssociativeContainer_int_str, FindLastTest)
 
 TEST_F(FDCore_AssociativeContainer_int_str, FindIfTest)
 {
-    typedef const FDCore::AssociativeContainer<int, std::string>::cell_type cell_type;
-    ASSERT_EQ(container.find_if([](cell_type &cell)
+    ASSERT_EQ(container.find_if([](const_cell_type &cell)
     {
         return cell.value == "11";
     }), container.end());
-    auto it = container.find_if([](cell_type &cell)
+    auto it = container.find_if([](const_cell_type &cell)
     {
         return cell.value == "3";
     });
@@ -96,11 +104,11 @@ TEST_F(FDCore_AssociativeContainer_int_str, FindIfTest)
     ASSERT_EQ(it->value, "3");
     ASSERT_EQ(it->key.key, 3);
 
-    ASSERT_EQ(getContainer().find_if([](cell_type &cell)
+    ASSERT_EQ(getContainer().find_if([](const_cell_type &cell)
     {
         return cell.value == "12";
     }), container.cend());
-    auto cit = getContainer().find_if([](cell_type &cell)
+    auto cit = getContainer().find_if([](const_cell_type &cell)
     {
         return cell.value == "4";
     });
@@ -111,13 +119,12 @@ TEST_F(FDCore_AssociativeContainer_int_str, FindIfTest)
 
 TEST_F(FDCore_AssociativeContainer_int_str, FindLastIfTest)
 {
-    typedef const FDCore::AssociativeContainer<int, std::string>::cell_type cell_type;
-    ASSERT_EQ(container.find_last_if([](cell_type &cell)
+    ASSERT_EQ(container.find_last_if([](const_cell_type &cell)
     {
         return cell.value == "11";
     }), container.end());
 
-    auto it = container.find_last_if([](cell_type &cell)
+    auto it = container.find_last_if([](const_cell_type &cell)
     {
         return cell.value == "1.2";
     });
@@ -125,11 +132,11 @@ TEST_F(FDCore_AssociativeContainer_int_str, FindLastIfTest)
     ASSERT_EQ(it->value, "1.2");
     ASSERT_EQ(it->key.key, 1);
 
-    ASSERT_EQ(getContainer().find_last_if([](cell_type &cell)
+    ASSERT_EQ(getContainer().find_last_if([](const_cell_type &cell)
     {
         return cell.value == "12";
     }), container.cend());
-    auto cit = getContainer().find_last_if([](cell_type &cell)
+    auto cit = getContainer().find_last_if([](const_cell_type &cell)
     {
         return cell.value == "4";
     });
@@ -149,13 +156,12 @@ TEST_F(FDCore_AssociativeContainer_int_str, FindAllTest)
         ASSERT_EQ(v[1]->key.key, 1);
     }
 
-    typedef const FDCore::AssociativeContainer<int, std::string>::cell_type cell_type;
     {
-        ASSERT_TRUE(container.find_all_if([](const cell_type &cell)
+        ASSERT_TRUE(container.find_all_if([](const_cell_type &cell)
         {
             return cell.value.size() == 4;
         }).empty());
-        auto v = container.find_all_if([](const cell_type &cell)
+        auto v = container.find_all_if([](const_cell_type &cell)
         {
             return cell.value.size() == 1;
         });
@@ -172,13 +178,12 @@ TEST_F(FDCore_AssociativeContainer_int_str, FindAllTest)
         ASSERT_EQ(v[1]->key.key, 1);
     }
 
-    typedef const FDCore::AssociativeContainer<int, std::string>::cell_type cell_type;
     {
-        ASSERT_TRUE(getContainer().find_all_if([](const cell_type &cell)
+        ASSERT_TRUE(getContainer().find_all_if([](const_cell_type &cell)
         {
             return cell.value.size() == 4;
         }).empty());
-        auto v = getContainer().find_all_if([](const cell_type &cell)
+        auto v = getContainer().find_all_if([](const_cell_type &cell)
         {
             return cell.value.size() == 1;
         });
@@ -213,6 +218,121 @@ TEST_F(FDCore_AssociativeContainer_int_str, InsertTest)
 
     FDCore::AssociativeContainer<int, std::string> tmp;
     ASSERT_TRUE(tmp.empty());
+}
+
+TEST_F(FDCore_AssociativeContainer_int_str, EraseTest)
+{
+    size_t s = container.size();
+    {
+        ASSERT_EQ(container.erase(11), container.end());
+        ASSERT_EQ(container.size(), s);
+    }
+
+    {
+        container.erase(1);
+        ASSERT_EQ(container.size(), s - 1);
+    }
+
+    {
+        auto it = container.find(2);
+        ASSERT_NE(container.erase(it), container.end());
+        ASSERT_EQ(container.size(), s - 2);
+    }
+
+    auto it = container.begin();
+    ++it;
+
+    container.erase(it, container.end());
+    ASSERT_EQ(container.size(), 1u);
+}
+
+TEST_F(FDCore_AssociativeContainer_int_str, EraseIfTest)
+{
+    size_t s = container.size();
+    {
+        ASSERT_EQ(container.erase_if([](const_cell_type &cell)
+        {
+            return cell.value == "11";
+        }), container.end());
+        ASSERT_EQ(container.size(), s);
+    }
+
+    {
+        container.erase_if([](const_cell_type &cell)
+        {
+            return cell.key.key == 1;
+        });
+        ASSERT_EQ(container.size(), s - 1);
+    }
+}
+
+TEST_F(FDCore_AssociativeContainer_int_str, EraseAllIfTest)
+{
+    size_t s = container.size();
+    {
+        ASSERT_EQ(container.erase_all_if([](const_cell_type &cell)
+        {
+            return cell.value == "11";
+        }), 0u);
+        ASSERT_EQ(container.size(), s);
+    }
+
+    {
+        container.erase_all_if([](const_cell_type &cell)
+        {
+            return cell.key.key == 1;
+        });
+        ASSERT_EQ(container.size(), s - 2);
+    }
+}
+
+TEST_F(FDCore_AssociativeContainer_int_str, CountTest)
+{
+    ASSERT_EQ(container.count(11), 0u);
+    ASSERT_EQ(container.count(1), 2u);
+}
+
+TEST_F(FDCore_AssociativeContainer_int_str, CountIfTest)
+{
+    ASSERT_EQ(container.count_if([](const_cell_type &cell)
+    {
+        return cell.value == "11";
+    }), 0u);
+    ASSERT_EQ(container.count_if([](const_cell_type &cell)
+    {
+        return cell.value.size() == 1u;
+    }), container.size() - 2u);
+}
+
+TEST_F(FDCore_AssociativeContainer_int_str, AtTest)
+{
+    {
+        ASSERT_EQ(container.at(11), nullptr);
+        auto *p = container.at(1);
+        ASSERT_NE(p, nullptr);
+        ASSERT_EQ(*p, "1");
+    }
+
+    {
+        ASSERT_EQ(getContainer().at(12), nullptr);
+        auto *p = getContainer().at(2);
+        ASSERT_NE(p, nullptr);
+        ASSERT_EQ(*p, "2");
+    }
+
+    {
+        ASSERT_EQ(container[11], nullptr);
+        auto *p = container[1];
+        ASSERT_NE(p, nullptr);
+        ASSERT_EQ(*p, "1");
+    }
+
+    {
+        ASSERT_EQ(getContainer()[12], nullptr);
+        auto *p = getContainer()[2];
+        ASSERT_NE(p, nullptr);
+        ASSERT_EQ(*p, "2");
+    }
 }
 
 #ifdef NEED_UNDEF
