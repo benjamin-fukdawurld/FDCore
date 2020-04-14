@@ -20,7 +20,7 @@ namespace FDCore
     {
         size_t hash; ///< the hash value of the key
         #ifdef DEBUG
-        Key key ///< the key itself. This value is used only for debug purpose and is not present in release mode
+        Key key; ///< the key itself. This value is used only for debug purpose and is not present in release mode
         #endif
 
         /**
@@ -181,7 +181,7 @@ namespace FDCore
             const_iterator find_last(const key_type &k) const
             {
                 size_t h = m_hash(k);
-                return find_if([h](const cell_type &cell){ return cell.key.hash == h; });
+                return find_last_if([h](const cell_type &cell){ return cell.key.hash == h; });
             }
 
             /**
@@ -208,8 +208,11 @@ namespace FDCore
             iterator find_last_if(Predicate pred)
             {
                 reverse_iterator rit = std::find_if(rbegin(), rend(), pred);
+                if(rit == rend())
+                    return end();
+
                 auto it = begin();
-                std::advance(it, std::distance(rend(), rit));
+                std::advance(it, std::distance(rit, rend() - 1));
                 return it;
             }
 
@@ -236,10 +239,37 @@ namespace FDCore
             template<typename Predicate>
             const_iterator find_last_if(Predicate pred) const
             {
-                reverse_iterator rit = std::find_if(rbegin(), rend(), pred);
+                const_reverse_iterator rit = std::find_if(rbegin(), rend(), pred);
+                if(rit == crend())
+                    return cend();
+
                 auto it = begin();
-                std::advance(it, std::distance(rend(), rit));
+                std::advance(it, std::distance(rit, crend()) - 1);
                 return it;
+            }
+
+            /**
+             * @brief Finds all cells in the container given their key
+             *
+             * @param k the key to search for
+             * @return an iterator on the found result or an iterator on the end of the container
+             */
+            std::vector<iterator> find_all(const key_type &k)
+            {
+                size_t h = m_hash(k);
+                return find_all_if([h](const cell_type &cell){ return cell.key.hash == h; });
+            }
+
+            /**
+             * @brief Finds all cells in the container given their key
+             *
+             * @param k the key to search for
+             * @return an iterator on the found result if any or an iterator on the end of the container
+             */
+            std::vector<const_iterator> find_all(const key_type &k) const
+            {
+                size_t h = m_hash(k);
+                return find_all_if([h](const cell_type &cell){ return cell.key.hash == h; });
             }
 
             /**

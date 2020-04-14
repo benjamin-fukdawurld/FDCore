@@ -62,7 +62,7 @@ class FDCore_FileUtils_readFile : public ::testing::Test
             f.close();
 
             m_stdErrStream = std::cout.rdbuf();
-            std::cout.rdbuf(m_errBuffer.rdbuf());
+            std::cerr.rdbuf(m_errBuffer.rdbuf());
         }
 
         void TearDown() override
@@ -146,7 +146,7 @@ class FDCore_FileUtils_readBinaryFile : public ::testing::Test
                 throw std::runtime_error("unable to open empty file");
 
             m_stdErrStream = std::cout.rdbuf();
-            std::cout.rdbuf(m_errBuffer.rdbuf());
+            std::cerr.rdbuf(m_errBuffer.rdbuf());
         }
 
         void TearDown() override

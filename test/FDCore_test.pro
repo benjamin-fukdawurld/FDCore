@@ -35,4 +35,5 @@ SOURCES += \
     main.cpp
 
 HEADERS += \
+    AssociativeContainer_test.h \
     FileUtils_test.h
