@@ -108,6 +108,14 @@ namespace FDCore
         public:
             typedef Key key_type; ///< the container key type
             typedef T value_type; ///< the container value type
+            typedef key_type* key_type_pointer; ///< a pointer to the container key type
+            typedef value_type* value_type_pointer; ///< a pointer to the container value type
+            typedef const key_type* const_key_type_pointer; ///< a constant pointer to the container key type
+            typedef const value_type* const_value_type_pointer; ///< a constant pointer to the container value type
+            typedef key_type& key_type_reference; ///< a reference to the container key type
+            typedef value_type& value_type_reference; ///< a reference to the container value type
+            typedef const key_type& const_key_type_reference; ///< a constant reference to the container key type
+            typedef const value_type& const_value_type_reference; ///< a constant reference to the container value type
             typedef KeyType<Key, Hash> cell_key_type; ///< the container cell key type. This is the type used to compare two elements
             typedef KeyValueType<Key, T, Hash> cell_type; ///< the container cell type
             typedef size_t size_type; ///< the container size type
@@ -134,7 +142,7 @@ namespace FDCore
              * @param key the key to hash
              * @return an hash value for a given key
              */
-            size_t hashKey(key_type key) { return m_hash(key); }
+            size_t hashKey(key_type key) const { return m_hash(key); }
             
             /**
              * @brief Finds a cell in the container given its key
@@ -522,6 +530,9 @@ namespace FDCore
              */
             iterator erase(const_iterator it)
             {
+                if(it == end())
+                    return end();
+
                 return m_container.erase(it);
             }
 
@@ -535,6 +546,9 @@ namespace FDCore
              */
             iterator erase(const_iterator first, const_iterator last)
             {
+                if(first == last)
+                    return end();
+
                 return m_container.erase(first, last);
             }
 
@@ -546,13 +560,12 @@ namespace FDCore
              */
             iterator erase(const key_type &k)
             {
-                return m_container.erase(find(k));
+                return erase(find(k));
             }
 
             /**
              * @brief Erase an element from the container if it matches a predicate
              *
-             * @tparam
              * @tparam Predicate the predicate type. This type must match the same requirements as std::find
              * @param pred the predicate to check the cells
              * @return an iterator following the removed element
@@ -560,7 +573,45 @@ namespace FDCore
             template<typename Predicate>
             iterator erase_if(Predicate pred)
             {
-                return m_container.erase(find_if(pred));
+                return erase(find_if(pred));
+            }
+
+            /**
+             * @brief Erase all elements from the container with a given key
+             *
+             * @param k the key of the elements to erase
+             * @return the number of elements erased
+             */
+            size_t erase_all(const key_type &k)
+            {
+                size_t h = hashKey(k);
+                return erase_all_if([h](const cell_type &cell) { return cell->key.key = h; });
+            }
+
+            /**
+             * @brief Erase all elements from the container if they match a predicate
+             *
+             * @tparam Predicate the predicate type. This type must match the same requirements as std::find
+             * @param pred the predicate to check the cells
+             * @return the number of elements erased
+             */
+            template<typename Predicate>
+            size_t erase_all_if(Predicate pred)
+            {
+                size_t result = 0;
+                iterator it = begin();
+                while(it != end())
+                {
+                    if(!pred(*it))
+                        ++it;
+                    else
+                    {
+                        it = m_container.erase(it);
+                        ++result;
+                    }
+                }
+
+                return result;
             }
 
             /**
@@ -571,7 +622,8 @@ namespace FDCore
              */
             size_type count(const key_type &k) const
             {
-                return std::count(begin(), end(), KeyType{ k, m_hash });
+                size_t h = hashKey(k);
+                return count_if([h](const cell_type &cell) { return cell.key.hash == h; });
             }
 
             /**
@@ -595,53 +647,53 @@ namespace FDCore
             void swap(AssociativeContainer &other) { m_container.swap(other); }
 
             /**
-             * @brief Returns a pointer to the cell that has a given key
+             * @brief Returns a pointer to the cell's value that has a given key
              * @param k the key to search
-             * @return a pointer to the cell that has a given key if there is no such key in the
+             * @return a pointer to the cell's value that has a given key if there is no such key in the
              * container a null pointer is returned
              */
-            pointer at(const key_type &k)
+            value_type_pointer at(const key_type &k)
             {
                 iterator it = find(k);
                 if(it == end())
                     return nullptr;
 
-                return &(*it);
+                return &(it->value);
             }
 
             /**
-             * @brief Returns a const pointer to the cell that has a given key
+             * @brief Returns a const pointer to the cell's value that has a given key
              * @param k the key to search
-             * @return a const pointer to the cell that has a given key if there is no such key in the
+             * @return a const pointer to the cell's value that has a given key if there is no such key in the
              * container a null pointer is returned
              */
-            const_pointer at(const key_type &k) const
+            const_value_type_pointer at(const key_type &k) const
             {
                 const_iterator it = find(k);
                 if(it == end())
                     return nullptr;
 
-                return &(*it);
+                return &(it->value);
             }
 
             /**
-             * @brief Returns a pointer to the cell that has a given key
+             * @brief Returns a pointer to the cell's value that has a given key
              * @param k the key to search
-             * @return a pointer to the cell that has a given key if there is no such key in the
+             * @return a pointer to the cell's value that has a given key if there is no such key in the
              * container a null pointer is returned
              */
-            pointer operator[](const key_type &k)
+            value_type_pointer operator[](const key_type &k)
             {
                 return at(k);
             }
 
             /**
-             * @brief Returns a const pointer to the cell that has a given key
+             * @brief Returns a const pointer to the cell's value that has a given key
              * @param k the key to search
-             * @return a const pointer to the cell that has a given key if there is no such key in the
+             * @return a const pointer to the cell's value that has a given key if there is no such key in the
              * container a null pointer is returned
              */
-            const_pointer operator[](const key_type &k) const
+            const_value_type_pointer operator[](const key_type &k) const
             {
                 return at(k);
             }
