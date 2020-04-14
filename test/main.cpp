@@ -2,6 +2,8 @@
 
 #include "FileUtils_test.h"
 
+#include "AssociativeContainer_test.h"
+
 int main(int argc, char *argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);
