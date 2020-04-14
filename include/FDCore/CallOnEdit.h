@@ -1,73 +1,77 @@
 #ifndef CALLONEDIT_H
 #define CALLONEDIT_H
 
-#include <type_traits>
-#include <tuple>
+#include <functional>
 
 namespace FDCore
 {
-    namespace internal
-    {
-        template<bool is_method>
-        struct callback_call_helper;
-
-        template<>
-        struct callback_call_helper<true>
-        {
-            template<typename T, typename Callback, typename ...Args>
-            static void call(T *caller, Callback cb, Args ...args)
-            {
-                return caller->*cb(args...);
-            }
-        };
-
-        template<>
-        struct callback_call_helper<false>
-        {
-            template<typename T, typename Callback, typename ...Args>
-            static void call(T*, Callback cb, Args ...args)
-            {
-                return cb(args...);
-            }
-        };
-
-    }
-
-    template <typename T, typename Callback, typename ...Args>
+    template <typename T>
     class CallOnEdit
     {
         protected:
-            Callback m_cb;
-            std::tuple<Args...> m_args;
+            T *m_managed;
+            std::function<void(T&)> m_callback;
 
         public:
-            CallOnEdit(Callback cb, Args ...args) :
-                m_cb(cb),
-                m_args(args...)
+            CallOnEdit():
+                CallOnEdit(nullptr)
             {}
 
-            const T& operator*() const { return *static_cast<T*>(this); }
+            CallOnEdit(T *managed):
+                m_managed(managed)
+            {}
 
-            T& operator*()
+            template<typename CallbackType>
+            CallOnEdit(T *managed, CallbackType cb):
+                m_managed(managed),
+                m_callback(cb)
+            {}
+
+            template<typename CallbackType, typename ...Args>
+            CallOnEdit(T *managed, CallbackType cb, Args... args):
+                m_managed(managed),
+                m_callback(std::bind(cb, args..., std::placeholders::_1))
+            {}
+
+            std::function<void(T&)> getCallback() const
             {
-                call();
-                return *static_cast<T*>(this);
+                return m_callback;
             }
 
-            const T* operator->() const { return static_cast<T*>(this); }
-
-            T* operator->()
+            template<typename CallbackType>
+            void setCallback(CallbackType cb)
             {
-                call();
-                return static_cast<T*>(this);
+                m_callback = cb;
             }
 
-        private:
-            void call()
+            template<typename CallbackType, typename ...Args>
+            void setCallback(CallbackType cb, Args... args)
             {
-                typedef internal::callback_call_helper<std::is_member_function_pointer_v<Callback>> call_helper;
-                std::apply(call_helper::call, std::tuple_cat(static_cast<T*>(this), m_cb, m_args));
+                m_callback = std::bind(cb, args..., std::placeholders::_1);
             }
+
+            const T *getManagedObject() const { return m_managed; }
+
+            T *getManagedObject()
+            {
+                if(m_callback)
+                    m_callback(*m_managed);
+
+                return m_managed;
+            }
+
+            void setManagedObject(T *managed)
+            {
+                m_managed = managed;
+            }
+
+            const T& operator*() const { return *getManagedObject(); }
+
+            T& operator*() { return *getManagedObject(); }
+
+            const T* operator->() const { return getManagedObject(); }
+
+            T* operator->() { return getManagedObject(); }
     };
 }
 
