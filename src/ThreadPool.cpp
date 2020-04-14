@@ -12,6 +12,15 @@ FDCore::ThreadPool::ThreadPool(size_t nbThread) :
         addThread();
 }
 
+FDCore::ThreadPool::~ThreadPool()
+{
+    m_run = false;
+    m_cond.notify_all();
+
+    for(size_t i = 0, imax = m_threads.size(); i < imax; ++i)
+        m_threads[i].second.join();
+}
+
 void FDCore::ThreadPool::setNumberOfThreads(size_t nbThreads)
 {
     if(nbThreads == m_threads.size())
