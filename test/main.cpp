@@ -1,8 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "FileUtils_test.h"
-
-#include "AssociativeContainer_test.h"
+#include "FDCore_test.h"
 
 int main(int argc, char *argv[])
 {

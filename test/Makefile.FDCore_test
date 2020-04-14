@@ -244,7 +244,10 @@ DIST          = ../../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.13.2/gcc_64/mkspecs/features/exceptions.prf \
 		../../../../Qt/5.13.2/gcc_64/mkspecs/features/yacc.prf \
 		../../../../Qt/5.13.2/gcc_64/mkspecs/features/lex.prf \
-		FDCore_test.pro FileUtils_test.h main.cpp
+		FDCore_test.pro AssociativeContainer_test.h \
+		FileUtils_test.h \
+		FDCore_test.h \
+		CallOnEdit_test.h main.cpp
 QMAKE_TARGET  = FDCore_test
 DESTDIR       = ../../build/bin/
 TARGET        = ../../build/bin/FDCore_test
@@ -702,8 +705,14 @@ compiler_clean:
 		../../thirdparty/googletest/googletest/include/gtest/gtest_prod.h \
 		../../thirdparty/googletest/googletest/include/gtest/gtest-typed-test.h \
 		../../thirdparty/googletest/googletest/include/gtest/gtest_pred_impl.h \
+		FDCore_test.h \
 		FileUtils_test.h \
-		../include/FDCore/FileUtils.h
+		../include/FDCore/FileUtils.h \
+		AssociativeContainer_test.h \
+		../include/FDCore/AssociativeContainer.h \
+		../include/FDCore/ComparableTrait.h \
+		CallOnEdit_test.h \
+		../include/FDCore/CallOnEdit.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../../build/obj/FDCore_test/main.o main.cpp
 
 ####### Install

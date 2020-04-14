@@ -32,4 +32,6 @@ SOURCES += \
 
 HEADERS += \
     AssociativeContainer_test.h \
-    FileUtils_test.h
+    FileUtils_test.h \
+    FDCore_test.h \
+    CallOnEdit_test.h
