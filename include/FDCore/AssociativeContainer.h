@@ -2,7 +2,6 @@
 #define ASSOCIATIVECONTAINER_H
 
 #include <functional>
-#include <optional>
 #include <vector>
 
 #include <FDCore/ComparableTrait.h>
