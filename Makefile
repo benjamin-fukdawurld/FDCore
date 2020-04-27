@@ -258,7 +258,8 @@ DIST          = ../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		include/FDCore/Singleton.h \
 		include/FDCore/CopyOnWrite.h \
 		include/FDCore/CallOnEdit.h \
-		include/FDCore/ThreadPool.h src/FileUtils.cpp \
+		include/FDCore/ThreadPool.h \
+		include/FDCore/Macros.h src/FileUtils.cpp \
 		src/ThreadPool.cpp
 QMAKE_TARGET  = FDCore
 DESTDIR       = ../build/lib/
@@ -724,10 +725,12 @@ compiler_clean:
 
 ####### Compile
 
-../build/obj/FDCore/FileUtils.o: src/FileUtils.cpp include/FDCore/FileUtils.h
+../build/obj/FDCore/FileUtils.o: src/FileUtils.cpp include/FDCore/FileUtils.h \
+		include/FDCore/Macros.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../build/obj/FDCore/FileUtils.o src/FileUtils.cpp
 
-../build/obj/FDCore/ThreadPool.o: src/ThreadPool.cpp include/FDCore/ThreadPool.h
+../build/obj/FDCore/ThreadPool.o: src/ThreadPool.cpp include/FDCore/ThreadPool.h \
+		include/FDCore/Macros.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../build/obj/FDCore/ThreadPool.o src/ThreadPool.cpp
 
 ####### Install
