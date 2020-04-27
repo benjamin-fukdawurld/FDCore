@@ -28,7 +28,8 @@ HEADERS += \
     include/FDCore/Singleton.h \
     include/FDCore/CopyOnWrite.h \
     include/FDCore/CallOnEdit.h \
-    include/FDCore/ThreadPool.h
+    include/FDCore/ThreadPool.h \
+    include/FDCore/Macros.h \
 
 unix {
     target.path = /usr/lib
