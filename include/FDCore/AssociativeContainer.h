@@ -152,7 +152,11 @@ namespace FDCore
             iterator find(const key_type &k)
             {
                 size_t h = m_hash(k);
-                return find_if([h](const cell_type &cell){ return cell.key.hash == h; });
+                iterator it = lower_bound(begin(), end(), k);
+                if(it != end() && it->key.hash != h)
+                    return end();
+
+                return it;
             }
 
             /**
@@ -164,7 +168,15 @@ namespace FDCore
             iterator find_last(const key_type &k)
             {
                 size_t h = m_hash(k);
-                return find_last_if([h](const cell_type &cell){ return cell.key.hash == h; });
+                iterator it = upper_bound(begin(), end(), k);
+                if(it == begin())
+                    return end();
+
+                --it;
+                if(it->key.hash != h)
+                    return end();
+
+                return it;
             }
 
             /**
@@ -176,7 +188,11 @@ namespace FDCore
             const_iterator find(const key_type &k) const
             {
                 size_t h = m_hash(k);
-                return find_if([h](const cell_type &cell){ return cell.key.hash == h; });
+                const_iterator it = lower_bound(begin(), end(), k);
+                if(it != end() && it->key.hash != h)
+                    return end();
+
+                return it;
             }
 
             /**
@@ -188,7 +204,15 @@ namespace FDCore
             const_iterator find_last(const key_type &k) const
             {
                 size_t h = m_hash(k);
-                return find_last_if([h](const cell_type &cell){ return cell.key.hash == h; });
+                const_iterator it = upper_bound(begin(), end(), k);
+                if(it == begin())
+                    return end();
+
+                --it;
+                if(it->key.hash != h)
+                    return end();
+
+                return it;
             }
 
             /**
@@ -263,8 +287,16 @@ namespace FDCore
              */
             std::vector<iterator> find_all(const key_type &k)
             {
-                size_t h = m_hash(k);
-                return find_all_if([h](const cell_type &cell){ return cell.key.hash == h; });
+                std::vector<iterator> result;
+                iterator first = find(k);
+                iterator last = upper_bound(first, end(), k);
+
+                size_t s = std::distance(first, last) + 1;
+                result.reserve(s);
+                while(first != end() && first < last)
+                    result.push_back(first++);
+
+                return result;
             }
 
             /**
@@ -275,8 +307,16 @@ namespace FDCore
              */
             std::vector<const_iterator> find_all(const key_type &k) const
             {
-                size_t h = m_hash(k);
-                return find_all_if([h](const cell_type &cell){ return cell.key.hash == h; });
+                std::vector<const_iterator> result;
+                const_iterator first = find(k);
+                const_iterator last = upper_bound(first, end(), k);
+
+                size_t s = std::distance(first, last) + 1;
+                result.reserve(s);
+                while(first != end() && first < last)
+                    result.push_back(first++);
+
+                return result;
             }
 
             /**
@@ -329,7 +369,8 @@ namespace FDCore
              */
             bool contains(const key_type &k) const
             {
-                return find(k) != end();
+                const_iterator first = lower_bound(begin(), end(), k);
+                return (first != end() && first->key.hash == hashKey(k));
             }
 
 
@@ -695,6 +736,129 @@ namespace FDCore
             const_value_type_pointer operator[](const key_type &k) const
             {
                 return at(k);
+            }
+
+            const_iterator lower_bound(const_iterator first, const_iterator last, const key_type &k) const
+            {
+                size_t h = hashKey(k);
+                const_iterator it;
+                difference_type count, step;
+                count = std::distance(first, last);
+
+                while (count > 0) {
+                    it = first;
+                    step = count / 2;
+                    std::advance(it, step);
+                    if (it->key.hash < h) {
+                        first = ++it;
+                        count -= step + 1;
+                    }
+                    else
+                        count = step;
+                }
+                return first;
+            }
+
+            iterator lower_bound(const_iterator first, const_iterator last, const key_type &k)
+            {
+                const_iterator it = const_cast<const AssociativeContainer<Key, T, Hash, Allocator>*>(this)->lower_bound(first, last, k);
+                size_t i = std::distance(cbegin(), it);
+                iterator result = begin();
+                std::advance(result, i);
+                return result;
+            }
+
+            template<typename Predicate>
+            const_iterator lower_bound(const_iterator first, const_iterator last, Predicate pred) const
+            {
+                const_iterator it;
+                difference_type count, step;
+                count = std::distance(first, last);
+
+                while (count > 0) {
+                    it = first;
+                    step = count / 2;
+                    std::advance(it, step);
+                    if(pred(*it))
+                    {
+                        first = ++it;
+                        count -= step + 1;
+                    }
+                    else
+                        count = step;
+                }
+                return first;
+            }
+
+            template<typename Predicate>
+            const_iterator lower_bound(const_iterator first, const_iterator last, Predicate pred)
+            {
+                const_iterator it = const_cast<const AssociativeContainer<Key, T, Hash, Allocator>*>(this)->lower_bound(first, last, pred);
+                size_t i = std::distance(cbegin(), it);
+                iterator result = begin();
+                std::advance(result, i);
+                return result;
+            }
+
+            const_iterator upper_bound(const_iterator first, const_iterator last, const key_type &k) const
+            {
+                size_t h = hashKey(k);
+                const_iterator it;
+                difference_type count, step;
+                count = std::distance(first, last);
+
+                while (count > 0) {
+                    it = first;
+                    step = count / 2;
+                    std::advance(it, step);
+                    if (!(h < it->key.hash)) {
+                        first = ++it;
+                        count -= step + 1;
+                    }
+                    else
+                        count = step;
+                }
+                return first;
+            }
+
+            iterator upper_bound(const_iterator first, const_iterator last, const key_type &k)
+            {
+                const_iterator it = const_cast<const AssociativeContainer<Key, T, Hash, Allocator>*>(this)->upper_bound(first, last, k);
+                size_t i = std::distance(cbegin(), it);
+                iterator result = begin();
+                std::advance(result, i);
+                return result;
+            }
+
+            template<class Predicate>
+            const_iterator upper_bound(const_iterator first, const_iterator last, Predicate pred) const
+            {
+                const_iterator it;
+                difference_type count, step;
+                count = std::distance(first, last);
+
+                while (count > 0) {
+                    it = first;
+                    step = count / 2;
+                    std::advance(it, step);
+                    if (!pred(*it)) {
+                        first = ++it;
+                        count -= step + 1;
+                    }
+                    else
+                        count = step;
+                }
+                return first;
+            }
+
+            template<typename Predicate>
+            const_iterator upper_bound(const_iterator first, const_iterator last, Predicate pred)
+            {
+                const_iterator it = const_cast<const AssociativeContainer<Key, T, Hash, Allocator>*>(this)->upper_bound(first, last, pred);
+                size_t i = std::distance(cbegin(), it);
+                iterator result = begin();
+                std::advance(result, i);
+                return result;
             }
     };
 }
