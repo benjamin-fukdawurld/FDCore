@@ -4,6 +4,8 @@
 #include <chrono>
 #include <cassert>
 
+#include <FDCore/Macros.h>
+
 namespace FDCore
 {
     template<typename ClockType = std::chrono::steady_clock>

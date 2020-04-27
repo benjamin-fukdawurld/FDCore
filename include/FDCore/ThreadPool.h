@@ -10,9 +10,11 @@
 #include <future>
 #include <cassert>
 
+#include <FDCore/Macros.h>
+
 namespace FDCore
 {
-    class ThreadPool
+    class FD_EXPORT ThreadPool
     {
         private:
             std::vector<std::pair<bool, std::thread>> m_threads;
@@ -29,6 +31,7 @@ namespace FDCore
             template<typename F, typename ...Args>
             std::future<typename std::result_of<F(Args...)>::type> enqueue(F&& f, Args&&... args);
 
+            size_t getNumberOfThreads() const;
             void setNumberOfThreads(size_t nbThreads);
 
         private:
