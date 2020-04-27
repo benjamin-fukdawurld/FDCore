@@ -21,6 +21,11 @@ FDCore::ThreadPool::~ThreadPool()
         m_threads[i].second.join();
 }
 
+size_t FDCore::ThreadPool::getNumberOfThreads() const
+{
+    return m_threads.size();
+}
+
 void FDCore::ThreadPool::setNumberOfThreads(size_t nbThreads)
 {
     if(nbThreads == m_threads.size())
@@ -69,8 +74,11 @@ void FDCore::ThreadPool::workFunction(size_t threadIndex)
                 return !m_run || !m_threads[threadIndex].first || !m_queue.empty();
             });
 
-            if(!m_run && m_queue.empty())
+            if(!m_run || !m_threads[threadIndex].first)
                 return;
+
+            if(m_queue.empty())
+                continue;
 
             task = std::move(m_queue.front());
             m_queue.pop();
