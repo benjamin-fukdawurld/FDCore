@@ -151,12 +151,20 @@ namespace FDCore
              */
             iterator find(const key_type &k)
             {
-                size_t h = m_hash(k);
+                /*size_t h = m_hash(k);
                 iterator it = lower_bound(begin(), end(), k);
-                if(it != end() && it->key.hash != h)
-                    return end();
+                if(it == end())
+                {
+                     if(m_container.empty() || m_container.back().key.hash != h)
+                        return end();
 
-                return it;
+                     it = begin();
+                     std::advance(it, m_container.size() - 1);
+                }
+
+                return it;*/
+                size_t h = m_hash(k);
+                return find_if([h](const cell_type &cell){ return cell.key.hash == h; });
             }
 
             /**
@@ -167,7 +175,7 @@ namespace FDCore
              */
             iterator find_last(const key_type &k)
             {
-                size_t h = m_hash(k);
+                /*size_t h = m_hash(k);
                 iterator it = upper_bound(begin(), end(), k);
                 if(it == begin())
                     return end();
@@ -176,7 +184,9 @@ namespace FDCore
                 if(it->key.hash != h)
                     return end();
 
-                return it;
+                return it;*/
+                size_t h = m_hash(k);
+                return find_last_if([h](const cell_type &cell){ return cell.key.hash == h; });
             }
 
             /**
@@ -187,12 +197,20 @@ namespace FDCore
              */
             const_iterator find(const key_type &k) const
             {
-                size_t h = m_hash(k);
+                /*size_t h = m_hash(k);
                 const_iterator it = lower_bound(begin(), end(), k);
-                if(it != end() && it->key.hash != h)
-                    return end();
+                if(it == end())
+                {
+                     if(m_container.empty() || m_container.back().key.hash != h)
+                        return end();
 
-                return it;
+                     it = begin();
+                     std::advance(it, m_container.size() - 1);
+                }
+
+                return it;*/
+                size_t h = m_hash(k);
+                return find_if([h](const cell_type &cell){ return cell.key.hash == h; });
             }
 
             /**
@@ -203,7 +221,7 @@ namespace FDCore
              */
             const_iterator find_last(const key_type &k) const
             {
-                size_t h = m_hash(k);
+                /*size_t h = m_hash(k);
                 const_iterator it = upper_bound(begin(), end(), k);
                 if(it == begin())
                     return end();
@@ -212,7 +230,9 @@ namespace FDCore
                 if(it->key.hash != h)
                     return end();
 
-                return it;
+                return it;*/
+                size_t h = m_hash(k);
+                return find_last_if([h](const cell_type &cell){ return cell.key.hash == h; });
             }
 
             /**
