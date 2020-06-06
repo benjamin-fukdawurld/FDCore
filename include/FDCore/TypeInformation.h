@@ -1,13 +1,15 @@
 #ifndef TYPEINFORMATION_H
 #define TYPEINFORMATION_H
 
+#include <functional>
+
 #define generateTypeCodeWithName(type, name) \
 namespace FDCore \
 { \
     template<> \
     struct TypeCodeHelper<type> \
     { \
-        static constexpr const char code[] = #name; \
+        static constexpr const char code[] = name; \
         static size_t hash() \
         { \
             static const size_t hash = std::hash<std::string_view>()(code); \
@@ -24,7 +26,7 @@ namespace FDCore \
     template<typename template_type> \
     struct TypeCodeHelper<type<template_type>> \
     { \
-        static constexpr const char code[] = #name; \
+        static constexpr const char code[] = name; \
         static size_t hash() \
         { \
             static const size_t hash = std::hash<std::string_view>()(code); \

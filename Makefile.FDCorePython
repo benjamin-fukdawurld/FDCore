@@ -53,9 +53,13 @@ OBJECTS_DIR   = ../build/obj/FDCorePython/
 ####### Files
 
 SOURCES       = src/ThreadPool_python.cpp \
-		src/TimeManager_python.cpp 
+		src/TimeManager_python.cpp \
+		src/Resource_python.cpp \
+		src/Object_python.cpp 
 OBJECTS       = ../build/obj/FDCorePython/ThreadPool_python.o \
-		../build/obj/FDCorePython/TimeManager_python.o
+		../build/obj/FDCorePython/TimeManager_python.o \
+		../build/obj/FDCorePython/Resource_python.o \
+		../build/obj/FDCorePython/Object_python.o
 DIST          = ../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../Qt/5.13.2/gcc_64/mkspecs/common/unix.conf \
 		../../../Qt/5.13.2/gcc_64/mkspecs/common/linux.conf \
@@ -249,8 +253,12 @@ DIST          = ../../../Qt/5.13.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../Qt/5.13.2/gcc_64/mkspecs/features/lex.prf \
 		FDCorePython.pro include/FDCore/Binding/Python/FDCorePython.h \
 		include/FDCore/Binding/Python/ThreadPool_python.h \
-		include/FDCore/Binding/Python/TimeManager_python.h src/ThreadPool_python.cpp \
-		src/TimeManager_python.cpp
+		include/FDCore/Binding/Python/TimeManager_python.h \
+		include/FDCore/Binding/Python/Resource_python.h \
+		include/FDCore/Binding/Python/Object_python.h src/ThreadPool_python.cpp \
+		src/TimeManager_python.cpp \
+		src/Resource_python.cpp \
+		src/Object_python.cpp
 QMAKE_TARGET  = FDCorePython
 DESTDIR       = ../build/lib/
 TARGET        = libFDCorePython.so.1.0.0
@@ -754,6 +762,52 @@ compiler_clean:
 		include/FDCore/TimeManager.h \
 		include/FDCore/Macros.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../build/obj/FDCorePython/TimeManager_python.o src/TimeManager_python.cpp
+
+../build/obj/FDCorePython/Resource_python.o: src/Resource_python.cpp include/FDCore/Binding/Python/Resource_python.h \
+		../thirdparty/pybind11/include/pybind11/embed.h \
+		../thirdparty/pybind11/include/pybind11/pybind11.h \
+		../thirdparty/pybind11/include/pybind11/attr.h \
+		../thirdparty/pybind11/include/pybind11/cast.h \
+		../thirdparty/pybind11/include/pybind11/pytypes.h \
+		../thirdparty/pybind11/include/pybind11/detail/common.h \
+		../thirdparty/pybind11/include/pybind11/buffer_info.h \
+		../thirdparty/pybind11/include/pybind11/detail/typeid.h \
+		../thirdparty/pybind11/include/pybind11/detail/descr.h \
+		../thirdparty/pybind11/include/pybind11/detail/internals.h \
+		../thirdparty/pybind11/include/pybind11/options.h \
+		../thirdparty/pybind11/include/pybind11/detail/class.h \
+		../thirdparty/pybind11/include/pybind11/detail/init.h \
+		../thirdparty/pybind11/include/pybind11/eval.h \
+		include/FDCore/BaseResource.h \
+		include/FDCore/AbstractResource.h \
+		include/FDCore/Object.h \
+		include/FDCore/TypeInformation.h \
+		include/FDCore/Macros.h \
+		include/FDCore/ComparableTrait.h \
+		include/FDCore/Binding/Python/Object_python.h \
+		../thirdparty/pybind11/include/pybind11/stl.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../build/obj/FDCorePython/Resource_python.o src/Resource_python.cpp
+
+../build/obj/FDCorePython/Object_python.o: src/Object_python.cpp include/FDCore/Binding/Python/Object_python.h \
+		../thirdparty/pybind11/include/pybind11/embed.h \
+		../thirdparty/pybind11/include/pybind11/pybind11.h \
+		../thirdparty/pybind11/include/pybind11/attr.h \
+		../thirdparty/pybind11/include/pybind11/cast.h \
+		../thirdparty/pybind11/include/pybind11/pytypes.h \
+		../thirdparty/pybind11/include/pybind11/detail/common.h \
+		../thirdparty/pybind11/include/pybind11/buffer_info.h \
+		../thirdparty/pybind11/include/pybind11/detail/typeid.h \
+		../thirdparty/pybind11/include/pybind11/detail/descr.h \
+		../thirdparty/pybind11/include/pybind11/detail/internals.h \
+		../thirdparty/pybind11/include/pybind11/options.h \
+		../thirdparty/pybind11/include/pybind11/detail/class.h \
+		../thirdparty/pybind11/include/pybind11/detail/init.h \
+		../thirdparty/pybind11/include/pybind11/eval.h \
+		../thirdparty/pybind11/include/pybind11/stl.h \
+		include/FDCore/Object.h \
+		include/FDCore/TypeInformation.h \
+		include/FDCore/Macros.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ../build/obj/FDCorePython/Object_python.o src/Object_python.cpp
 
 ####### Install
 

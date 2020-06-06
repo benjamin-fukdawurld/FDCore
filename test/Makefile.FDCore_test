@@ -708,6 +708,7 @@ compiler_clean:
 		FDCore_test.h \
 		FileUtils_test.h \
 		../include/FDCore/FileUtils.h \
+		../include/FDCore/Macros.h \
 		AssociativeContainer_test.h \
 		../include/FDCore/AssociativeContainer.h \
 		../include/FDCore/ComparableTrait.h \

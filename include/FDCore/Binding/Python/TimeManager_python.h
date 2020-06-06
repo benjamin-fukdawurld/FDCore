@@ -1,5 +1,5 @@
-#ifndef TIMEMANAGER_H
-#define TIMEMANAGER_H
+#ifndef FDCORE_TIMEMANAGER_PYTHON_H
+#define FDCORE_TIMEMANAGER_PYTHON_H
 
 #include <pybind11/embed.h>
 
@@ -13,4 +13,4 @@ namespace FDCore
     }
 }
 
-#endif // TIMEMANAGER_H
+#endif // FDCORE_TIMEMANAGER_PYTHON_H

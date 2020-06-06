@@ -26,12 +26,16 @@ INCLUDEPATH += include \
 
 SOURCES += \
     src/ThreadPool_python.cpp \
-    src/TimeManager_python.cpp
+    src/TimeManager_python.cpp \
+    src/Resource_python.cpp \
+    src/Object_python.cpp
 
 HEADERS += \
     include/FDCore/Binding/Python/FDCorePython.h \
     include/FDCore/Binding/Python/ThreadPool_python.h \
-    include/FDCore/Binding/Python/TimeManager_python.h
+    include/FDCore/Binding/Python/TimeManager_python.h \
+    include/FDCore/Binding/Python/Resource_python.h \
+    include/FDCore/Binding/Python/Object_python.h
 
 unix {
     target.path = /usr/lib

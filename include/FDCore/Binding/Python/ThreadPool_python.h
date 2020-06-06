@@ -1,5 +1,5 @@
-#ifndef THREADPOOL_PYTHON_H
-#define THREADPOOL_PYTHON_H
+#ifndef FDCORE_THREADPOOL_PYTHON_H
+#define FDCORE_THREADPOOL_PYTHON_H
 
 #include <pybind11/embed.h>
 #include <FDCore/ThreadPool.h>
@@ -12,4 +12,4 @@ namespace FDCore
     }
 }
 
-#endif // THREADPOOL_PYTHON_H
+#endif // FDCORE_THREADPOOL_PYTHON_H
