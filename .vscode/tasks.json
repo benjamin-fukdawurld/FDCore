@@ -1,0 +1,47 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "format project",
+            "type": "shell",
+            "command": "find -name '*.cpp' -o -name '*.h' | xargs ${workspaceFolder}/../thirdparty/llvm/build/bin/clang-format -i",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "make project",
+            "type": "shell",
+            "command": "cmake",
+            "options": {
+                "cwd": "${workspaceFolder}/bin"
+            },
+            "args": [
+                "${workspaceFolder}"
+            ],
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "build project",
+            "type": "shell",
+            "command": "cmake",
+            "options": {
+                "cwd": "${workspaceFolder}/bin"
+            },
+            "args": [
+                "--build",
+                "."
+            ],
+            "presentation": {
+                "reveal": "always"
+            }
+        }
+    ]
+}

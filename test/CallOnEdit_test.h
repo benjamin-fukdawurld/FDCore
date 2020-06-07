@@ -1,32 +1,28 @@
 #ifndef CALLONEDIT_TEST_H
 #define CALLONEDIT_TEST_H
 
-#include <gtest/gtest.h>
-
 #include <FDCore/CallOnEdit.h>
+#include <gtest/gtest.h>
 
 
 class FDCore_CallOnEdit : public ::testing::Test
 {
-    public:
-        size_t editCount;
+  public:
+    size_t editCount;
 
-    public:
-        ~FDCore_CallOnEdit() override = default;
+  public:
+    ~FDCore_CallOnEdit() override = default;
 
-        void SetUp() override;
+    void SetUp() override;
 
-        void onEdit(FDCore_CallOnEdit&);
-        void onEditWithArg(size_t val, FDCore_CallOnEdit&);
+    void onEdit(FDCore_CallOnEdit &);
+    void onEditWithArg(size_t val, FDCore_CallOnEdit &);
 };
 
-void FDCore_CallOnEdit::SetUp()
-{
-    editCount = 0;
-}
+void FDCore_CallOnEdit::SetUp() { editCount = 0; }
 
-void FDCore_CallOnEdit::onEdit(FDCore_CallOnEdit&) { ++editCount; }
-void FDCore_CallOnEdit::onEditWithArg(size_t val, FDCore_CallOnEdit&) { editCount += val; }
+void FDCore_CallOnEdit::onEdit(FDCore_CallOnEdit &) { ++editCount; }
+void FDCore_CallOnEdit::onEditWithArg(size_t val, FDCore_CallOnEdit &) { editCount += val; }
 
 static size_t staticCounter = 0;
 
@@ -34,7 +30,10 @@ inline static void incrementStaticcounter(int &) { ++staticCounter; }
 inline static void incrementStaticcounterWithArg(size_t val, int &) { staticCounter += val; }
 
 inline static void incrementStaticcounterForObj(FDCore_CallOnEdit &) { ++staticCounter; }
-inline static void incrementStaticcounterForObjWithArg(size_t val, FDCore_CallOnEdit &) { staticCounter += val; }
+inline static void incrementStaticcounterForObjWithArg(size_t val, FDCore_CallOnEdit &)
+{
+    staticCounter += val;
+}
 
 TEST_F(FDCore_CallOnEdit, StaticFunctions)
 {
@@ -97,7 +96,8 @@ TEST_F(FDCore_CallOnEdit, lambdaFunctions)
     {
         int val = 0;
         int tmp = 3;
-        FDCore::CallOnEdit<int> coe(&val, [](int s, int &val) { val += s; }, tmp);
+        FDCore::CallOnEdit<int> coe(
+          &val, [](int s, int &val) { val += s; }, tmp);
         int *p = coe.getManagedObject();
         ASSERT_EQ(val, 3);
         *p -= 3;
@@ -107,7 +107,8 @@ TEST_F(FDCore_CallOnEdit, lambdaFunctions)
     {
         int val = 0;
         int tmp = 3;
-        const FDCore::CallOnEdit<int> coe(&val, [](int s, int &val) { val += s; }, tmp);
+        const FDCore::CallOnEdit<int> coe(
+          &val, [](int s, int &val) { val += s; }, tmp);
         const int *p = coe.getManagedObject();
         ASSERT_EQ(val, 0);
         ASSERT_EQ(*p, 0);
@@ -133,7 +134,8 @@ TEST_F(FDCore_CallOnEdit, memberFunctions)
 
     {
         size_t tmp = 3u;
-        FDCore::CallOnEdit<FDCore_CallOnEdit> coe(this, &FDCore_CallOnEdit::onEditWithArg, this, tmp);
+        FDCore::CallOnEdit<FDCore_CallOnEdit> coe(this, &FDCore_CallOnEdit::onEditWithArg, this,
+                                                  tmp);
         FDCore_CallOnEdit *p = coe.getManagedObject();
         ASSERT_EQ(editCount, 3u);
         p->editCount -= 3u;
@@ -142,7 +144,8 @@ TEST_F(FDCore_CallOnEdit, memberFunctions)
 
     {
         size_t tmp = 3u;
-        const FDCore::CallOnEdit<FDCore_CallOnEdit> coe(this, &FDCore_CallOnEdit::onEditWithArg, this, tmp);
+        const FDCore::CallOnEdit<FDCore_CallOnEdit> coe(this, &FDCore_CallOnEdit::onEditWithArg,
+                                                        this, tmp);
         const FDCore_CallOnEdit *p = coe.getManagedObject();
         ASSERT_EQ(editCount, 0u);
         ASSERT_EQ(p->editCount, 0u);
@@ -173,7 +176,8 @@ TEST_F(FDCore_CallOnEdit, Constructors)
 
     {
         size_t tmp = 3;
-        FDCore::CallOnEdit<FDCore_CallOnEdit> coe(this, &FDCore_CallOnEdit::onEditWithArg, this, tmp);
+        FDCore::CallOnEdit<FDCore_CallOnEdit> coe(this, &FDCore_CallOnEdit::onEditWithArg, this,
+                                                  tmp);
         ASSERT_TRUE(coe.getCallback());
         ASSERT_EQ(coe.getManagedObject(), this);
         ASSERT_EQ(editCount, 3u);
@@ -209,7 +213,7 @@ TEST_F(FDCore_CallOnEdit, Setters)
 
     {
         size_t val = 0;
-        coe.setCallback([&val](FDCore_CallOnEdit&) { ++val; });
+        coe.setCallback([&val](FDCore_CallOnEdit &) { ++val; });
         coe.getManagedObject();
         ASSERT_EQ(val, 1u);
     }
@@ -217,7 +221,7 @@ TEST_F(FDCore_CallOnEdit, Setters)
     {
         size_t val = 0;
         size_t tmp = 3;
-        coe.setCallback([&val](size_t s, FDCore_CallOnEdit&) { val += s; }, tmp);
+        coe.setCallback([&val](size_t s, FDCore_CallOnEdit &) { val += s; }, tmp);
         coe.getManagedObject();
         ASSERT_EQ(val, 3u);
         editCount = 0;

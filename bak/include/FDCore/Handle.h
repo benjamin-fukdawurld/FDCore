@@ -2,43 +2,44 @@
 #define FDCORE_HANDLE_H
 
 #include "FDCore.h"
-
 #include "MemoryPool.h"
 
 namespace FDCore
 {
-	template<typename T>
-	class Handle
-	{
-		friend class MemoryPool;
+    template<typename T>
+    class Handle
+    {
+        friend class MemoryPool;
 
-		public:
+      public:
+        typedef T value_type;
 
-			typedef T value_type;
+      protected:
+        handle_ptr &m_ptr;
+        MemoryPool &m_pool;
 
-		protected:
+        Handle(handle_ptr &ptr, MemoryPool &pool) : m_ptr(ptr), m_pool(pool) {}
 
-			handle_ptr &m_ptr;
-			MemoryPool &m_pool;
+      public:
+        Handle(const Handle<T> &h) : m_ptr(h.m_ptr), m_pool(h.m_pool) {}
 
-			Handle(handle_ptr &ptr, MemoryPool &pool) : m_ptr(ptr), m_pool(pool) {}
+        Handle &operator=(const Handle<T> &h)
+        {
+            m_ptr = h.m_ptr;
+            m_pool = h.m_pool;
+            return *this;
+        }
 
-		public:
+        static size_t size() { return sizeof(value_type); }
 
-			Handle(const Handle<T> &h) : m_ptr(h.m_ptr), m_pool(h.m_pool) {}
+        handle_ptr getPtr() const { return m_ptr; }
 
-			Handle & operator=(const Handle<T> &h) { m_ptr = h.m_ptr; m_pool = h.m_pool; return *this;  }
+        T *get() { return m_pool.get<T>(m_ptr); }
 
-			static size_t size() { return sizeof(value_type); }
-
-			handle_ptr getPtr() const { return m_ptr; }
-
-			T *get() { return m_pool.get<T>(m_ptr); }
-
-			T *operator->() { return m_pool.get<T>(m_ptr); }
-			T &operator*() { return *(m_pool.get<T>(m_ptr)); }
-	};
-}
+        T *operator->() { return m_pool.get<T>(m_ptr); }
+        T &operator*() { return *(m_pool.get<T>(m_ptr)); }
+    };
+} // namespace FDCore
 
 
 

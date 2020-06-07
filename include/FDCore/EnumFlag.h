@@ -12,222 +12,206 @@ namespace FDCore
     template<typename EnumType, typename StorageType = int>
     class EnumFlag
     {
-        private:
+      private:
+        /**
+         * @brief FlagProxy is an access proxy class to simplify checking and setting of a given
+         * field in the flag
+         *
+         */
+        class FlagProxy
+        {
+            friend class EnumFlag<EnumType, StorageType>;
+
+          private:
+            EnumFlag<EnumType, StorageType> &m_flags; ///< The EnumFlag object wrapped by this proxy
+            EnumType m_value;                         ///< The value of the field to manage
+
             /**
-             * @brief FlagProxy is an access proxy class to simplify checking and setting of a given field in the flag
+             * @brief Constructs a new Flag Proxy object
              *
+             * @param flags The EnumFlag object wrapped by this proxy
+             * @param value The value of the field to manage
              */
-            class FlagProxy
+            FlagProxy(EnumFlag<EnumType, StorageType> &flags, EnumType value) :
+                m_flags(flags),
+                m_value(value)
             {
-                friend class EnumFlag<EnumType, StorageType>;
-                private:
-                    EnumFlag<EnumType, StorageType> &m_flags; ///< The EnumFlag object wrapped by this proxy
-                    EnumType m_value; ///< The value of the field to manage
+            }
 
-                    /**
-                     * @brief Constructs a new Flag Proxy object
-                     *
-                     * @param flags The EnumFlag object wrapped by this proxy
-                     * @param value The value of the field to manage
-                     */
-                    FlagProxy(EnumFlag<EnumType, StorageType> &flags, EnumType value) :
-                        m_flags(flags),
-                        m_value(value)
-                    {}
-
-                public:
-
-                    /**
-                     * @brief Sets the status of the field (activated/disactivated)
-                     *
-                     * @param activated The status to set to the field
-                     * @return a reference to this object
-                     */
-                    FlagProxy &operator=(bool activated)
-                    {
-                        if(activated)
-                            m_flags |= m_value;
-                        else
-                            m_flags -= m_value;
-
-                        return *this;
-                    }
-
-                    /**
-                     * @brief Checks whether this field is activated or not
-                     *
-                     * @return true if the field is acctivated, false otherwise
-                     */
-                    operator bool() const { return m_flags.operator&(m_value); }
-            };
-
-        protected:
-            StorageType m_value; ///< The storage of the flags fields
-
-        public:
+          public:
             /**
-             * @brief Constructs a new Enum Flag object with all fields disactivated
-             */
-            EnumFlag() :
-                m_value(0)
-            {}
-
-            /**
-             * @brief Constructs a new Enum Flag object with the field @b type activated
+             * @brief Sets the status of the field (activated/disactivated)
              *
-             * @param type The field to activate
+             * @param activated The status to set to the field
+             * @return a reference to this object
              */
-            EnumFlag(EnumType type) :
-                m_value(static_cast<StorageType>(type))
-            {}
-
-            /**
-             * @brief Constructs a new Enum Flag object with a the value of the param @b flags
-             *
-             * @param flags the value to initialize the flags with
-             */
-            EnumFlag(StorageType flags) :
-                m_value(flags)
-            {}
-
-            /**
-             * @brief Converts the Enum flag into its storage type implicitly
-             *
-             * @return StorageType the flags value as StorageType
-             */
-            operator StorageType() const { return m_value; }
-
-            /**
-             * @brief Activates a field
-             *
-             * @param type The field to activate
-             * @return A reference to this object
-             */
-            EnumFlag<EnumType, StorageType> &operator|=(EnumType type)
+            FlagProxy &operator=(bool activated)
             {
-                m_value |= static_cast<StorageType>(type);
+                if(activated)
+                    m_flags |= m_value;
+                else
+                    m_flags -= m_value;
+
                 return *this;
             }
 
             /**
-             * @brief Activates fields from flag
+             * @brief Checks whether this field is activated or not
              *
-             * @param flag The fields to activate
-             * @return A reference to this object
+             * @return true if the field is acctivated, false otherwise
              */
-            EnumFlag<EnumType, StorageType> &operator|=(StorageType flag)
-            {
-                m_value |= flag;
-                return *this;
-            }
+            operator bool() const { return m_flags.operator&(m_value); }
+        };
 
-            /**
-             * @brief Activates a field
-             *
-             * @param type The field to activate
-             * @return A new EnumFlag
-             */
-            EnumFlag<EnumType, StorageType> operator|(EnumType type) const
-            {
-                return EnumFlag<EnumType, StorageType>(m_value | static_cast<StorageType>(type));
-            }
+      protected:
+        StorageType m_value; ///< The storage of the flags fields
 
-            /**
-             * @brief Activates fields from flag
-             *
-             * @param flag The fields to activate
-             * @return A new EnumFlag
-             */
-            EnumFlag<EnumType, StorageType> operator|(StorageType flag) const
-            {
-                return EnumFlag<EnumType, StorageType>(m_value | flag);
-            }
+      public:
+        /**
+         * @brief Constructs a new Enum Flag object with all fields disactivated
+         */
+        EnumFlag() : m_value(0) {}
 
-            EnumFlag<EnumType, StorageType> &operator&=(EnumType type)
-            {
-                m_value &= static_cast<StorageType>(type);
-                return *this;
-            }
+        /**
+         * @brief Constructs a new Enum Flag object with the field @b type activated
+         *
+         * @param type The field to activate
+         */
+        EnumFlag(EnumType type) : m_value(static_cast<StorageType>(type)) {}
 
-            EnumFlag<EnumType, StorageType> &operator&=(StorageType flag)
-            {
-                m_value &= flag;
-                return *this;
-            }
+        /**
+         * @brief Constructs a new Enum Flag object with a the value of the param @b flags
+         *
+         * @param flags the value to initialize the flags with
+         */
+        EnumFlag(StorageType flags) : m_value(flags) {}
 
-            EnumFlag<EnumType, StorageType> operator&(EnumType type) const
-            {
-                return EnumFlag<EnumType, StorageType>(m_value & static_cast<StorageType>(type));
-            }
+        /**
+         * @brief Converts the Enum flag into its storage type implicitly
+         *
+         * @return StorageType the flags value as StorageType
+         */
+        operator StorageType() const { return m_value; }
 
-            EnumFlag<EnumType, StorageType> operator&(StorageType flag) const
-            {
-                return EnumFlag<EnumType, StorageType>(m_value & flag);
-            }
+        /**
+         * @brief Activates a field
+         *
+         * @param type The field to activate
+         * @return A reference to this object
+         */
+        EnumFlag<EnumType, StorageType> &operator|=(EnumType type)
+        {
+            m_value |= static_cast<StorageType>(type);
+            return *this;
+        }
 
-            EnumFlag<EnumType, StorageType> &operator^=(EnumType type)
-            {
-                m_value ^= static_cast<StorageType>(type);
-                return *this;
-            }
+        /**
+         * @brief Activates fields from flag
+         *
+         * @param flag The fields to activate
+         * @return A reference to this object
+         */
+        EnumFlag<EnumType, StorageType> &operator|=(StorageType flag)
+        {
+            m_value |= flag;
+            return *this;
+        }
 
-            EnumFlag<EnumType, StorageType> &operator^=(StorageType flag)
-            {
-                m_value ^= flag;
-                return *this;
-            }
+        /**
+         * @brief Activates a field
+         *
+         * @param type The field to activate
+         * @return A new EnumFlag
+         */
+        EnumFlag<EnumType, StorageType> operator|(EnumType type) const
+        {
+            return EnumFlag<EnumType, StorageType>(m_value | static_cast<StorageType>(type));
+        }
 
-            EnumFlag<EnumType, StorageType> operator^(EnumType type) const
-            {
-                return EnumFlag<EnumType, StorageType>(m_value ^ static_cast<StorageType>(type));
-            }
+        /**
+         * @brief Activates fields from flag
+         *
+         * @param flag The fields to activate
+         * @return A new EnumFlag
+         */
+        EnumFlag<EnumType, StorageType> operator|(StorageType flag) const
+        {
+            return EnumFlag<EnumType, StorageType>(m_value | flag);
+        }
 
-            EnumFlag<EnumType, StorageType> operator^(StorageType flag) const
-            {
-                return EnumFlag<EnumType, StorageType>(m_value ^ flag);
-            }
+        EnumFlag<EnumType, StorageType> &operator&=(EnumType type)
+        {
+            m_value &= static_cast<StorageType>(type);
+            return *this;
+        }
 
-            EnumFlag<EnumType, StorageType> &operator-=(EnumType type)
-            {
-                return *this &= ~static_cast<StorageType>(type);
-            }
+        EnumFlag<EnumType, StorageType> &operator&=(StorageType flag)
+        {
+            m_value &= flag;
+            return *this;
+        }
 
-            EnumFlag<EnumType, StorageType> &operator-=(StorageType flag)
-            {
-                return *this &= ~static_cast<StorageType>(flag);
-            }
+        EnumFlag<EnumType, StorageType> operator&(EnumType type) const
+        {
+            return EnumFlag<EnumType, StorageType>(m_value & static_cast<StorageType>(type));
+        }
 
-            EnumFlag<EnumType, StorageType> operator~() const
-            {
-                return EnumFlag<EnumType, StorageType>(~m_value);
-            }
+        EnumFlag<EnumType, StorageType> operator&(StorageType flag) const
+        {
+            return EnumFlag<EnumType, StorageType>(m_value & flag);
+        }
 
-            bool operator==(EnumType type) const
-            {
-                return m_value == static_cast<StorageType>(type);
-            }
+        EnumFlag<EnumType, StorageType> &operator^=(EnumType type)
+        {
+            m_value ^= static_cast<StorageType>(type);
+            return *this;
+        }
 
-            bool operator==(StorageType flag) const
-            {
-                return m_value == flag;
-            }
+        EnumFlag<EnumType, StorageType> &operator^=(StorageType flag)
+        {
+            m_value ^= flag;
+            return *this;
+        }
 
-            FlagProxy operator[](EnumType type)
-            {
-                return FlagProxy(*this, type);
-            }
+        EnumFlag<EnumType, StorageType> operator^(EnumType type) const
+        {
+            return EnumFlag<EnumType, StorageType>(m_value ^ static_cast<StorageType>(type));
+        }
 
-            bool operator[](EnumType type) const
-            {
-                return (m_value & static_cast<StorageType>(type)) == static_cast<StorageType>(type);
-            }
+        EnumFlag<EnumType, StorageType> operator^(StorageType flag) const
+        {
+            return EnumFlag<EnumType, StorageType>(m_value ^ flag);
+        }
 
-            bool operator[](StorageType flag) const
-            {
-                return (m_value & flag) == flag;
-            }
+        EnumFlag<EnumType, StorageType> &operator-=(EnumType type)
+        {
+            return *this &= ~static_cast<StorageType>(type);
+        }
+
+        EnumFlag<EnumType, StorageType> &operator-=(StorageType flag)
+        {
+            return *this &= ~static_cast<StorageType>(flag);
+        }
+
+        EnumFlag<EnumType, StorageType> operator~() const
+        {
+            return EnumFlag<EnumType, StorageType>(~m_value);
+        }
+
+        bool operator==(EnumType type) const { return m_value == static_cast<StorageType>(type); }
+
+        bool operator==(StorageType flag) const { return m_value == flag; }
+
+        FlagProxy operator[](EnumType type) { return FlagProxy(*this, type); }
+
+        bool operator[](EnumType type) const
+        {
+            return (m_value & static_cast<StorageType>(type)) == static_cast<StorageType>(type);
+        }
+
+        bool operator[](StorageType flag) const { return (m_value & flag) == flag; }
     };
 
-}
+} // namespace FDCore
 
 #endif // ENUMFLAG_H

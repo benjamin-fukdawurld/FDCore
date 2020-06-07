@@ -1,11 +1,8 @@
 #include <FDCore/ThreadPool.h>
 
-FDCore::ThreadPool::ThreadPool():
-    ThreadPool(std::thread::hardware_concurrency())
-{}
+FDCore::ThreadPool::ThreadPool() : ThreadPool(std::thread::hardware_concurrency()) {}
 
-FDCore::ThreadPool::ThreadPool(size_t nbThread) :
-    m_run(true)
+FDCore::ThreadPool::ThreadPool(size_t nbThread) : m_run(true)
 {
     m_threads.reserve(nbThread);
     for(size_t i = 0; i < nbThread; ++i)
@@ -21,10 +18,7 @@ FDCore::ThreadPool::~ThreadPool()
         m_threads[i].second.join();
 }
 
-size_t FDCore::ThreadPool::getNumberOfThreads() const
-{
-    return m_threads.size();
-}
+size_t FDCore::ThreadPool::getNumberOfThreads() const { return m_threads.size(); }
 
 void FDCore::ThreadPool::setNumberOfThreads(size_t nbThreads)
 {
@@ -43,7 +37,8 @@ void FDCore::ThreadPool::setNumberOfThreads(size_t nbThreads)
 
 void FDCore::ThreadPool::addThread()
 {
-    m_threads.push_back(std::make_pair(true, std::thread(&ThreadPool::workFunction, this, m_threads.size())));
+    m_threads.push_back(
+      std::make_pair(true, std::thread(&ThreadPool::workFunction, this, m_threads.size())));
 }
 
 void FDCore::ThreadPool::removeThreads(size_t nbThread)
@@ -69,8 +64,7 @@ void FDCore::ThreadPool::workFunction(size_t threadIndex)
         std::function<void()> task;
         {
             std::unique_lock<std::mutex> lock(m_mutex);
-            m_cond.wait(lock, [this, threadIndex]
-            {
+            m_cond.wait(lock, [this, threadIndex] {
                 return !m_run || !m_threads[threadIndex].first || !m_queue.empty();
             });
 

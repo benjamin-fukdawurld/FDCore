@@ -1,9 +1,8 @@
 #ifndef FDCORE_OBJECT_JSON_H
 #define FDCORE_OBJECT_JSON_H
 
-#include <FDJson/JsonSerializer.h>
-
 #include <FDCore/Object.h>
+#include <FDJson/JsonSerializer.h>
 
 namespace FDJson
 {
@@ -11,14 +10,14 @@ namespace FDJson
     {
         rapidjson::Value result(rapidjson::kObjectType);
 
-        result.AddMember(serializer.serialize("type"),
-                         serializer.serialize(obj.getTypeCode()),
+        result.AddMember(serializer.serialize("type"), serializer.serialize(obj.getTypeCode()),
                          serializer.getAllocator());
 
         return result;
     }
 
-    FD_INLINE bool unserialize(const rapidjson::Value &val, FDCore::Object &, FDJson::Serializer &, std::string *err)
+    FD_INLINE bool unserialize(const rapidjson::Value &val, FDCore::Object &, FDJson::Serializer &,
+                               std::string *err)
     {
         if(!val.IsObject())
         {
@@ -55,6 +54,6 @@ namespace FDJson
 
         return true;
     }
-}
+} // namespace FDJson
 
 #endif // FDCORE_OBJECT_JSON_H

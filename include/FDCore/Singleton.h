@@ -9,24 +9,26 @@ namespace FDCore
     template<typename Derived>
     class Singleton
     {
-        private:
-            static std::unique_ptr<Derived> m_instance;
+      private:
+        static std::unique_ptr<Derived> m_instance;
 
-        protected:
-            Singleton() {}
+      protected:
+        Singleton() {}
 
-        public:
+      public:
+        template<typename SingletonType = Derived, typename... Args>
+        static typename std::enable_if_t<std::is_base_of_v<Derived, SingletonType>, Derived &>
+          getInstance(Args... args);
 
-            template<typename SingletonType = Derived, typename ...Args>
-            static typename std::enable_if_t<std::is_base_of_v<Derived, SingletonType>, Derived &> getInstance(Args... args);
-
-            template<typename SingletonType = Derived, typename ...Args>
-            static typename std::enable_if_t<std::is_base_of_v<Derived, SingletonType>, const Derived &> getInstance(Args... args);
+        template<typename SingletonType = Derived, typename... Args>
+        static typename std::enable_if_t<std::is_base_of_v<Derived, SingletonType>, const Derived &>
+          getInstance(Args... args);
     };
 
     template<typename Derived>
-    template<typename SingletonType, typename ...Args>
-    std::enable_if_t<std::is_base_of_v<Derived, SingletonType>, Derived &> Singleton<Derived>::getInstance(Args... args)
+    template<typename SingletonType, typename... Args>
+    std::enable_if_t<std::is_base_of_v<Derived, SingletonType>, Derived &> Singleton<
+      Derived>::getInstance(Args... args)
     {
         if(!m_instance)
             m_instance.reset(new SingletonType(args...));
@@ -35,8 +37,9 @@ namespace FDCore
     }
 
     template<typename Derived>
-    template<typename SingletonType, typename ...Args>
-    std::enable_if_t<std::is_base_of_v<Derived, SingletonType>, const Derived &> Singleton<Derived>::getInstance(Args... args)
+    template<typename SingletonType, typename... Args>
+    std::enable_if_t<std::is_base_of_v<Derived, SingletonType>, const Derived &> Singleton<
+      Derived>::getInstance(Args... args)
     {
         if(!m_instance)
             m_instance.reset(new SingletonType(args...));
@@ -44,6 +47,6 @@ namespace FDCore
         return *m_instance;
     }
 
-}
+} // namespace FDCore
 
 #endif // SINGLETONTRAIT_H

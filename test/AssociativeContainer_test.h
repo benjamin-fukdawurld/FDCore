@@ -2,12 +2,11 @@
 #define ASSOCIATIVECONTAINER_TEST_H
 
 #include <gtest/gtest.h>
-
 #include <string>
 
 #ifndef DEBUG
-#define DEBUG
-#define NEED_UNDEF
+    #define DEBUG
+    #define NEED_UNDEF
 #endif
 
 #include <FDCore/AssociativeContainer.h>
@@ -15,27 +14,24 @@
 
 class FDCore_AssociativeContainer_int_str : public ::testing::Test
 {
-    protected:
-        typedef const FDCore::AssociativeContainer<int, std::string>::cell_type const_cell_type;
-        FDCore::AssociativeContainer<int, std::string> container;
+  protected:
+    typedef const FDCore::AssociativeContainer<int, std::string>::cell_type const_cell_type;
+    FDCore::AssociativeContainer<int, std::string> container;
 
-    public:
-        ~FDCore_AssociativeContainer_int_str() override = default;
+  public:
+    ~FDCore_AssociativeContainer_int_str() override = default;
 
-        void SetUp() override;
+    void SetUp() override;
 
-        const FDCore::AssociativeContainer<int, std::string> &getContainer() const
+    const FDCore::AssociativeContainer<int, std::string> &getContainer() const { return container; }
+
+    void printContainer() const
+    {
+        for(auto &[key, value]: container)
         {
-            return container;
+            std::cerr << key.key << ": " << value << std::endl;
         }
-
-        void printContainer() const
-        {
-            for(auto &[key, value]: container)
-            {
-                std::cerr << key.key << ": " << value << std::endl;
-            }
-        }
+    }
 };
 
 void FDCore_AssociativeContainer_int_str::SetUp()
@@ -72,7 +68,6 @@ TEST_F(FDCore_AssociativeContainer_int_str, FindTest)
     auto cit = getContainer().find(2);
     ASSERT_NE(cit, container.end());
     ASSERT_EQ(cit->value, "2");
-
 }
 
 TEST_F(FDCore_AssociativeContainer_int_str, FindLastTest)
@@ -92,26 +87,16 @@ TEST_F(FDCore_AssociativeContainer_int_str, FindLastTest)
 
 TEST_F(FDCore_AssociativeContainer_int_str, FindIfTest)
 {
-    ASSERT_EQ(container.find_if([](const_cell_type &cell)
-    {
-        return cell.value == "11";
-    }), container.end());
-    auto it = container.find_if([](const_cell_type &cell)
-    {
-        return cell.value == "3";
-    });
+    ASSERT_EQ(container.find_if([](const_cell_type &cell) { return cell.value == "11"; }),
+              container.end());
+    auto it = container.find_if([](const_cell_type &cell) { return cell.value == "3"; });
     ASSERT_NE(it, container.end());
     ASSERT_EQ(it->value, "3");
     ASSERT_EQ(it->key.key, 3);
 
-    ASSERT_EQ(getContainer().find_if([](const_cell_type &cell)
-    {
-        return cell.value == "12";
-    }), container.cend());
-    auto cit = getContainer().find_if([](const_cell_type &cell)
-    {
-        return cell.value == "4";
-    });
+    ASSERT_EQ(getContainer().find_if([](const_cell_type &cell) { return cell.value == "12"; }),
+              container.cend());
+    auto cit = getContainer().find_if([](const_cell_type &cell) { return cell.value == "4"; });
     ASSERT_NE(cit, container.end());
     ASSERT_EQ(cit->value, "4");
     ASSERT_EQ(cit->key.key, 4);
@@ -119,27 +104,17 @@ TEST_F(FDCore_AssociativeContainer_int_str, FindIfTest)
 
 TEST_F(FDCore_AssociativeContainer_int_str, FindLastIfTest)
 {
-    ASSERT_EQ(container.find_last_if([](const_cell_type &cell)
-    {
-        return cell.value == "11";
-    }), container.end());
+    ASSERT_EQ(container.find_last_if([](const_cell_type &cell) { return cell.value == "11"; }),
+              container.end());
 
-    auto it = container.find_last_if([](const_cell_type &cell)
-    {
-        return cell.value == "1.2";
-    });
+    auto it = container.find_last_if([](const_cell_type &cell) { return cell.value == "1.2"; });
     ASSERT_NE(it, container.end());
     ASSERT_EQ(it->value, "1.2");
     ASSERT_EQ(it->key.key, 1);
 
-    ASSERT_EQ(getContainer().find_last_if([](const_cell_type &cell)
-    {
-        return cell.value == "12";
-    }), container.cend());
-    auto cit = getContainer().find_last_if([](const_cell_type &cell)
-    {
-        return cell.value == "4";
-    });
+    ASSERT_EQ(getContainer().find_last_if([](const_cell_type &cell) { return cell.value == "12"; }),
+              container.cend());
+    auto cit = getContainer().find_last_if([](const_cell_type &cell) { return cell.value == "4"; });
     ASSERT_NE(cit, container.end());
     ASSERT_EQ(cit->value, "4");
     ASSERT_EQ(cit->key.key, 4);
@@ -157,14 +132,11 @@ TEST_F(FDCore_AssociativeContainer_int_str, FindAllTest)
     }
 
     {
-        ASSERT_TRUE(container.find_all_if([](const_cell_type &cell)
-        {
-            return cell.value.size() == 4;
-        }).empty());
-        auto v = container.find_all_if([](const_cell_type &cell)
-        {
-            return cell.value.size() == 1;
-        });
+        ASSERT_TRUE(
+          container.find_all_if([](const_cell_type &cell) { return cell.value.size() == 4; })
+            .empty());
+        auto v =
+          container.find_all_if([](const_cell_type &cell) { return cell.value.size() == 1; });
         ASSERT_FALSE(v.empty());
         ASSERT_EQ(v.size(), container.size() - 2u);
     };
@@ -179,14 +151,11 @@ TEST_F(FDCore_AssociativeContainer_int_str, FindAllTest)
     }
 
     {
-        ASSERT_TRUE(getContainer().find_all_if([](const_cell_type &cell)
-        {
-            return cell.value.size() == 4;
-        }).empty());
-        auto v = getContainer().find_all_if([](const_cell_type &cell)
-        {
-            return cell.value.size() == 1;
-        });
+        ASSERT_TRUE(getContainer()
+                      .find_all_if([](const_cell_type &cell) { return cell.value.size() == 4; })
+                      .empty());
+        auto v =
+          getContainer().find_all_if([](const_cell_type &cell) { return cell.value.size() == 1; });
         ASSERT_FALSE(v.empty());
         ASSERT_EQ(v.size(), getContainer().size() - 2u);
     };
@@ -250,18 +219,13 @@ TEST_F(FDCore_AssociativeContainer_int_str, EraseIfTest)
 {
     size_t s = container.size();
     {
-        ASSERT_EQ(container.erase_if([](const_cell_type &cell)
-        {
-            return cell.value == "11";
-        }), container.end());
+        ASSERT_EQ(container.erase_if([](const_cell_type &cell) { return cell.value == "11"; }),
+                  container.end());
         ASSERT_EQ(container.size(), s);
     }
 
     {
-        container.erase_if([](const_cell_type &cell)
-        {
-            return cell.key.key == 1;
-        });
+        container.erase_if([](const_cell_type &cell) { return cell.key.key == 1; });
         ASSERT_EQ(container.size(), s - 1);
     }
 }
@@ -270,18 +234,13 @@ TEST_F(FDCore_AssociativeContainer_int_str, EraseAllIfTest)
 {
     size_t s = container.size();
     {
-        ASSERT_EQ(container.erase_all_if([](const_cell_type &cell)
-        {
-            return cell.value == "11";
-        }), 0u);
+        ASSERT_EQ(container.erase_all_if([](const_cell_type &cell) { return cell.value == "11"; }),
+                  0u);
         ASSERT_EQ(container.size(), s);
     }
 
     {
-        container.erase_all_if([](const_cell_type &cell)
-        {
-            return cell.key.key == 1;
-        });
+        container.erase_all_if([](const_cell_type &cell) { return cell.key.key == 1; });
         ASSERT_EQ(container.size(), s - 2);
     }
 }
@@ -294,14 +253,9 @@ TEST_F(FDCore_AssociativeContainer_int_str, CountTest)
 
 TEST_F(FDCore_AssociativeContainer_int_str, CountIfTest)
 {
-    ASSERT_EQ(container.count_if([](const_cell_type &cell)
-    {
-        return cell.value == "11";
-    }), 0u);
-    ASSERT_EQ(container.count_if([](const_cell_type &cell)
-    {
-        return cell.value.size() == 1u;
-    }), container.size() - 2u);
+    ASSERT_EQ(container.count_if([](const_cell_type &cell) { return cell.value == "11"; }), 0u);
+    ASSERT_EQ(container.count_if([](const_cell_type &cell) { return cell.value.size() == 1u; }),
+              container.size() - 2u);
 }
 
 TEST_F(FDCore_AssociativeContainer_int_str, AtTest)
@@ -336,8 +290,8 @@ TEST_F(FDCore_AssociativeContainer_int_str, AtTest)
 }
 
 #ifdef NEED_UNDEF
-#undef DEBUG
-#undef NEED_UNDEF
+    #undef DEBUG
+    #undef NEED_UNDEF
 #endif
 
 #endif // ASSOCIATIVECONTAINER_TEST_H

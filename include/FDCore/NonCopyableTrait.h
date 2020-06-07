@@ -5,25 +5,25 @@ namespace FDCore
 {
     class NonCopyable
     {
-        public:
-            NonCopyable() = default;
-            virtual ~NonCopyable() = default;
+      public:
+        NonCopyable() = default;
+        virtual ~NonCopyable() = default;
 
-        private:
-            NonCopyable(const NonCopyable &) = delete;
-            NonCopyable &operator=(const NonCopyable &) = delete;
+      private:
+        NonCopyable(const NonCopyable &) = delete;
+        NonCopyable &operator=(const NonCopyable &) = delete;
     };
 
     class NonMovable
     {
-        public:
-            NonMovable() = default;
-            virtual ~NonMovable() = default;
+      public:
+        NonMovable() = default;
+        virtual ~NonMovable() = default;
 
-        private:
-            NonMovable(NonMovable &&) = delete;
-            NonMovable &operator=(NonMovable &&) = delete;
+      private:
+        NonMovable(NonMovable &&) = delete;
+        NonMovable &operator=(NonMovable &&) = delete;
     };
-}
+} // namespace FDCore
 
 #endif // NONCOPYABLETRAIT_H

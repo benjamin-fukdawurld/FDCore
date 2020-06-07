@@ -1,10 +1,9 @@
 #ifndef FDCOREPYTHON_H
 #define FDCOREPYTHON_H
 
-#include <pybind11/embed.h>
-
 #include <FDCore/Binding/Python/ThreadPool_python.h>
 #include <FDCore/Binding/Python/TimeManager_python.h>
+#include <pybind11/embed.h>
 
 extern pybind11::detail::embedded_module PyFDCore;
 PYBIND11_EMBEDDED_MODULE(PyFDCore, m)

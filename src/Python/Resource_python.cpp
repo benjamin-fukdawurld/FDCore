@@ -1,24 +1,22 @@
 #include <FDCore/Binding/Python/Resource_python.h>
-
 #include <pybind11/pybind11.h>
 
 namespace py = pybind11;
 
 void FDCore::Python::bind_resource(pybind11::module &m)
 {
-    /*py::class_<FDCore::AbstractResource, FDCore::Python::PyAbstractResource<>>(m, "AbstractResource")
-        .def(py::init_alias())
-        .def("getResourceName", &FDCore::AbstractResource::getResourceName)
-        .def("setResourceName", &FDCore::AbstractResource::setResourceName)
-        .def("getResourceHash", &FDCore::AbstractResource::getResourceHash)
-        .def("getResourcePath", &FDCore::AbstractResource::getResourcePath)
-        .def("setResourcePath", &FDCore::AbstractResource::setResourcePath)
-        .def("isLoaded", &FDCore::AbstractResource::isLoaded)
-        .def("load", &FDCore::AbstractResource::load)
+    /*py::class_<FDCore::AbstractResource, FDCore::Python::PyAbstractResource<>>(m,
+    "AbstractResource") .def(py::init_alias()) .def("getResourceName",
+    &FDCore::AbstractResource::getResourceName) .def("setResourceName",
+    &FDCore::AbstractResource::setResourceName) .def("getResourceHash",
+    &FDCore::AbstractResource::getResourceHash) .def("getResourcePath",
+    &FDCore::AbstractResource::getResourcePath) .def("setResourcePath",
+    &FDCore::AbstractResource::setResourcePath) .def("isLoaded",
+    &FDCore::AbstractResource::isLoaded) .def("load", &FDCore::AbstractResource::load)
         .def("release", &FDCore::AbstractResource::release)
         .def_property_readonly("resourceHash", &FDCore::AbstractResource::getResourceHash)
-        .def_property("resourceName", &FDCore::AbstractResource::getResourceName, &FDCore::AbstractResource::setResourceName)
-        .def("compare", &FDCore::AbstractResource::compare)
+        .def_property("resourceName", &FDCore::AbstractResource::getResourceName,
+    &FDCore::AbstractResource::setResourceName) .def("compare", &FDCore::AbstractResource::compare)
     ;
 
     py::class_<FDCore::BaseResource, FDCore::Python::PyResource<>>(m, "BaseResource")
@@ -34,8 +32,8 @@ void FDCore::Python::bind_resource(pybind11::module &m)
         .def("load", &FDCore::BaseResource::load)
         .def("release", &FDCore::BaseResource::release)
         .def_property_readonly("resourceHash", &FDCore::BaseResource::getResourceHash)
-        .def_property("resourceName", &FDCore::BaseResource::getResourceName, &FDCore::BaseResource::setResourceName)
-        .def("compare", &FDCore::AbstractResource::compare)
+        .def_property("resourceName", &FDCore::BaseResource::getResourceName,
+    &FDCore::BaseResource::setResourceName) .def("compare", &FDCore::AbstractResource::compare)
     ;*/
 }
 
