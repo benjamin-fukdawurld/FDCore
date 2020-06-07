@@ -1,11 +1,11 @@
-#include <FDCore/Object.h>
+#include <FDCore/Common/Object.h>
 
-std::vector<const char *> FDCore::Object::getTypeCodeHierarchy()
+std::vector<const char *> FDCore::Object::getTypeCodeHierarchy() const
 {
     return { FDCore::TypeCodeHelper<FDCore::Object>::code };
 }
 
-std::vector<size_t> FDCore::Object::getTypeCodeHashHierarchy()
+std::vector<size_t> FDCore::Object::getTypeCodeHashHierarchy() const
 {
     return { FDCore::TypeCodeHelper<FDCore::Object>::hash() };
 }

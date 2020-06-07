@@ -1,8 +1,8 @@
 #ifndef FDCORE_OBJECT_H
 #define FDCORE_OBJECT_H
 
-#include <FDCore/Macros.h>
-#include <FDCore/TypeInformation.h>
+#include <FDCore/Common/Macros.h>
+#include <FDCore/Common/TypeInformation.h>
 
 namespace FDCore
 {
@@ -36,9 +36,9 @@ namespace FDCore
             return static_cast<T *>(this);
         }
 
-        virtual std::vector<const char *> getTypeCodeHierarchy();
+        virtual std::vector<const char *> getTypeCodeHierarchy() const;
 
-        virtual std::vector<size_t> getTypeCodeHashHierarchy();
+        virtual std::vector<size_t> getTypeCodeHashHierarchy() const;
 
         virtual const char *getTypeCode() const;
 
