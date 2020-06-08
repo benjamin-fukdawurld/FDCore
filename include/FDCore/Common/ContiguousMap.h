@@ -225,6 +225,71 @@ namespace FDCore
          *
          */
         void clear() { m_container.clear(); }
+
+        std::pair<iterator, bool> insert(const value_type &value) {}
+
+        std::pair<iterator, bool> insert(value_type &&value);
+        template<class P>
+        std::pair<iterator, bool> insert(P &&value);
+
+        iterator lower_bound(iterator first, iterator last, consy key_type &key)
+        {
+            return lower_bound_impl(first, last, hashKey(key));
+        }
+
+        const_iterator lower_bound(const_iterator first, const_iterator last,
+                                   consy key_type &key) const
+        {
+            return lower_bound_impl(first, last, hashKey(key));
+        }
+
+      protected:
+        template<typename ForwardIt>
+        static ForwardIt lower_bound_impl(ForwardIt first, ForwardIt last, size_t hash)
+        {
+            ForwardIt it;
+            difference_type count, step;
+            count = std::distance(first, last);
+
+            while(count > 0)
+            {
+                it = first;
+                step = count / 2;
+                std::advance(it, step);
+                if(hashKey(it->first) < hash)
+                {
+                    first = ++it;
+                    count -= step + 1;
+                }
+                else
+                    count = step;
+            }
+            return first;
+        }
+
+        template<typename ForwardIt, typename Compare>
+        static ForwardIt lower_bound_impl(ForwardIt first, ForwardIt last, const key_type &key,
+                                          Compare comp)
+        {
+            ForwardIt it;
+            difference_type count, step;
+            count = std::distance(first, last);
+
+            while(count > 0)
+            {
+                it = first;
+                step = count / 2;
+                std::advance(it, step);
+                if(Compare(it->first, key))
+                {
+                    first = ++it;
+                    count -= step + 1;
+                }
+                else
+                    count = step;
+            }
+            return first;
+        }
     };
 
     template<typename T, typename Hash = std::hash<T>, typename Equal = std::equal_to<T>,
