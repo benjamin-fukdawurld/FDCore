@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/FDCore/Common/ContiguousMap.h
+algorithm
+-
+functional
+-
+vector
+-
+
+../include/FDCore/Common/ContiguousSet.h
+algorithm
+-
+functional
+-
+vector
+-
+
+/home/benjamin/dev/FanatikDevelopment/FDCore/test/main.cpp
+FDCore/Common/ContiguousMap.h
+-
+FDCore/Common/ContiguousSet.h
+-
+cassert
+-
+iostream
+-
+string
+-
+

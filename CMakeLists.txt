@@ -13,3 +13,7 @@ add_library(${PROJECT_NAME}
             src/ResourceManagement/AbstractResource.cpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)
+
+add_executable(${PROJECT_NAME}_test test/main.cpp)
+
+target_include_directories(${PROJECT_NAME}_test PUBLIC include)

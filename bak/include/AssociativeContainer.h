@@ -104,7 +104,9 @@ namespace FDCore
      * @tparam Allocator the allocation strategy to use. The expected type is similar to stl
      * containers' allocator default, value: std::allocator<KeyValueType<Key, T, Hash>>
      */
-    template<typename Key, typename T, typename Hash = std::hash<Key>,
+    template<typename Key,
+             typename T,
+             typename Hash = std::hash<Key>,
              typename Allocator = std::allocator<KeyValueType<Key, T, Hash>>>
     class AssociativeContainer
     {
@@ -780,7 +782,8 @@ namespace FDCore
          */
         const_value_type_pointer operator[](const key_type &k) const { return at(k); }
 
-        const_iterator lower_bound(const_iterator first, const_iterator last,
+        const_iterator lower_bound(const_iterator first,
+                                   const_iterator last,
                                    const key_type &k) const
         {
             size_t h = hashKey(k);
@@ -850,7 +853,8 @@ namespace FDCore
             return result;
         }
 
-        const_iterator upper_bound(const_iterator first, const_iterator last,
+        const_iterator upper_bound(const_iterator first,
+                                   const_iterator last,
                                    const key_type &k) const
         {
             size_t h = hashKey(k);

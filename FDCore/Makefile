@@ -68,18 +68,42 @@ RM = /usr/local/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/benjamin/dev/FanatikDevelopment/FDCore
+CMAKE_SOURCE_DIR = /home/benjamin/dev/FanatikDevelopment
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/benjamin/dev/FanatikDevelopment/FDCore/build
+CMAKE_BINARY_DIR = /home/benjamin/dev/FanatikDevelopment/FDCore
 
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/local/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/local/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/local/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/local/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/bin/cmake-gui -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/usr/local/bin/ccmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -98,16 +122,38 @@ rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Only default component available"
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/local/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/local/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/benjamin/dev/FanatikDevelopment/FDCore/build/CMakeFiles /home/benjamin/dev/FanatikDevelopment/FDCore/build/CMakeFiles/progress.marks
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/benjamin/dev/FanatikDevelopment/FDCore/build/CMakeFiles 0
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(CMAKE_COMMAND) -E cmake_progress_start /home/benjamin/dev/FanatikDevelopment/FDCore/CMakeFiles /home/benjamin/dev/FanatikDevelopment/FDCore/FDCore/CMakeFiles/progress.marks
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FDCore/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/benjamin/dev/FanatikDevelopment/FDCore/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 clean
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FDCore/clean
 .PHONY : clean
 
 # The main clean target
@@ -117,44 +163,33 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 preinstall
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FDCore/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 preinstall
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FDCore/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
-#=============================================================================
-# Target rules for targets named FDCore
+# Convenience name for target.
+FDCore/CMakeFiles/FDCore.dir/rule:
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FDCore/CMakeFiles/FDCore.dir/rule
+.PHONY : FDCore/CMakeFiles/FDCore.dir/rule
 
-# Build rule for target.
-FDCore: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FDCore
+# Convenience name for target.
+FDCore: FDCore/CMakeFiles/FDCore.dir/rule
+
 .PHONY : FDCore
 
 # fast build rule for target.
 FDCore/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FDCore.dir/build.make CMakeFiles/FDCore.dir/build
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(MAKE) $(MAKESILENT) -f FDCore/CMakeFiles/FDCore.dir/build.make FDCore/CMakeFiles/FDCore.dir/build
 .PHONY : FDCore/fast
-
-#=============================================================================
-# Target rules for targets named FDCore_test
-
-# Build rule for target.
-FDCore_test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FDCore_test
-.PHONY : FDCore_test
-
-# fast build rule for target.
-FDCore_test/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FDCore_test.dir/build.make CMakeFiles/FDCore_test.dir/build
-.PHONY : FDCore_test/fast
 
 src/Common/Object.o: src/Common/Object.cpp.o
 
@@ -162,7 +197,7 @@ src/Common/Object.o: src/Common/Object.cpp.o
 
 # target to build an object file
 src/Common/Object.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FDCore.dir/build.make CMakeFiles/FDCore.dir/src/Common/Object.cpp.o
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(MAKE) $(MAKESILENT) -f FDCore/CMakeFiles/FDCore.dir/build.make FDCore/CMakeFiles/FDCore.dir/src/Common/Object.cpp.o
 .PHONY : src/Common/Object.cpp.o
 
 src/Common/Object.i: src/Common/Object.cpp.i
@@ -171,7 +206,7 @@ src/Common/Object.i: src/Common/Object.cpp.i
 
 # target to preprocess a source file
 src/Common/Object.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FDCore.dir/build.make CMakeFiles/FDCore.dir/src/Common/Object.cpp.i
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(MAKE) $(MAKESILENT) -f FDCore/CMakeFiles/FDCore.dir/build.make FDCore/CMakeFiles/FDCore.dir/src/Common/Object.cpp.i
 .PHONY : src/Common/Object.cpp.i
 
 src/Common/Object.s: src/Common/Object.cpp.s
@@ -180,7 +215,7 @@ src/Common/Object.s: src/Common/Object.cpp.s
 
 # target to generate assembly for a file
 src/Common/Object.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FDCore.dir/build.make CMakeFiles/FDCore.dir/src/Common/Object.cpp.s
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(MAKE) $(MAKESILENT) -f FDCore/CMakeFiles/FDCore.dir/build.make FDCore/CMakeFiles/FDCore.dir/src/Common/Object.cpp.s
 .PHONY : src/Common/Object.cpp.s
 
 src/ResourceManagement/AbstractResource.o: src/ResourceManagement/AbstractResource.cpp.o
@@ -189,7 +224,7 @@ src/ResourceManagement/AbstractResource.o: src/ResourceManagement/AbstractResour
 
 # target to build an object file
 src/ResourceManagement/AbstractResource.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FDCore.dir/build.make CMakeFiles/FDCore.dir/src/ResourceManagement/AbstractResource.cpp.o
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(MAKE) $(MAKESILENT) -f FDCore/CMakeFiles/FDCore.dir/build.make FDCore/CMakeFiles/FDCore.dir/src/ResourceManagement/AbstractResource.cpp.o
 .PHONY : src/ResourceManagement/AbstractResource.cpp.o
 
 src/ResourceManagement/AbstractResource.i: src/ResourceManagement/AbstractResource.cpp.i
@@ -198,7 +233,7 @@ src/ResourceManagement/AbstractResource.i: src/ResourceManagement/AbstractResour
 
 # target to preprocess a source file
 src/ResourceManagement/AbstractResource.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FDCore.dir/build.make CMakeFiles/FDCore.dir/src/ResourceManagement/AbstractResource.cpp.i
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(MAKE) $(MAKESILENT) -f FDCore/CMakeFiles/FDCore.dir/build.make FDCore/CMakeFiles/FDCore.dir/src/ResourceManagement/AbstractResource.cpp.i
 .PHONY : src/ResourceManagement/AbstractResource.cpp.i
 
 src/ResourceManagement/AbstractResource.s: src/ResourceManagement/AbstractResource.cpp.s
@@ -207,7 +242,7 @@ src/ResourceManagement/AbstractResource.s: src/ResourceManagement/AbstractResour
 
 # target to generate assembly for a file
 src/ResourceManagement/AbstractResource.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FDCore.dir/build.make CMakeFiles/FDCore.dir/src/ResourceManagement/AbstractResource.cpp.s
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(MAKE) $(MAKESILENT) -f FDCore/CMakeFiles/FDCore.dir/build.make FDCore/CMakeFiles/FDCore.dir/src/ResourceManagement/AbstractResource.cpp.s
 .PHONY : src/ResourceManagement/AbstractResource.cpp.s
 
 src/ResourceManagement/IResource.o: src/ResourceManagement/IResource.cpp.o
@@ -216,7 +251,7 @@ src/ResourceManagement/IResource.o: src/ResourceManagement/IResource.cpp.o
 
 # target to build an object file
 src/ResourceManagement/IResource.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FDCore.dir/build.make CMakeFiles/FDCore.dir/src/ResourceManagement/IResource.cpp.o
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(MAKE) $(MAKESILENT) -f FDCore/CMakeFiles/FDCore.dir/build.make FDCore/CMakeFiles/FDCore.dir/src/ResourceManagement/IResource.cpp.o
 .PHONY : src/ResourceManagement/IResource.cpp.o
 
 src/ResourceManagement/IResource.i: src/ResourceManagement/IResource.cpp.i
@@ -225,7 +260,7 @@ src/ResourceManagement/IResource.i: src/ResourceManagement/IResource.cpp.i
 
 # target to preprocess a source file
 src/ResourceManagement/IResource.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FDCore.dir/build.make CMakeFiles/FDCore.dir/src/ResourceManagement/IResource.cpp.i
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(MAKE) $(MAKESILENT) -f FDCore/CMakeFiles/FDCore.dir/build.make FDCore/CMakeFiles/FDCore.dir/src/ResourceManagement/IResource.cpp.i
 .PHONY : src/ResourceManagement/IResource.cpp.i
 
 src/ResourceManagement/IResource.s: src/ResourceManagement/IResource.cpp.s
@@ -234,35 +269,8 @@ src/ResourceManagement/IResource.s: src/ResourceManagement/IResource.cpp.s
 
 # target to generate assembly for a file
 src/ResourceManagement/IResource.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FDCore.dir/build.make CMakeFiles/FDCore.dir/src/ResourceManagement/IResource.cpp.s
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(MAKE) $(MAKESILENT) -f FDCore/CMakeFiles/FDCore.dir/build.make FDCore/CMakeFiles/FDCore.dir/src/ResourceManagement/IResource.cpp.s
 .PHONY : src/ResourceManagement/IResource.cpp.s
-
-test/main.o: test/main.cpp.o
-
-.PHONY : test/main.o
-
-# target to build an object file
-test/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FDCore_test.dir/build.make CMakeFiles/FDCore_test.dir/test/main.cpp.o
-.PHONY : test/main.cpp.o
-
-test/main.i: test/main.cpp.i
-
-.PHONY : test/main.i
-
-# target to preprocess a source file
-test/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FDCore_test.dir/build.make CMakeFiles/FDCore_test.dir/test/main.cpp.i
-.PHONY : test/main.cpp.i
-
-test/main.s: test/main.cpp.s
-
-.PHONY : test/main.s
-
-# target to generate assembly for a file
-test/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FDCore_test.dir/build.make CMakeFiles/FDCore_test.dir/test/main.cpp.s
-.PHONY : test/main.cpp.s
 
 # Help Target
 help:
@@ -271,9 +279,12 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... FDCore"
-	@echo "... FDCore_test"
 	@echo "... src/Common/Object.o"
 	@echo "... src/Common/Object.i"
 	@echo "... src/Common/Object.s"
@@ -283,9 +294,6 @@ help:
 	@echo "... src/ResourceManagement/IResource.o"
 	@echo "... src/ResourceManagement/IResource.i"
 	@echo "... src/ResourceManagement/IResource.s"
-	@echo "... test/main.o"
-	@echo "... test/main.i"
-	@echo "... test/main.s"
 .PHONY : help
 
 
@@ -297,6 +305,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/benjamin/dev/FanatikDevelopment/FDCore && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

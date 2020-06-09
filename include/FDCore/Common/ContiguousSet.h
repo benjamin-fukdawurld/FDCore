@@ -1,5 +1,5 @@
-#ifndef FDCORE_CONTIGUOUSMAP_H
-#define FDCORE_CONTIGUOUSMAP_H
+#ifndef FDCORE_CONTIGUOUSSET_H
+#define FDCORE_CONTIGUOUSSET_H
 
 #include <algorithm>
 #include <functional>
@@ -8,40 +8,31 @@
 
 namespace FDCore
 {
-    template<typename Key,
-             typename T,
-             typename Hash = std::hash<Key>,
-             typename Equal = std::equal_to<Key>,
-             typename Allocator = std::allocator<std::pair<Key, T>>>
-    class ContiguousMap
+    template<typename T,
+             typename Hash = std::hash<T>,
+             typename Equal = std::equal_to<T>,
+             typename Allocator = std::allocator<T>>
+    class ContiguousSet
     {
       public:
-        typedef Key key_type;                   ///< the container key type
         typedef T value_type;                   ///< the container value type
-        typedef key_type *key_type_pointer;     ///< a pointer to the container key type
         typedef value_type *value_type_pointer; ///< a pointer to the container value type
-        typedef const key_type
-          *const_key_type_pointer; ///< a constant pointer to the container key type
         typedef const value_type
-          *const_value_type_pointer;          ///< a constant pointer to the container value type
-        typedef key_type &key_type_reference; ///< a reference to the container key type
+          *const_value_type_pointer; ///< a constant pointer to the container value type
         typedef value_type &value_type_reference; ///< a reference to the container value type
-        typedef const key_type
-          &const_key_type_reference; ///< a constant reference to the container key type
         typedef const value_type
           &const_value_type_reference; ///< a constant reference to the container value type
         typedef size_t size_type;      ///< the container size type
         typedef ptrdiff_t
           difference_type;        ///< signed integer used to check distance between two cells
         typedef Hash hasher_type; ///< the container hasher type
-        typedef Equal key_equal_type;
-        typedef Allocator allocator_type;         ///< the container allocator type
-        typedef std::pair<Key, T> cell_type;      ///< the container cell type
-        typedef cell_type &reference;             ///< the container cell reference type
-        typedef const cell_type &const_reference; ///< the container cell const reference type
-        typedef cell_type *pointer;               ///< the container cell pointer type
-        typedef const cell_type *const_pointer;   ///< the container cell const pointer type
-        typedef std::vector<cell_type, allocator_type>
+        typedef Equal equal_type;
+        typedef Allocator allocator_type;          ///< the container allocator type
+        typedef value_type &reference;             ///< the container cell reference type
+        typedef const value_type &const_reference; ///< the container cell const reference type
+        typedef value_type *pointer;               ///< the container cell pointer type
+        typedef const value_type *const_pointer;   ///< the container cell const pointer type
+        typedef std::vector<value_type, allocator_type>
           container_type; ///< the container underlying containing structure reference type
         typedef typename container_type::iterator iterator; ///< the container iterator type
         typedef typename container_type::const_iterator
@@ -50,17 +41,19 @@ namespace FDCore
           reverse_iterator; ///< the container reverse iterator type
         typedef typename container_type::const_reverse_iterator
           const_reverse_iterator; ///< the container const reverse iterator type
-        typedef ContiguousMap<key_type, value_type, hasher_type, key_equal_type, allocator_type>
-          contiguous_map_type;
+
+        typedef ContiguousSet<value_type, hasher_type, equal_type, allocator_type>
+          contiguous_set_type;
+
 
       protected:
         container_type m_container;
         hasher_type m_hasher;
-        key_equal_type m_equal;
+        equal_type m_equal;
 
       public:
-        explicit ContiguousMap(const Hash &hash = Hash(),
-                               const key_equal_type &equal = key_equal_type(),
+        explicit ContiguousSet(const Hash &hash = Hash(),
+                               const equal_type &equal = equal_type(),
                                const Allocator &alloc = Allocator()) :
             m_hasher(hash),
             m_equal(equal),
@@ -68,37 +61,31 @@ namespace FDCore
         {
         }
 
-        explicit ContiguousMap(std::initializer_list<cell_type> init,
+        explicit ContiguousSet(std::initializer_list<value_type> init,
                                const Hash &hash = Hash(),
-                               const key_equal_type &equal = key_equal_type(),
+                               const equal_type &equal = equal_type(),
                                const Allocator &alloc = Allocator()) :
-            m_hasher(hash),
-            m_equal(equal),
-            m_container(init, alloc)
+            ContiguousSet(hash, equal, alloc)
         {
             *this = init;
         }
 
-        ContiguousMap(const ContiguousMap &m) = default;
-        ContiguousMap(ContiguousMap &&m) = default;
+        size_t hashValue(value_type value) const { return m_hash(value); }
 
-        ContiguousMap &operator=(const ContiguousMap &m) = default;
-        ContiguousMap &operator=(ContiguousMap &&m) = default;
+        ContiguousSet(const ContiguousSet &m) = default;
+        ContiguousSet(ContiguousSet &&m) = default;
 
-        ContiguousMap &operator=(std::initializer_list<cell_type> l)
+        ContiguousSet &operator=(const ContiguousSet &m) = default;
+        ContiguousSet &operator=(ContiguousSet &&m) = default;
+
+        ContiguousSet &operator=(std::initializer_list<value_type> l)
         {
+            m_container = l;
             std::sort(m_container.begin(), m_container.end(),
-                      [this](const cell_type &a, const cell_type &b) {
-                          return m_hasher(a.first) < m_hasher(b.first);
+                      [this](const value_type &a, const value_type &b) {
+                          return m_hasher(a) < m_hasher(b);
                       });
         }
-
-        /**
-         * @brief Returns an hash value for a given key
-         * @param key the key to hash
-         * @return an hash value for a given key
-         */
-        size_t hashKey(key_type key) const { return m_hash(key); }
 
         /**
          * @brief Get the allocator object
@@ -260,68 +247,53 @@ namespace FDCore
          */
         void clear() { m_container.clear(); }
 
-        bool contains(const key_type &key) { return binary_search(begin(), end(), key); }
+        bool contains(const value_type &value) { return binary_search(begin(), end(), value); }
 
-        iterator insert(const key_type &key, const value_type &value)
+        iterator insert(const value_type &value)
         {
-            size_t hash = m_hasher(key);
+            size_t hash = m_hasher(value);
             auto it = lower_bound_impl(begin(), end(), hash, m_hasher);
             if(it == end())
-                return m_container.insert(end(), std::make_pair(key, value));
+                return m_container.insert(end(), value);
 
             it = upper_bound_impl(it, end(), hash, m_hasher);
             if(it == end())
-                return m_container.insert(end(), std::make_pair(key, value));
+                return m_container.insert(end(), value);
 
             --it;
-            return m_container.insert(it, std::make_pair(key, value));
+            return m_container.insert(it, value);
         }
 
-        iterator insert(key_type &&key, value_type &&value)
+        iterator insert(value_type &&value)
         {
-            size_t hash = m_hasher(key);
-            auto p = std::make_pair(std::move(key), std::move(value));
+            size_t hash = m_hasher(value);
             auto it = lower_bound_impl(begin(), end(), hash, m_hasher);
             if(it == end())
-                return m_container.insert(end(), std::move(p));
+                return m_container.insert(end(), std::move(value));
 
             it = upper_bound_impl(it, end(), hash, m_hasher);
             if(it == end())
-                return m_container.insert(end(), std::move(p));
+                return m_container.insert(end(), std::move(value));
 
             --it;
-            return m_container.insert(it, std::move(p));
-        }
-
-        iterator insert(cell_type p)
-        {
-            size_t hash = m_hasher(p.first);
-            auto it = lower_bound_impl(begin(), end(), hash, m_hasher);
-            if(it == end())
-                return m_container.insert(end(), std::move(p));
-
-            it = upper_bound_impl(it, end(), hash, m_hasher);
-            if(it == end())
-                return m_container.insert(end(), std::move(p));
-
-            --it;
-            return m_container.insert(it, std::move(p));
+            return m_container.insert(it, std::move(value));
         }
 
         template<typename... Args>
-        iterator emplace(const key_type &key, Args &&... args)
+        iterator emplace(Args &&... args)
         {
-            size_t hash = m_hasher(key);
+            value_type val { args... };
+            size_t hash = m_hasher(val);
             auto it = lower_bound_impl(begin(), end(), hash, m_hasher);
             if(it == end())
-                return m_container.insert(end(), std::make_pair(key, value_type { args... }));
+                return m_container.insert(end(), std::move(val));
 
             it = upper_bound_impl(it, end(), hash, m_hasher);
             if(it == end())
-                return m_container.insert(end(), std::make_pair(key, value_type { args... }));
+                return m_container.insert(end(), std::move(val));
 
             --it;
-            return m_container.insert(it, std::make_pair(key, value_type { args... }));
+            return m_container.insert(it, std::move(val));
         }
 
         iterator erase(const_iterator pos) { return m_container.erase(pos); }
@@ -331,45 +303,13 @@ namespace FDCore
             return m_container.erase(first, last);
         }
 
-        bool erase(const key_type &key)
-        {
-            auto it = find(key);
-            if(it != end())
-                return false;
+        void swap(contiguous_set_type &other) { m_container.swap(other.m_container); }
 
-            m_container.erase(it);
-            return true;
-        }
-
-        void swap(contiguous_map_type &other) { m_container.swap(other.m_container); }
-
-        value_type_pointer at(const key_type &key)
-        {
-            auto it = find(key);
-            if(it == end())
-                return nullptr;
-
-            return &(it->second);
-        }
-
-        const_value_type_pointer at(const key_type &key) const
-        {
-            auto it = find(key);
-            if(it == end())
-                return nullptr;
-
-            return &(it->second);
-        }
-
-        value_type_pointer operator[](const key_type &key) { return at(key); }
-
-        const_value_type_pointer operator[](const key_type &key) const { return at(key); }
-
-        size_t count(const key_type &key) const
+        size_t count(size_t hash) const
         {
             size_t result = 0;
-            auto it = find(key);
-            while(it != end() && it->first == key)
+            auto it = lower_bound_impl(begin(), end(), hash, m_hasher);
+            while(it != end() && m_hasher(*it) == hash)
             {
                 ++result;
                 ++it;
@@ -394,18 +334,18 @@ namespace FDCore
             return result;
         }
 
-        iterator find(const key_type &key) { return find(begin(), end(), key); }
+        iterator find(size_t hash) { return find(begin(), end(), hash); }
 
-        iterator find(iterator first, iterator last, const key_type &key)
+        iterator find(iterator first, iterator last, size_t hash)
         {
-            return find_impl(first, last, key, m_equal, m_hasher);
+            return find_impl(first, last, hash, m_equal, m_hasher);
         }
 
-        const_iterator find(const key_type &key) const { return find(begin(), end(), key); }
+        const_iterator find(size_t hash) const { return find(begin(), end(), hash); }
 
-        const_iterator find(const_iterator first, const_iterator last, const key_type &key) const
+        const_iterator find(const_iterator first, const_iterator last, size_t hash) const
         {
-            return find_impl(first, last, key, m_equal, m_hasher);
+            return find_impl(first, last, hash, m_equal, m_hasher);
         }
 
         template<typename Predicate>
@@ -432,26 +372,23 @@ namespace FDCore
             return find_if_impl(first, last, pred);
         }
 
-        std::vector<iterator> find_all(const key_type &key)
+        std::vector<iterator> find_all(size_t hash) { return find_all(begin(), end(), hash); }
+
+        std::vector<iterator> find_all(iterator first, iterator last, size_t hash)
         {
-            return find_all(begin(), end(), key);
+            return find_all_impl(first, last, hash, m_equal, m_hasher);
         }
 
-        std::vector<iterator> find_all(iterator first, iterator last, const key_type &key)
+        std::vector<const_iterator> find_all(size_t hash) const
         {
-            return find_all_impl(first, last, key, m_equal, m_hasher);
-        }
-
-        std::vector<const_iterator> find_all(const key_type &key) const
-        {
-            return find_all(begin(), end(), key);
+            return find_all(begin(), end(), hash);
         }
 
         std::vector<const_iterator> find_all(const_iterator first,
                                              const_iterator last,
-                                             const key_type &key) const
+                                             size_t hash) const
         {
-            return find_all_impl(first, last, key, m_equal, m_hasher);
+            return find_all_impl(first, last, hash, m_equal, m_hasher);
         }
 
         template<typename Predicate>
@@ -478,23 +415,18 @@ namespace FDCore
             return find_all_if_impl(first, last, pred);
         }
 
-        iterator find_last(const key_type &key) { return find_last(begin(), end(), key); }
+        iterator find_last(size_t hash) { return find_last(begin(), end(), hash); }
 
-        iterator find_last(iterator first, iterator last, const key_type &key)
+        iterator find_last(iterator first, iterator last, size_t hash)
         {
-            return find_last_impl(begin(), end(), key, m_equal, m_hasher);
+            return find_last_impl(first, last, hash, m_equal, m_hasher);
         }
 
-        const_iterator find_last(const key_type &key) const
-        {
-            return find_last(begin(), end(), key);
-        }
+        const_iterator find_last(size_t hash) const { return find_last(begin(), end(), hash); }
 
-        const_iterator find_last(const_iterator first,
-                                 const_iterator last,
-                                 const key_type &key) const
+        const_iterator find_last(const_iterator first, const_iterator last, size_t hash) const
         {
-            return find_last_impl(begin(), end(), key, m_equal, m_hasher);
+            return find_last_impl(first, last, hash, m_equal, m_hasher);
         }
 
         template<typename Predicate>
@@ -510,119 +442,120 @@ namespace FDCore
         }
 
         template<typename Predicate>
-        const_iterator find_last_if(Predicate pred) const
+        const_iterator find_last_if(Predicate pred)
         {
             return find_last_if(begin(), end(), pred);
         }
 
         template<typename Predicate>
-        const_iterator find_last_if(const_iterator first, const_iterator last, Predicate pred) const
+        const_iterator find_last_if(const_iterator first, const_iterator last, Predicate pred)
         {
             return find_last_if_impl(first, last, pred);
         }
 
-        bool binary_search(const_iterator first, const_iterator last, const key_type &key) const
+        bool binary_search(const_iterator first, const_iterator last, size_t hash) const
         {
-            first = lower_bound(first, last, key);
-            return (!(first == last) && !(m_hasher(key) < m_hasher(first->first)));
+            first = lower_bound(first, last, hash);
+            return (!(first == last) && !(hash < m_hasher(first)));
+        }
+
+        bool binary_search(const_iterator first, const_iterator last, const value_type &value) const
+        {
+            return binary_search(first, last, m_hasher(value));
         }
 
         template<typename Compare>
         bool binary_search(const_iterator first,
                            const_iterator last,
-                           const key_type &key,
+                           const value_type &value,
                            Compare comp) const
         {
-            first = lower_bound(first, last, key, comp);
-            return (!(first == last) && !(comp(key, first->first)));
+            first = lower_bound(first, last, value, comp);
+            return (!(first == last) && !(comp(value, *first)));
         }
 
-        iterator lower_bound(iterator first, iterator last, const key_type &key)
+        iterator lower_bound(iterator first, iterator last, size_t hash)
         {
-            return lower_bound_impl(first, last, hashKey(key), m_hasher);
+            return lower_bound_impl(first, last, hash, m_hasher);
         }
 
-        const_iterator lower_bound(const_iterator first,
-                                   const_iterator last,
-                                   const key_type &key) const
+        const_iterator lower_bound(const_iterator first, const_iterator last, size_t hash) const
         {
-            return lower_bound_impl(first, last, hashKey(key), m_hasher);
+            return lower_bound_impl(first, last, hash, m_hasher);
         }
 
         template<typename Compare>
-        iterator lower_bound(iterator first, iterator last, const key_type &key, Compare comp)
+        iterator lower_bound(iterator first, iterator last, const value_type &value, Compare comp)
         {
-            return lower_bound_comp_impl(first, last, key, comp);
+            return lower_bound_comp_impl(first, last, value, comp);
         }
 
         template<typename Compare>
         const_iterator lower_bound(const_iterator first,
                                    const_iterator last,
-                                   const key_type &key,
+                                   const value_type &value,
                                    Compare comp)
         {
-            return lower_bound_comp_impl(first, last, key, comp);
+            return lower_bound_comp_impl(first, last, value, comp);
         }
 
-        iterator upper_bound(iterator first, iterator last, const key_type &key)
+        iterator upper_bound(iterator first, iterator last, size_t hash)
         {
-            return upper_bound_impl(first, last, m_hasher(key), m_hasher);
+            return upper_bound_impl(first, last, hash, m_hasher);
         }
 
-        const_iterator upper_bound(const_iterator first,
-                                   const_iterator last,
-                                   const key_type &key) const
+        const_iterator upper_bound(const_iterator first, const_iterator last, size_t hash) const
         {
-            return upper_bound_impl(first, last, m_hasher(key), m_hasher);
+            return upper_bound_impl(first, last, hash, m_hasher);
         }
 
         template<typename Compare>
-        iterator upper_bound(iterator first, iterator last, const key_type &key, Compare comp)
+        iterator upper_bound(iterator first, iterator last, const value_type &value, Compare comp)
         {
-            return upper_bound_comp_impl(first, last, key, comp);
+            return upper_bound_comp_impl(first, last, value, comp);
         }
 
         template<typename Compare>
         const_iterator upper_bound(const_iterator first,
                                    const_iterator last,
-                                   const key_type &key,
+                                   const value_type &value,
                                    Compare comp) const
         {
-            return upper_bound_comp_impl(first, last, key, comp);
+            return upper_bound_comp_impl(first, last, value, comp);
         }
 
       protected:
         template<typename IteratorType>
         static IteratorType find_impl(IteratorType first,
                                       IteratorType last,
-                                      const key_type &key,
-                                      const key_equal_type &equal,
+                                      size_t hash,
+                                      const equal_type &equal,
                                       const hasher_type &hasher)
         {
-            auto it = lower_bound_impl(first, last, hasher(key), hasher);
+            auto it = lower_bound_impl(first, last, hash, hasher);
             if(it == last)
-                return last;
+                return last();
 
-            if(equal(key, it->first))
+            if(hash == hasher(*it))
                 return it;
 
-            return last;
+            return last();
         }
 
         template<typename IteratorType>
         static std::vector<IteratorType> find_all_impl(IteratorType first,
                                                        IteratorType last,
-                                                       const key_type &key,
-                                                       const key_equal_type &equal,
+                                                       size_t hash,
+                                                       const equal_type &equal,
                                                        const hasher_type &hasher)
         {
             std::vector<IteratorType> result;
 
-            auto it = lower_bound_impl(first, last, hasher(key), hasher);
+            auto it = lower_bound_impl(first, last, hash, hasher);
             if(it == last)
                 return result;
 
-            while(equal(key, it->first))
+            while(hash == hasher(*it))
             {
                 result.push_back(it);
                 ++it;
@@ -665,19 +598,19 @@ namespace FDCore
         template<typename IteratorType>
         static IteratorType find_last_impl(IteratorType first,
                                            IteratorType last,
-                                           const key_type &key,
-                                           const key_equal_type &equal,
+                                           size_t hash,
+                                           const equal_type &equal,
                                            const hasher_type &hasher)
         {
-            auto it = upper_bound_impl(first, last, hasher(key), hasher);
+            auto it = upper_bound_impl(first, last, hash, hasher);
             if(it == first)
-                return last;
+                return last();
 
             --it;
-            if(equal(key, it->first))
+            if(hash == hasher(*it))
                 return it;
 
-            return last;
+            return last();
         }
 
         template<typename IteratorType, typename Predicate>
@@ -717,7 +650,7 @@ namespace FDCore
                 it = first;
                 step = count / 2;
                 std::advance(it, step);
-                if(hasher(it->first) < hash)
+                if(hasher(*it) < hash)
                 {
                     first = ++it;
                     count -= step + 1;
@@ -731,7 +664,7 @@ namespace FDCore
         template<typename IteratorType, typename Compare>
         static IteratorType lower_bound_comp_impl(IteratorType first,
                                                   IteratorType last,
-                                                  const key_type &key,
+                                                  const value_type &value,
                                                   Compare comp)
         {
             IteratorType it;
@@ -743,7 +676,7 @@ namespace FDCore
                 it = first;
                 step = count / 2;
                 std::advance(it, step);
-                if(comp(it->first, key))
+                if(comp(*it, value))
                 {
                     first = ++it;
                     count -= step + 1;
@@ -769,7 +702,7 @@ namespace FDCore
                 it = first;
                 step = count / 2;
                 std::advance(it, step);
-                if(hash >= hasher(it->first))
+                if(hash >= hasher(*it))
                 {
                     first = ++it;
                     count -= step + 1;
@@ -783,7 +716,7 @@ namespace FDCore
         template<typename IteratorType, typename Compare>
         static IteratorType upper_bound_comp_impl(IteratorType first,
                                                   IteratorType last,
-                                                  const key_type &key,
+                                                  const value_type &value,
                                                   Compare comp)
         {
             IteratorType it;
@@ -795,7 +728,7 @@ namespace FDCore
                 it = first;
                 step = count / 2;
                 std::advance(it, step);
-                if(!comp(key, it->first))
+                if(!comp(value, *it))
                 {
                     first = ++it;
                     count -= step + 1;
@@ -806,7 +739,6 @@ namespace FDCore
             return first;
         }
     };
-
 } // namespace FDCore
 
-#endif // FDCORE_CONTIGUOUSMAP_H
+#endif // FDCORE_CONTIGUOUSSET_H
