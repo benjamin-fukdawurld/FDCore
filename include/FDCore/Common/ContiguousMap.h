@@ -62,9 +62,9 @@ namespace FDCore
         explicit ContiguousMap(const Hash &hash = Hash(),
                                const key_equal_type &equal = key_equal_type(),
                                const Allocator &alloc = Allocator()) :
+            m_container(alloc),
             m_hasher(hash),
-            m_equal(equal),
-            m_container(alloc)
+            m_equal(equal)
         {
         }
 
@@ -72,9 +72,9 @@ namespace FDCore
                                const Hash &hash = Hash(),
                                const key_equal_type &equal = key_equal_type(),
                                const Allocator &alloc = Allocator()) :
+            m_container(alloc),
             m_hasher(hash),
-            m_equal(equal),
-            m_container(init, alloc)
+            m_equal(equal)
         {
             *this = init;
         }
@@ -87,6 +87,7 @@ namespace FDCore
 
         ContiguousMap &operator=(std::initializer_list<cell_type> l)
         {
+            m_container = l;
             std::sort(m_container.begin(), m_container.end(),
                       [this](const cell_type &a, const cell_type &b) {
                           return m_hasher(a.first) < m_hasher(b.first);
@@ -98,7 +99,7 @@ namespace FDCore
          * @param key the key to hash
          * @return an hash value for a given key
          */
-        size_t hashKey(key_type key) const { return m_hash(key); }
+        size_t hashKey(key_type key) const { return m_hasher(key); }
 
         /**
          * @brief Get the allocator object
@@ -482,7 +483,7 @@ namespace FDCore
 
         iterator find_last(iterator first, iterator last, const key_type &key)
         {
-            return find_last_impl(begin(), end(), key, m_equal, m_hasher);
+            return find_last_impl(first, last, key, m_equal, m_hasher);
         }
 
         const_iterator find_last(const key_type &key) const
@@ -494,7 +495,7 @@ namespace FDCore
                                  const_iterator last,
                                  const key_type &key) const
         {
-            return find_last_impl(begin(), end(), key, m_equal, m_hasher);
+            return find_last_impl(first, last, key, m_equal, m_hasher);
         }
 
         template<typename Predicate>

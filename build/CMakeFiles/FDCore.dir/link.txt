@@ -1,2 +1,0 @@
-/usr/bin/ar qc libFDCore.a  CMakeFiles/FDCore.dir/src/Common/Object.cpp.o CMakeFiles/FDCore.dir/src/ResourceManagement/IResource.cpp.o CMakeFiles/FDCore.dir/src/ResourceManagement/AbstractResource.cpp.o
-/usr/bin/ranlib libFDCore.a

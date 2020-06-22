@@ -70,7 +70,7 @@ namespace FDCore
             *this = init;
         }
 
-        size_t hashValue(value_type value) const { return m_hash(value); }
+        size_t hashValue(value_type value) const { return m_hasher(value); }
 
         ContiguousSet(const ContiguousSet &m) = default;
         ContiguousSet(ContiguousSet &&m) = default;
@@ -338,14 +338,14 @@ namespace FDCore
 
         iterator find(iterator first, iterator last, size_t hash)
         {
-            return find_impl(first, last, hash, m_equal, m_hasher);
+            return find_impl(first, last, hash, m_hasher);
         }
 
         const_iterator find(size_t hash) const { return find(begin(), end(), hash); }
 
         const_iterator find(const_iterator first, const_iterator last, size_t hash) const
         {
-            return find_impl(first, last, hash, m_equal, m_hasher);
+            return find_impl(first, last, hash, m_hasher);
         }
 
         template<typename Predicate>
@@ -376,7 +376,7 @@ namespace FDCore
 
         std::vector<iterator> find_all(iterator first, iterator last, size_t hash)
         {
-            return find_all_impl(first, last, hash, m_equal, m_hasher);
+            return find_all_impl(first, last, hash, m_hasher);
         }
 
         std::vector<const_iterator> find_all(size_t hash) const
@@ -388,7 +388,7 @@ namespace FDCore
                                              const_iterator last,
                                              size_t hash) const
         {
-            return find_all_impl(first, last, hash, m_equal, m_hasher);
+            return find_all_impl(first, last, hash, m_hasher);
         }
 
         template<typename Predicate>
@@ -419,14 +419,14 @@ namespace FDCore
 
         iterator find_last(iterator first, iterator last, size_t hash)
         {
-            return find_last_impl(first, last, hash, m_equal, m_hasher);
+            return find_last_impl(first, last, hash, m_hasher);
         }
 
         const_iterator find_last(size_t hash) const { return find_last(begin(), end(), hash); }
 
         const_iterator find_last(const_iterator first, const_iterator last, size_t hash) const
         {
-            return find_last_impl(first, last, hash, m_equal, m_hasher);
+            return find_last_impl(first, last, hash, m_hasher);
         }
 
         template<typename Predicate>
@@ -529,7 +529,6 @@ namespace FDCore
         static IteratorType find_impl(IteratorType first,
                                       IteratorType last,
                                       size_t hash,
-                                      const equal_type &equal,
                                       const hasher_type &hasher)
         {
             auto it = lower_bound_impl(first, last, hash, hasher);
@@ -546,7 +545,6 @@ namespace FDCore
         static std::vector<IteratorType> find_all_impl(IteratorType first,
                                                        IteratorType last,
                                                        size_t hash,
-                                                       const equal_type &equal,
                                                        const hasher_type &hasher)
         {
             std::vector<IteratorType> result;
@@ -599,7 +597,6 @@ namespace FDCore
         static IteratorType find_last_impl(IteratorType first,
                                            IteratorType last,
                                            size_t hash,
-                                           const equal_type &equal,
                                            const hasher_type &hasher)
         {
             auto it = upper_bound_impl(first, last, hash, hasher);

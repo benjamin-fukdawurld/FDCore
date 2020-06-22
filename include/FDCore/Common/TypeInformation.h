@@ -1,5 +1,5 @@
-#ifndef TYPEINFORMATION_H
-#define TYPEINFORMATION_H
+#ifndef FDCORE_TYPEINFORMATION_H
+#define FDCORE_TYPEINFORMATION_H
 
 #include <functional>
 
@@ -50,4 +50,4 @@ namespace FDCore
     };
 } // namespace FDCore
 
-#endif // TYPEINFORMATION_H
+#endif // FDCORE_TYPEINFORMATION_H

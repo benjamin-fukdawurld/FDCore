@@ -57,7 +57,7 @@ bool FDCore::StrategyResource<T>::isLoaded() const
 }
 
 template<typename T>
-void FDCore::StrategyResource<T>::release() override
+void FDCore::StrategyResource<T>::release()
 {
     return m_releaseStrategy(m_resource);
 }

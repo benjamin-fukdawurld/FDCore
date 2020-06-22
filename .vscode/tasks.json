@@ -15,33 +15,38 @@
             }
         },
         {
-            "label": "make project",
+            "label": "configure build",
             "type": "shell",
             "command": "cmake",
             "options": {
-                "cwd": "${workspaceFolder}/bin"
+                "cwd": "${workspaceFolder}/build"
             },
             "args": [
-                "${workspaceFolder}"
-            ],
-            "presentation": {
-                "reveal": "always"
-            }
+                ".."
+            ]
         },
         {
-            "label": "build project",
+            "label": "build FDCore",
             "type": "shell",
             "command": "cmake",
             "options": {
-                "cwd": "${workspaceFolder}/bin"
+                "cwd": "${workspaceFolder}/build"
             },
             "args": [
                 "--build",
                 "."
-            ],
-            "presentation": {
-                "reveal": "always"
-            }
+            ]
+        },
+        {
+            "label": "install FDCore",
+            "type": "shell",
+            "command": "make",
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "args": [
+                "install"
+            ]
         }
     ]
 }

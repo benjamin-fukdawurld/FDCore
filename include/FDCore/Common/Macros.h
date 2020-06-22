@@ -1,5 +1,5 @@
-#ifndef MACROS_H
-#define MACROS_H
+#ifndef FDCORE_MACROS_H
+#define FDCORE_MACROS_H
 
 #define FD_EXPORT __attribute__((visibility("default")))
 
@@ -9,4 +9,4 @@
     #define FD_INLINE
 #endif
 
-#endif // MACROS_H
+#endif // FDCORE_MACROS_H
