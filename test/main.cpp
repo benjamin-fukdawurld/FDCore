@@ -1,26 +1,26 @@
+#include <FDCore/ApplicationManagement/AbstractApplication.h>
 #include <FDCore/Common/ContiguousMap.h>
 #include <FDCore/Common/ContiguousSet.h>
 #include <FDCore/Common/Identifiable.h>
+#include <FDCore/Common/ObjectGuard.h>
 #include <FDCore/Log/Logger.h>
 #include <FDCore/ResourceManagement/ResourceManager.h>
 #include <cassert>
 #include <iostream>
 #include <string>
 
-#include <FDCore/ApplicationManagement/AbstractApplication.h>
-
 class Application : public FDCore::AbstractApplication
 {
-    private:
-        std::vector<FDCore::AbstractPlugin*> m_plugins;
+  private:
+    std::vector<FDCore::AbstractPlugin *> m_plugins;
 
-    public:
-        Application() = default;
-        bool init() override;
-        void quit() override;
-        int run(int argc, char **argv) override;
+  public:
+    Application() = default;
+    bool init() override;
+    void quit() override;
+    int run(int argc, char **argv) override;
 
-        void addPlugin(FDCore::AbstractPlugin *plugin) override;
+    void addPlugin(FDCore::AbstractPlugin *plugin) override;
 };
 
 bool Application::init()
@@ -70,24 +70,11 @@ int Application::run(int, char **)
     return AbstractApplication::ExitSuccess;
 }
 
-void Application::addPlugin(FDCore::AbstractPlugin *plugin)
-{
-    m_plugins.push_back(plugin);
-}
-
-class ApplicationGuard
-{
-    private:
-        FDCore::AbstractApplication &m_app;
-
-    public:
-        ApplicationGuard(FDCore::AbstractApplication &app) : m_app(app) { m_app.init(); }
-        ~ApplicationGuard() { m_app.quit(); }
-};
+void Application::addPlugin(FDCore::AbstractPlugin *plugin) { m_plugins.push_back(plugin); }
 
 int main(int argc, char **argv)
 {
     Application app;
-    ApplicationGuard guard(app);
+    FDCore::ObjectGuard<Application> guard(app);
     return app.run(argc, argv);
 }
