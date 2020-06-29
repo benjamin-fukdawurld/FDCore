@@ -2,7 +2,8 @@
 #define FDCORE_ABSTRACTRESOURCE_H
 
 #include <FDCore/ResourceManagement/IResource.h>
-#include <string>
+#include <string_view>
+#include <vector>
 
 namespace FDCore
 {

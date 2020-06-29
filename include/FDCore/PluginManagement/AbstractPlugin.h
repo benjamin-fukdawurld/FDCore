@@ -1,7 +1,7 @@
 #ifndef FDCORE_ABSTRACTPLUGIN_H
 #define FDCORE_ABSTRACTPLUGIN_H
 
-#include <FDCore/AbstractResource.h>
+#include <FDCore/ResourceManagement/AbstractResource.h>
 
 namespace FDCore
 {
@@ -9,9 +9,9 @@ namespace FDCore
     {
       public:
         AbstractPlugin() = default;
-        virtual ~AbstractPlugin() = default;
+        ~AbstractPlugin() override = default;
 
-        void *getSymbol() = 0;
+        virtual std::string getName() = 0;
     };
 } // namespace FDCore
 
