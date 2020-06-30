@@ -25,6 +25,8 @@ namespace FDCore
         using AbstractResource::AbstractResource;
         ~AbstractPlugin() override = default;
 
+        virtual bool hasSymbol() = 0;
+
         std::vector<const char *> getTypeCodeHierarchy() const override;
 
         std::vector<size_t> getTypeCodeHashHierarchy() const override;
