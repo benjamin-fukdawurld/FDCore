@@ -8,6 +8,20 @@ namespace FDCore
     class AbstractPlugin : public AbstractResource
     {
       public:
+        enum ApiEntryPointType
+        {
+            Variable,
+            Factory
+        };
+
+        struct ApiEntryPoint
+        {
+            std::string symbolName;
+            ApiEntryPointType type;
+            bool isAlias;
+        };
+
+      public:
         using AbstractResource::AbstractResource;
         ~AbstractPlugin() override = default;
 
