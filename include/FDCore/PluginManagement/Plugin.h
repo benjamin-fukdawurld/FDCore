@@ -28,7 +28,28 @@ namespace FDCore
 
         bool hasSymbol(std::string_view symbol) override { return m_library.has(symbol); }
 
+        template<typename T>
+        T getSymbol(std::string_view symbol)
+        {
+            return m_library.get<T>(symbol);
+        }
+
+        template<typename T>
+        T getSymbolAlias(std::string_view alias)
+        {
+            return m_library.get_alias<T>(symbol);
+        }
+
         std::string_view getPath() { return m_path; }
+
+        PluginLibrary &getLibrary() { return m_library; }
+        const PluginLibrary &getLibrary() const { return m_library; }
+
+        PluginApi &getPlugin() { return *m_plugin; }
+        const PluginApi &getPlugin() const { return *m_plugin; }
+
+        PluginApi *operator->() { return *m_plugin; }
+        const PluginApi *operator->() const { return *m_plugin; }
 
         bool load(std::any data)
         {
@@ -47,9 +68,13 @@ namespace FDCore
             return false;
         }
 
-        bool isLoaded() const { return m_plugin; }
+        bool isLoaded() const { return m_library.is_loaded(); }
 
-        void release() { m_plugin.reset(); }
+        void release()
+        {
+            m_plugin.reset();
+            m_library.unload();
+        }
 
         std::vector<const char *> getTypeCodeHierarchy() const override;
 
