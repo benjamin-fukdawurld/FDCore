@@ -1,14 +1,18 @@
+#include "test_PluginApi.h"
+
 #include <FDCore/ApplicationManagement/AbstractApplication.h>
 #include <FDCore/Common/ContiguousMap.h>
 #include <FDCore/Common/ContiguousSet.h>
 #include <FDCore/Common/Identifiable.h>
 #include <FDCore/Common/ObjectGuard.h>
 #include <FDCore/Log/Logger.h>
+#include <FDCore/PluginManagement/Plugin.h>
 #include <FDCore/ResourceManagement/ResourceManager.h>
 #include <cassert>
 #include <iostream>
 #include <string>
 
+generateTypeCode(FDCore::Plugin<FDCore::PluginApi>);
 class Application : public FDCore::AbstractApplication
 {
   private:
@@ -41,8 +45,30 @@ void Application::quit()
     logger(FDCore::Information) << "Application Quitted";
 }
 
+generateTypeCode(FDCore::Plugin<int>);
+
 int Application::run(int, char **)
 {
+    FDCore::Plugin<FDCore::PluginApi> plugin("test_plugin", "FDCore_test_plugin");
+    FDCore::AbstractPlugin::ApiEntryPoint entryPoint;
+    entryPoint.type = FDCore::AbstractPlugin::Variable;
+    entryPoint.symbolName = "plugin";
+    std::any entryPointAny = &entryPoint;
+    plugin.load(entryPointAny);
+    assert(plugin.isLoaded());
+
+    std::cout << "plugin->i : " << plugin->i << std::endl;
+    std::cout << "plugin->pi : " << plugin->pi << std::endl;
+    std::cout << std::boolalpha << "plugin->b : " << plugin->b << std::endl;
+    std::cout << "plugin->c : " << plugin->c << std::endl;
+    std::cout << "plugin->str : " << plugin->str << std::endl;
+
+    std::cout << "plugin->f_i : " << plugin->f_i() << std::endl;
+    std::cout << "plugin->f_f : " << plugin->f_f() << std::endl;
+    std::cout << std::boolalpha << "plugin->f_b : " << plugin->f_b() << std::endl;
+    std::cout << "plugin->f_c : " << plugin->f_c() << std::endl;
+    std::cout << "plugin->f_str : " << plugin->f_str() << std::endl;
+
     FDCore::ContiguousMap<std::string, int> m;
     m.insert("test", 0);
     m.insert("test", 1);
@@ -66,6 +92,8 @@ int Application::run(int, char **)
 
     logger(FDCore::Debug) << "test log"
                           << " must be on the same line";
+
+    plugin.release();
 
     return AbstractApplication::ExitSuccess;
 }

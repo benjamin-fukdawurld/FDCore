@@ -4,6 +4,7 @@
 #include <FDCore/PluginManagement/AbstractPlugin.h>
 #include <boost/dll/alias.hpp>
 #include <boost/dll/import.hpp>
+#include <boost/function.hpp>
 #include <memory>
 
 namespace FDCore
@@ -26,18 +27,18 @@ namespace FDCore
 
         ~Plugin() override = default;
 
-        bool hasSymbol(std::string_view symbol) override { return m_library.has(symbol); }
+        bool hasSymbol(std::string_view symbol) override { return m_library.has(symbol.data()); }
 
         template<typename T>
         T getSymbol(std::string_view symbol)
         {
-            return m_library.get<T>(symbol);
+            return m_library.get<T>(symbol.data());
         }
 
         template<typename T>
         T getSymbolAlias(std::string_view alias)
         {
-            return m_library.get_alias<T>(symbol);
+            return m_library.get_alias<T>(alias.data());
         }
 
         std::string_view getPath() { return m_path; }
@@ -48,15 +49,14 @@ namespace FDCore
         PluginApi &getPlugin() { return *m_plugin; }
         const PluginApi &getPlugin() const { return *m_plugin; }
 
-        PluginApi *operator->() { return *m_plugin; }
-        const PluginApi *operator->() const { return *m_plugin; }
+        PluginApi *operator->() { return m_plugin.get(); }
+        const PluginApi *operator->() const { return m_plugin.get(); }
 
-        bool load(std::any data)
+        bool load(std::any data = {}) override
         {
             m_library.load(boost::dll::fs::path(m_path), boost::dll::load_mode::append_decorations);
-            const ApiEntryPoint *entryPoint = nullptr;
-            if(!data.has_value() ||
-               (entryPoint = std::any_cast<const ApiEntryPoint *>(data)) == nullptr)
+            ApiEntryPoint *entryPoint = nullptr;
+            if(!data.has_value() || (entryPoint = std::any_cast<ApiEntryPoint *>(data)) == nullptr)
                 return importWithoutData();
 
             if(entryPoint->type == Variable)
@@ -68,9 +68,9 @@ namespace FDCore
             return false;
         }
 
-        bool isLoaded() const { return m_library.is_loaded(); }
+        bool isLoaded() const override { return m_library.is_loaded(); }
 
-        void release()
+        void release() override
         {
             m_plugin.reset();
             m_library.unload();
@@ -89,36 +89,36 @@ namespace FDCore
       private:
         bool importWithoutData()
         {
-            m_plugin = boost::dll::import<PluginApi>(m_library, m_name);
+            m_plugin = boost::dll::import<PluginApi>(m_library, getResourceName().data());
 
-            return plugin.get() != 0;
+            return m_plugin.get() != 0;
         }
 
-        bool importVariable(ApiEntryPoint *entryPoint)
+        bool importVariable(const ApiEntryPoint *entryPoint)
         {
             if(entryPoint->isAlias)
                 m_plugin = boost::dll::import_alias<PluginApi>(m_library, entryPoint->symbolName);
             else
                 m_plugin = boost::dll::import<PluginApi>(m_library, entryPoint->symbolName);
 
-            return plugin.get() != 0;
+            return m_plugin.get() != 0;
         }
 
-        bool importFactory(ApiEntryPoint *entryPoint)
+        bool importFactory(const ApiEntryPoint *entryPoint)
         {
-            PluginFactory factory;
+            boost::shared_ptr<PluginFactory> factory;
             if(entryPoint->isAlias)
                 factory =
-                  boost::dll::import_alias<plugin_factory>(m_library, entryPoint->symbolName);
+                  boost::dll::import_alias<PluginFactory>(m_library, entryPoint->symbolName);
             else
-                factory = boost::dll::import<plugin_factory>(m_library, entryPoint->symbolName);
+                factory = boost::dll::import<PluginFactory>(m_library, entryPoint->symbolName);
 
             if(!factory)
                 return false;
 
-            m_plugin = factory();
+            m_plugin = (*factory)();
 
-            return plugin.get() != 0;
+            return m_plugin.get() != 0;
         }
     };
 

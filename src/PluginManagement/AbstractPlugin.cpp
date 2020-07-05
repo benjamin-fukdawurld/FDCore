@@ -1,4 +1,4 @@
-#include <FDCore/ResourceManagement/AbstractPlugin.h>
+#include <FDCore/PluginManagement/AbstractPlugin.h>
 
 std::vector<const char *> FDCore::AbstractPlugin::getTypeCodeHierarchy() const
 {

@@ -17,7 +17,7 @@ namespace FDCore
         virtual std::string_view getResourceName() const = 0;
         virtual size_t getResourceHash() const = 0;
 
-        virtual bool load(std::any data) = 0;
+        virtual bool load(std::any data = {}) = 0;
         virtual bool isLoaded() const = 0;
         virtual void release() = 0;
 
