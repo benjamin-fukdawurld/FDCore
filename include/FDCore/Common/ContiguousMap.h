@@ -266,15 +266,20 @@ namespace FDCore
         iterator insert(const key_type &key, const value_type &value)
         {
             size_t hash = m_hasher(key);
-            auto it = lower_bound_impl(begin(), end(), hash, m_hasher);
+            auto low_it = lower_bound_impl(begin(), end(), hash, m_hasher);
+            if(low_it == end())
+                return m_container.insert(end(), std::make_pair(key, value));
+
+            auto it = upper_bound_impl(low_it, end(), hash, m_hasher);
             if(it == end())
                 return m_container.insert(end(), std::make_pair(key, value));
 
-            it = upper_bound_impl(it, end(), hash, m_hasher);
-            if(it == end())
-                return m_container.insert(end(), std::make_pair(key, value));
+            if(m_hasher(key) >= m_hasher(it->first))
+                ++it;
 
-            --it;
+            if(it != low_it)
+                --it;
+
             return m_container.insert(it, std::make_pair(key, value));
         }
 
@@ -282,30 +287,40 @@ namespace FDCore
         {
             size_t hash = m_hasher(key);
             auto p = std::make_pair(std::move(key), std::move(value));
-            auto it = lower_bound_impl(begin(), end(), hash, m_hasher);
+            auto low_it = lower_bound_impl(begin(), end(), hash, m_hasher);
+            if(low_it == end())
+                return m_container.insert(end(), std::move(p));
+
+            auto it = upper_bound_impl(low_it, end(), hash, m_hasher);
             if(it == end())
                 return m_container.insert(end(), std::move(p));
 
-            it = upper_bound_impl(it, end(), hash, m_hasher);
-            if(it == end())
-                return m_container.insert(end(), std::move(p));
+            if(m_hasher(key) >= m_hasher(it->first))
+                ++it;
 
-            --it;
+            if(it != low_it)
+                --it;
+
             return m_container.insert(it, std::move(p));
         }
 
         iterator insert(cell_type p)
         {
             size_t hash = m_hasher(p.first);
-            auto it = lower_bound_impl(begin(), end(), hash, m_hasher);
+            auto low_it = lower_bound_impl(begin(), end(), hash, m_hasher);
+            if(low_it == end())
+                return m_container.insert(end(), std::move(p));
+
+            auto it = upper_bound_impl(low_it, end(), hash, m_hasher);
             if(it == end())
                 return m_container.insert(end(), std::move(p));
 
-            it = upper_bound_impl(it, end(), hash, m_hasher);
-            if(it == end())
-                return m_container.insert(end(), std::move(p));
+            if(m_hasher(p.first) >= m_hasher(it->first))
+                ++it;
 
-            --it;
+            if(it != low_it)
+                --it;
+
             return m_container.insert(it, std::move(p));
         }
 
@@ -313,15 +328,20 @@ namespace FDCore
         iterator emplace(const key_type &key, Args &&... args)
         {
             size_t hash = m_hasher(key);
-            auto it = lower_bound_impl(begin(), end(), hash, m_hasher);
+            auto low_it = lower_bound_impl(begin(), end(), hash, m_hasher);
+            if(low_it == end())
+                return m_container.insert(end(), std::make_pair(key, value_type { args... }));
+
+            auto it = upper_bound_impl(low_it, end(), hash, m_hasher);
             if(it == end())
                 return m_container.insert(end(), std::make_pair(key, value_type { args... }));
 
-            it = upper_bound_impl(it, end(), hash, m_hasher);
-            if(it == end())
-                return m_container.insert(end(), std::make_pair(key, value_type { args... }));
+            if(m_hasher(key) >= m_hasher(it->first))
+                ++it;
 
-            --it;
+            if(it != low_it)
+                --it;
+
             return m_container.insert(it, std::make_pair(key, value_type { args... }));
         }
 
@@ -335,7 +355,7 @@ namespace FDCore
         bool erase(const key_type &key)
         {
             auto it = find(key);
-            if(it != end())
+            if(it == end())
                 return false;
 
             m_container.erase(it);
@@ -718,7 +738,8 @@ namespace FDCore
                 it = first;
                 step = count / 2;
                 std::advance(it, step);
-                if(hasher(it->first) < hash)
+                size_t h = hasher(it->first);
+                if(h < hash)
                 {
                     first = ++it;
                     count -= step + 1;
@@ -770,7 +791,8 @@ namespace FDCore
                 it = first;
                 step = count / 2;
                 std::advance(it, step);
-                if(hash >= hasher(it->first))
+                size_t h = hasher(it->first);
+                if(hash >= h)
                 {
                     first = ++it;
                     count -= step + 1;

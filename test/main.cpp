@@ -1,7 +1,7 @@
+#include "ContiguousMap_test.h"
 #include "test_PluginApi.h"
 
 #include <FDCore/ApplicationManagement/AbstractApplication.h>
-#include <FDCore/Common/ContiguousMap.h>
 #include <FDCore/Common/ContiguousSet.h>
 #include <FDCore/Common/Identifiable.h>
 #include <FDCore/Common/ObjectGuard.h>
@@ -9,6 +9,7 @@
 #include <FDCore/PluginManagement/Plugin.h>
 #include <FDCore/ResourceManagement/ResourceManager.h>
 #include <cassert>
+#include <gtest/gtest.h>
 #include <iostream>
 #include <string>
 
@@ -102,7 +103,10 @@ void Application::addPlugin(FDCore::AbstractPlugin *plugin) { m_plugins.push_bac
 
 int main(int argc, char **argv)
 {
-    Application app;
+    /*Application app;
     FDCore::ObjectGuard<Application> guard(app);
-    return app.run(argc, argv);
+    return app.run(argc, argv);*/
+
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

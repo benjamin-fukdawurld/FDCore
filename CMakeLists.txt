@@ -20,6 +20,8 @@ set(BOOST_ROOT /home/benjamin/Bureau/dev/FanatikDevelopment/FDFramework/thirdpar
 set(BOOST_INCLUDE_DIR ${BOOST_ROOT})
 set(BOOST_LIBRARYDIR ${BOOST_ROOT}/stage)
 
+set(GTEST_ROOT /home/benjamin/Bureau/dev/FanatikDevelopment/FDFramework/thirdparty/googletest)
+
 find_package(Boost 1.74 COMPONENTS system filesystem REQUIRED)
 
 target_include_directories(${PROJECT_NAME}
@@ -35,11 +37,21 @@ target_include_directories(${PROJECT_NAME}_test_plugin
 
 target_link_libraries(${PROJECT_NAME}_test_plugin ${PROJECT_NAME})
 
+# Add googletest directly to our build. This defines
+# the gtest and gtest_main targets.
+add_subdirectory(${GTEST_ROOT}/
+                 ${GTEST_ROOT}/build)
+
 add_executable(${PROJECT_NAME}_test test/main.cpp)
 set_property(TARGET ${PROJECT_NAME}_test PROPERTY ENABLE_EXPORTS 1)
 
-target_include_directories(${PROJECT_NAME}_test PUBLIC include)
+target_include_directories(${PROJECT_NAME}_test
+                            PUBLIC include
+                            PUBLIC ${GTEST_ROOT}/googletest/include
+                            PUBLIC ${GTEST_ROOT}/googlemock/include)
+
 target_link_libraries(${PROJECT_NAME}_test Boost::filesystem Boost::system)
+target_link_libraries(${PROJECT_NAME}_test gtest)
 target_link_libraries(${PROJECT_NAME}_test dl)
 target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME}_test_plugin)
