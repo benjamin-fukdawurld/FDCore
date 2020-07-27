@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <iostream>
 #include <vector>
 
 
@@ -277,9 +278,6 @@ namespace FDCore
             if(m_hasher(key) >= m_hasher(it->first))
                 ++it;
 
-            if(it != low_it)
-                --it;
-
             return m_container.insert(it, std::make_pair(key, value));
         }
 
@@ -295,11 +293,8 @@ namespace FDCore
             if(it == end())
                 return m_container.insert(end(), std::move(p));
 
-            if(m_hasher(key) >= m_hasher(it->first))
+            if(m_hasher(p.first) >= m_hasher(it->first))
                 ++it;
-
-            if(it != low_it)
-                --it;
 
             return m_container.insert(it, std::move(p));
         }
@@ -318,9 +313,6 @@ namespace FDCore
             if(m_hasher(p.first) >= m_hasher(it->first))
                 ++it;
 
-            if(it != low_it)
-                --it;
-
             return m_container.insert(it, std::move(p));
         }
 
@@ -338,9 +330,6 @@ namespace FDCore
 
             if(m_hasher(key) >= m_hasher(it->first))
                 ++it;
-
-            if(it != low_it)
-                --it;
 
             return m_container.insert(it, std::make_pair(key, value_type { args... }));
         }
