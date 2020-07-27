@@ -144,9 +144,6 @@ TEST(ContiguousMap_test, test_access)
     testMap.insert("5", "5");
     testMap.insert("5", "5.1");
 
-    for(auto &[key, value]: testMap)
-        std::cout << key << ": " << value << std::endl;
-
     ASSERT_EQ(testMap.size(), 6u);
     ASSERT_STREQ(testMap.at("1")->c_str(), "1");
     ASSERT_STREQ(c_testMap.at("2")->c_str(), "2");
