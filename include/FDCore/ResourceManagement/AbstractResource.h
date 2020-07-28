@@ -7,7 +7,7 @@
 
 namespace FDCore
 {
-    class FD_EXPORT AbstractResource : IResource
+    class FD_EXPORT AbstractResource : public IResource
     {
       private:
         std::string m_resourceName;
