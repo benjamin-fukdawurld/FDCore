@@ -1,5 +1,5 @@
-#ifndef ENUMFLAG_H
-#define ENUMFLAG_H
+#ifndef FDCORE_ENUMFLAG_H
+#define FDCORE_ENUMFLAG_H
 
 namespace FDCore
 {
@@ -214,4 +214,4 @@ namespace FDCore
 
 } // namespace FDCore
 
-#endif // ENUMFLAG_H
+#endif // FDCORE_ENUMFLAG_H

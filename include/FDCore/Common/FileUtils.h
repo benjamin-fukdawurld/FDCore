@@ -1,7 +1,7 @@
-#ifndef FILEUTILS_H
-#define FILEUTILS_H
+#ifndef FDCORE_FILEUTILS_H
+#define FDCORE_FILEUTILS_H
 
-#include <FDCore/Macros.h>
+#include <FDCore/Common/Macros.h>
 #include <memory>
 #include <string>
 
@@ -11,4 +11,4 @@ namespace FDCore
     FD_EXPORT std::unique_ptr<uint8_t[]> readBinaryFile(const std::string &fileName, size_t &size);
 } // namespace FDCore
 
-#endif // FILEUTILS_H
+#endif // FDCORE_FILEUTILS_H

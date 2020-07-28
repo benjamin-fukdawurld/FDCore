@@ -1,5 +1,5 @@
-#ifndef SINGLETONTRAIT_H
-#define SINGLETONTRAIT_H
+#ifndef FDCORE_SINGLETONTRAIT_H
+#define FDCORE_SINGLETONTRAIT_H
 
 #include <memory>
 #include <type_traits>
@@ -49,4 +49,4 @@ namespace FDCore
 
 } // namespace FDCore
 
-#endif // SINGLETONTRAIT_H
+#endif // FDCORE_SINGLETONTRAIT_H

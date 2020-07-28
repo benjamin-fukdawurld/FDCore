@@ -1,5 +1,5 @@
-#ifndef CALLONEDIT_H
-#define CALLONEDIT_H
+#ifndef FDCORE_CALLONEDIT_H
+#define FDCORE_CALLONEDIT_H
 
 #include <functional>
 
@@ -65,4 +65,4 @@ namespace FDCore
     };
 } // namespace FDCore
 
-#endif // CALLONEDIT_H
+#endif // FDCORE_CALLONEDIT_H

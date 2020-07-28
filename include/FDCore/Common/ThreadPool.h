@@ -1,7 +1,7 @@
-#ifndef THREADPOOL_H
-#define THREADPOOL_H
+#ifndef FDCORE_THREADPOOL_H
+#define FDCORE_THREADPOOL_H
 
-#include <FDCore/Macros.h>
+#include <FDCore/Common/Macros.h>
 #include <cassert>
 #include <condition_variable>
 #include <functional>

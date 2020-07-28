@@ -1,5 +1,5 @@
-#ifndef NONCOPYABLETRAIT_H
-#define NONCOPYABLETRAIT_H
+#ifndef FDCORE_NONCOPYABLETRAIT_H
+#define FDCORE_NONCOPYABLETRAIT_H
 
 namespace FDCore
 {
@@ -26,4 +26,4 @@ namespace FDCore
     };
 } // namespace FDCore
 
-#endif // NONCOPYABLETRAIT_H
+#endif // FDCORE_NONCOPYABLETRAIT_H

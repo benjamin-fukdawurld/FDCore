@@ -1,5 +1,5 @@
-#ifndef COPYONWRITE_H
-#define COPYONWRITE_H
+#ifndef FDCORE_COPYONWRITE_H
+#define FDCORE_COPYONWRITE_H
 
 #include <memory>
 
@@ -136,4 +136,4 @@ namespace FDCore
     };
 } // namespace FDCore
 
-#endif // COPYONWRITE_H
+#endif // FDCORE_COPYONWRITE_H

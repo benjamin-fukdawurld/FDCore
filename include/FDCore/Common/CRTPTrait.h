@@ -1,5 +1,5 @@
-#ifndef CRTPTRAIT_H
-#define CRTPTRAIT_H
+#ifndef FDCORE_CRTPTRAIT_H
+#define FDCORE_CRTPTRAIT_H
 
 namespace FDCore
 {
@@ -42,4 +42,4 @@ namespace FDCore
 
 } // namespace FDCore
 
-#endif // CRTPTRAIT_H
+#endif // FDCORE_CRTPTRAIT_H
