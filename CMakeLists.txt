@@ -57,7 +57,8 @@ set(SRC_FILES
     src/ResourceManagement/ResourceManager.cpp
     src/PluginManagement/AbstractPlugin.cpp
     src/PluginManagement/PluginManager.cpp
-    src/PluginManagement/PluginResource.cpp)
+    src/PluginManagement/PluginResource.cpp
+    src/DynamicVariable/DynamicVariable.cpp)
 
 if(FDCORE_BUILD_STATIC)
     add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
