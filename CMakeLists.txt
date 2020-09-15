@@ -50,7 +50,7 @@ target_include_directories(${PROJECT_NAME}
                             PUBLIC ${BOOST_INCLUDE_DIR})
 
 if(FDCORE_BUILD_TESTS)
-    find_package(Boost 1.65 COMPONENTS system filesystem REQUIRED)
+    find_package(Boost 1.65.1 COMPONENTS system filesystem REQUIRED)
     find_package(GTest REQUIRED)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
     find_package(Threads REQUIRED)
