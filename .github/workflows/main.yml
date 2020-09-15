@@ -48,7 +48,7 @@ jobs:
       - name: configure project
         run: |
           cd build
-          cmake ..
+          cmake .. -DCMAKE_C_COMPILER=clang-12 -DCMAKE_CXX_COMPILER=clang++-12
           make -j $(nproc)
       - name: run tests
         run: ./FDCore_test
