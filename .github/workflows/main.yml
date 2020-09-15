@@ -21,7 +21,7 @@ jobs:
           tar -xzvf cmake-$version.$build.tar.gz
           cd cmake-$version.$build/
           ./bootstrap
-          make -j4
+          make -j $(nproc)
           sudo make install
       - name: Clang 12
         run: |
