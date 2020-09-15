@@ -15,8 +15,25 @@ jobs:
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           sudo ./llvm.sh 12
-      - name: boost
-        run: sudo apt-get update && sudo apt-get install -yq libboost1.71-dev
+      - name: cache-boost
+        uses: actions/cache@v1.0.3
+        id: cache-boost
+        with:
+          path: "~/boost"
+          key: "libboost-dev"
+      - name: Install boost
+          env:
+            CACHE_HIT: ${{steps.cache-boost.outputs.cache-hit}}
+          run: |
+            if [[ "$CACHE_HIT" == 'true' ]]; then
+              sudo cp --force --recursive ~/boost/* /
+            else
+              sudo apt-get update && sudo apt-get install -yq libboost-dev
+              mkdir -p ~/boost
+              for dep in libboost-dev; do
+                dpkg -L $dep | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/boost/
+              done
+            fi
       - name: gtest
         run: |
           sudo apt-get install -yq libgtest-dev
