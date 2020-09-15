@@ -26,6 +26,7 @@ namespace FDCore
           const T &value)
         {
             m_value = static_cast<int64_t>(value);
+            return *this;
         }
 
         template<
@@ -40,6 +41,7 @@ namespace FDCore
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> &operator++()
         {
             ++m_value;
+            return *this;
         }
 
         template<typename T>
@@ -47,12 +49,14 @@ namespace FDCore
           int)
         {
             m_value++;
+            return *this;
         }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> &operator--()
         {
             --m_value;
+            return *this;
         }
 
         template<typename T>
@@ -60,6 +64,7 @@ namespace FDCore
           int)
         {
             m_value--;
+            return *this;
         }
 
         template<typename T>
@@ -67,18 +72,28 @@ namespace FDCore
           const T &value)
         {
             m_value += static_cast<int64_t>(value);
+            return *this;
         }
 
-        IntValue &operator+=(const IntValue &value) { m_value += value.m_value; }
+        IntValue &operator+=(const IntValue &value)
+        {
+            m_value += value.m_value;
+            return *this;
+        }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> &operator-=(
           const T &value)
         {
             m_value -= static_cast<int64_t>(value);
+            return *this;
         }
 
-        IntValue &operator-=(const IntValue &value) { m_value -= value.m_value; }
+        IntValue &operator-=(const IntValue &value)
+        {
+            m_value -= value.m_value;
+            return *this;
+        }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> operator+(
@@ -87,7 +102,7 @@ namespace FDCore
             return IntValue(m_value + static_cast<int64_t>(value));
         }
 
-        IntValue operator+(const IntValue &value) { IntValue(m_value + value.m_value); }
+        IntValue operator+(const IntValue &value) { return IntValue(m_value + value.m_value); }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> operator-(
@@ -96,25 +111,35 @@ namespace FDCore
             return IntValue(m_value - static_cast<int64_t>(value));
         }
 
-        IntValue operator-(const IntValue &value) { IntValue(m_value - value.m_value); }
+        IntValue operator-(const IntValue &value) { return IntValue(m_value - value.m_value); }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> &operator*=(
           const T &value)
         {
             m_value *= static_cast<int64_t>(value);
+            return *this;
         }
 
-        IntValue &operator*=(const IntValue &value) { m_value *= value.m_value; }
+        IntValue &operator*=(const IntValue &value)
+        {
+            m_value *= value.m_value;
+            return *this;
+        }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> &operator/=(
           const T &value)
         {
             m_value /= static_cast<int64_t>(value);
+            return *this;
         }
 
-        IntValue &operator/=(const IntValue &value) { m_value /= value.m_value; }
+        IntValue &operator/=(const IntValue &value)
+        {
+            m_value /= value.m_value;
+            return *this;
+        }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> operator*(
@@ -123,7 +148,7 @@ namespace FDCore
             return IntValue(m_value * static_cast<int64_t>(value));
         }
 
-        IntValue operator*(const IntValue &value) { IntValue(m_value * value.m_value); }
+        IntValue operator*(const IntValue &value) { return IntValue(m_value * value.m_value); }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> operator/(
@@ -132,16 +157,20 @@ namespace FDCore
             return IntValue(m_value / static_cast<int64_t>(value));
         }
 
-        IntValue operator/(const IntValue &value) { IntValue(m_value / value.m_value); }
+        IntValue operator/(const IntValue &value) { return IntValue(m_value / value.m_value); }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> &operator%=(
           const T &value)
         {
-            m_value %= static_cast<int64_t>(value);
+            return m_value %= static_cast<int64_t>(value);
         }
 
-        IntValue &operator%=(const IntValue &value) { m_value %= value.m_value; }
+        IntValue &operator%=(const IntValue &value)
+        {
+            m_value %= value.m_value;
+            return *this;
+        }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> operator%(
@@ -150,7 +179,7 @@ namespace FDCore
             return IntValue(m_value % static_cast<int64_t>(value));
         }
 
-        IntValue operator%(const IntValue &value) { IntValue(m_value % value.m_value); }
+        IntValue operator%(const IntValue &value) { return IntValue(m_value % value.m_value); }
     };
 
     class FloatValue : public AbstractValue
@@ -170,137 +199,113 @@ namespace FDCore
         }
 
         template<typename T>
-        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, FloatValue> &operator=(
-          const T &value)
+        std::enable_if_t<std::is_floating_point_v<T>, FloatValue> &operator=(const T &value)
         {
-            m_value = static_cast<int64_t>(value);
+            m_value = static_cast<double>(value);
+            return *this;
         }
 
-        template<
-          typename T,
-          typename U = std::enable_if<!std::is_same_v<T, bool> && std::is_integral_v<T>, T>::type>
+        template<typename T,
+                 typename U = typename std::enable_if<std::is_floating_point_v<T>, T>::type>
         explicit operator T() const
         {
             return static_cast<T>(m_value);
         }
 
         template<typename T>
-        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, FloatValue>
-          &operator++()
-        {
-            ++m_value;
-        }
-
-        template<typename T>
-        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, FloatValue> &operator++(
-          int)
-        {
-            m_value++;
-        }
-
-        template<typename T>
-        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, FloatValue>
-          &operator--()
-        {
-            --m_value;
-        }
-
-        template<typename T>
-        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, FloatValue> &operator--(
-          int)
-        {
-            m_value--;
-        }
-
-        template<typename T>
-        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, FloatValue> &operator+=(
-          const T &value)
+        std::enable_if_t<std::is_floating_point_v<T>, FloatValue> &operator+=(const T &value)
         {
             m_value += static_cast<int64_t>(value);
         }
 
-        FloatValue &operator+=(const FloatValue &value) { m_value += value.m_value; }
-
-        template<typename T>
-        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, FloatValue> &operator-=(
-          const T &value)
+        FloatValue &operator+=(const FloatValue &value)
         {
-            m_value -= static_cast<int64_t>(value);
+            m_value += value.m_value;
+            return *this;
         }
 
-        FloatValue &operator-=(const FloatValue &value) { m_value -= value.m_value; }
+        template<typename T>
+        std::enable_if_t<std::is_floating_point_v<T>, FloatValue> &operator-=(const T &value)
+        {
+            m_value -= static_cast<int64_t>(value);
+            return *this;
+        }
+
+        FloatValue &operator-=(const FloatValue &value)
+        {
+            m_value -= value.m_value;
+            return *this;
+        }
 
         template<typename T>
-        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, FloatValue> operator+(
-          const T &value)
+        std::enable_if_t<std::is_floating_point_v<T>, FloatValue> operator+(const T &value)
         {
             return FloatValue(m_value + static_cast<int64_t>(value));
         }
 
-        FloatValue operator+(const FloatValue &value) { FloatValue(m_value + value.m_value); }
+        FloatValue operator+(const FloatValue &value)
+        {
+            return FloatValue(m_value + value.m_value);
+        }
 
         template<typename T>
-        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, FloatValue> operator-(
-          const T &value)
+        std::enable_if_t<std::is_floating_point_v<T>, FloatValue> operator-(const T &value)
         {
             return FloatValue(m_value - static_cast<int64_t>(value));
         }
 
-        FloatValue operator-(const FloatValue &value) { FloatValue(m_value - value.m_value); }
+        FloatValue operator-(const FloatValue &value)
+        {
+            return FloatValue(m_value - value.m_value);
+        }
 
         template<typename T>
-        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, FloatValue> &operator*=(
-          const T &value)
+        std::enable_if_t<std::is_floating_point_v<T>, FloatValue> &operator*=(const T &value)
         {
             m_value *= static_cast<int64_t>(value);
+            return *this;
         }
 
-        FloatValue &operator*=(const FloatValue &value) { m_value *= value.m_value; }
+        FloatValue &operator*=(const FloatValue &value)
+        {
+            m_value *= value.m_value;
+            return *this;
+        }
 
         template<typename T>
-        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, FloatValue> &operator/=(
-          const T &value)
+        std::enable_if_t<std::is_floating_point_v<T>, FloatValue> &operator/=(const T &value)
         {
             m_value /= static_cast<int64_t>(value);
+            return *this;
         }
 
-        FloatValue &operator/=(const FloatValue &value) { m_value /= value.m_value; }
+        FloatValue &operator/=(const FloatValue &value)
+        {
+            m_value /= value.m_value;
+            return *this;
+        }
 
         template<typename T>
-        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, FloatValue> operator*(
-          const T &value)
+        std::enable_if_t<std::is_floating_point_v<T>, FloatValue> operator*(const T &value)
         {
             return FloatValue(m_value * static_cast<int64_t>(value));
         }
 
-        FloatValue operator*(const FloatValue &value) { FloatValue(m_value * value.m_value); }
+        FloatValue operator*(const FloatValue &value)
+        {
+            return FloatValue(m_value * value.m_value);
+        }
 
         template<typename T>
-        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, FloatValue> operator/(
-          const T &value)
+        std::enable_if_t<std::is_floating_point_v<T>, FloatValue> operator/(const T &value)
         {
             return FloatValue(m_value / static_cast<int64_t>(value));
         }
 
-        FloatValue operator/(const FloatValue &value) { FloatValue(m_value / value.m_value); }
-
-        template<typename T>
-        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, FloatValue> &operator%=(
-          const T &value)
+        FloatValue operator/(const FloatValue &value)
         {
-            m_value %= static_cast<int64_t>(value);
+            return FloatValue(m_value / value.m_value);
         }
-
-        FloatValue &operator%=(const FloatValue &value) { m_value %= value.m_value; }
-
-        template<typename T>
-        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, FloatValue> operator%(
-          const T &value)
-        {
-            return FloatValue(m_value % static_cast<int64_t>(value));
-        }
-
-        FloatValue operator%(const FloatValue &value) { FloatValue(m_value % value.m_value); }
     };
 } // namespace FDCore
 
