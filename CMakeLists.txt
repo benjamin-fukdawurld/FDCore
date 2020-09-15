@@ -10,41 +10,20 @@ option(FDCORE_BUILD_STATIC "Build FDCore as static library" OFF)
 
 option(FDCORE_BUILD_TESTS "Build FDCore tests" ON)
 
-if(NOT DEFINED THIRDPARTY_DIR)
-    set(THIRDPARTY_DIR CACHE PATH "path to thirdparty libraries")
-endif()
-
-if(NOT THIRDPARTY_DIR)
-    message(FATAL_ERROR "Thirdparty directory is not set")
-endif()
-
-if(NOT DEFINED THIRDPARTY_BOOST_DIR)
-    set(THIRDPARTY_BOOST_DIR ${THIRDPARTY_DIR}/boost CACHE PATH "path to boost root directory")
-endif()
-
-if(NOT THIRDPARTY_BOOST_DIR)
-    message(FATAL_ERROR "Boost directory is not set")
-endif()
-
 if(NOT DEFINED BOOST_ROOT)
-    set(BOOST_ROOT ${THIRDPARTY_BOOST_DIR})
+    message(STATUS "BOOST_ROOT not defined: using default path")
+else()
+    if(NOT DEFINED BOOST_INCLUDE_DIR)
+        set(BOOST_INCLUDE_DIR ${BOOST_ROOT})
+    endif()
+    
+    if(NOT DEFINED BOOST_LIBRARYDIR)
+        set(BOOST_LIBRARYDIR ${BOOST_ROOT}/stage)
+    endif()
 endif()
 
-if(NOT DEFINED BOOST_INCLUDE_DIR)
-    set(BOOST_INCLUDE_DIR ${BOOST_ROOT})
-endif()
-
-if(NOT DEFINED BOOST_LIBRARYDIR)
-    set(BOOST_LIBRARYDIR ${BOOST_ROOT}/stage)
-endif()
-
-if(NOT DEFINED THIRDPARTY_GTEST_DIR)
-    set(THIRDPARTY_GTEST_DIR ${THIRDPARTY_DIR}/googletest CACHE PATH
-        "path to googletest root directory")
-endif()
-
-if(NOT GTEST_ROOT)
-    set(GTEST_ROOT ${THIRDPARTY_GTEST_DIR})
+if(NOT DEFINED GTEST_ROOT)
+    message(STATUS "GTEST_ROOT not defined: using default path")
 endif()
 
 set(SRC_FILES
@@ -72,6 +51,9 @@ target_include_directories(${PROJECT_NAME}
 
 if(FDCORE_BUILD_TESTS)
     find_package(Boost 1.74 COMPONENTS system filesystem REQUIRED)
+    find_package(GTest REQUIRED)
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
+    find_package(Threads REQUIRED)
 
     add_library(${PROJECT_NAME}_test_plugin SHARED test/test_Plugin.cpp)
 
@@ -82,10 +64,8 @@ if(FDCORE_BUILD_TESTS)
 
     target_link_libraries(${PROJECT_NAME}_test_plugin ${PROJECT_NAME})
 
-    add_subdirectory(${GTEST_ROOT}
-                    ${GTEST_ROOT}/build)
-
     add_executable(${PROJECT_NAME}_test test/main.cpp)
+
     set_property(TARGET ${PROJECT_NAME}_test PROPERTY ENABLE_EXPORTS 1)
 
     target_include_directories(${PROJECT_NAME}_test
@@ -93,6 +73,7 @@ if(FDCORE_BUILD_TESTS)
                                 PUBLIC ${GTEST_ROOT}/googletest/include
                                 PUBLIC ${GTEST_ROOT}/googlemock/include)
 
+    target_link_libraries(${PROJECT_NAME}_test Threads::Threads)
     target_link_libraries(${PROJECT_NAME}_test Boost::filesystem Boost::system)
     target_link_libraries(${PROJECT_NAME}_test gtest)
     target_link_libraries(${PROJECT_NAME}_test dl)
