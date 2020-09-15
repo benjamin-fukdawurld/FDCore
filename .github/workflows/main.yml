@@ -2,7 +2,7 @@ name: build and run tests
 on:
   push:
     branches: [master]
-  pull request:
+  pull_request:
     branches: [master]
   jobs:
     build:
