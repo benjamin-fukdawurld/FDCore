@@ -6,8 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra")
 
-set(Gtest_DEBUG 1)
-
 option(FDCORE_BUILD_STATIC "Build FDCore as static library" OFF)
 
 option(FDCORE_BUILD_TESTS "Build FDCore tests" ON)
