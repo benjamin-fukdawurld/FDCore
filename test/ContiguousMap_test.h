@@ -28,25 +28,25 @@ TEST(ContiguousMap_test, test_size)
     ASSERT_EQ(testMap.size(), 0u);
 
     testMap.insert("1", 1);
-    ASSERT_EQ(testMap.size(), 1);
+    ASSERT_EQ(testMap.size(), 1u);
 
     testMap.insert("2", 2);
-    ASSERT_EQ(testMap.size(), 2);
+    ASSERT_EQ(testMap.size(), 2u);
 
     testMap.insert("3", 3);
-    ASSERT_EQ(testMap.size(), 3);
+    ASSERT_EQ(testMap.size(), 3u);
 
     testMap.insert("4", 4);
-    ASSERT_EQ(testMap.size(), 4);
+    ASSERT_EQ(testMap.size(), 4u);
 
     testMap.erase("4");
-    ASSERT_EQ(testMap.size(), 3);
+    ASSERT_EQ(testMap.size(), 3u);
 
     testMap.erase("4");
-    ASSERT_EQ(testMap.size(), 3);
+    ASSERT_EQ(testMap.size(), 3u);
 
     testMap.erase("3");
-    ASSERT_EQ(testMap.size(), 2);
+    ASSERT_EQ(testMap.size(), 2u);
 }
 
 TEST(ContiguousMap_test, test_clear)
@@ -59,7 +59,7 @@ TEST(ContiguousMap_test, test_clear)
     testMap.insert("3", 3);
     testMap.insert("4", 4);
 
-    ASSERT_EQ(testMap.size(), 4);
+    ASSERT_EQ(testMap.size(), 4u);
     testMap.clear();
     ASSERT_TRUE(testMap.empty());
 }
