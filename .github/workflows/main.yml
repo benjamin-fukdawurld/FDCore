@@ -25,9 +25,11 @@ jobs:
           sudo make install
       - name: Clang 12
         run: |
-          wget https://apt.llvm.org/llvm.sh
-          chmod +x llvm.sh
-          sudo ./llvm.sh 12
+          REPO_NAME="deb http://apt.llvm.org/focal/     llvm-toolchain-focal    main 12"
+          sudo wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+          sudo add-apt-repository "${REPO_NAME}"
+          sudo apt-get update
+          sudo apt-get install -y clang-12 lldb-12 lld-12 clangd-12
       - name: cache-boost
         uses: actions/cache@v1.0.3
         id: cache-boost
