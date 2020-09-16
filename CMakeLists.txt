@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra")
 
+set(Gtest_DEBUG 1)
+
 option(FDCORE_BUILD_STATIC "Build FDCore as static library" OFF)
 
 option(FDCORE_BUILD_TESTS "Build FDCore tests" ON)
@@ -13,17 +15,25 @@ option(FDCORE_BUILD_TESTS "Build FDCore tests" ON)
 if(NOT DEFINED BOOST_ROOT)
     message(STATUS "BOOST_ROOT not defined: using default path")
 else()
-    if(NOT DEFINED BOOST_INCLUDE_DIR)
-        set(BOOST_INCLUDE_DIR ${BOOST_ROOT})
+    if(NOT DEFINED BOOST_INCLUDEDIR)
+        set(BOOST_INCLUDEDIR ${BOOST_ROOT}/include)
     endif()
     
     if(NOT DEFINED BOOST_LIBRARYDIR)
-        set(BOOST_LIBRARYDIR ${BOOST_ROOT}/stage)
+        set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib)
     endif()
 endif()
 
 if(NOT DEFINED GTEST_ROOT)
     message(STATUS "GTEST_ROOT not defined: using default path")
+    else()
+    if(NOT DEFINED GTEST_INCLUDE_DIR)
+        set(GTEST_INCLUDE_DIR ${GTEST_ROOT}/include)
+    endif()
+
+    if(NOT DEFINED GTEST_LIBRARIES)
+        set(GTEST_LIBRARIES ${GTEST_ROOT}/lib)
+    endif()
 endif()
 
 set(SRC_FILES
@@ -47,11 +57,12 @@ endif()
 
 target_include_directories(${PROJECT_NAME}
                             PUBLIC include
-                            PUBLIC ${BOOST_INCLUDE_DIR})
+                            PUBLIC ${BOOST_INCLUDEDIR})
+
+find_package(Boost 1.74 COMPONENTS system filesystem REQUIRED)
 
 if(FDCORE_BUILD_TESTS)
-    find_package(Boost 1.74 COMPONENTS system filesystem REQUIRED)
-    find_package(GTest REQUIRED)
+    find_package(GTest REQUIRED COMPONENTS gtest)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
     find_package(Threads REQUIRED)
 
@@ -60,7 +71,8 @@ if(FDCORE_BUILD_TESTS)
     target_include_directories(${PROJECT_NAME}_test_plugin
                                 PUBLIC include
                                 PUBLIC test
-                                PUBLIC ${BOOST_INCLUDE_DIR})
+                                PUBLIC ${BOOST_INCLUDEDIR}
+                                PUBLIC ${GTEST_INCLUDE_DIR})
 
     target_link_libraries(${PROJECT_NAME}_test_plugin ${PROJECT_NAME})
 
@@ -70,12 +82,12 @@ if(FDCORE_BUILD_TESTS)
 
     target_include_directories(${PROJECT_NAME}_test
                                 PUBLIC include
-                                PUBLIC ${GTEST_ROOT}/googletest/include
-                                PUBLIC ${GTEST_ROOT}/googlemock/include)
+                                PUBLIC ${BOOST_INCLUDEDIR}
+                                PUBLIC ${GTEST_INCLUDE_DIR})
 
     target_link_libraries(${PROJECT_NAME}_test Threads::Threads)
     target_link_libraries(${PROJECT_NAME}_test Boost::filesystem Boost::system)
-    target_link_libraries(${PROJECT_NAME}_test gtest)
+    target_link_libraries(${PROJECT_NAME}_test GTest::GTest)
     target_link_libraries(${PROJECT_NAME}_test dl)
     target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
     target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME}_test_plugin)
