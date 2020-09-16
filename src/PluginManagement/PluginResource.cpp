@@ -20,7 +20,7 @@ size_t FDCore::PluginResource::getResourceHash() const
     return m_resource->getResourceHash();
 }
 
-bool FDCore::PluginResource::load(std::any data)
+bool FDCore::PluginResource::load(std::any /*data*/)
 {
     if(!isValid())
         return false;
