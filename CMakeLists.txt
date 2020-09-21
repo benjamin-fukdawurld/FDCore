@@ -24,12 +24,12 @@ endif()
 
 if(NOT DEFINED GTEST_ROOT)
     message(STATUS "GTEST_ROOT not defined: using default path")
-    else()
-    if(NOT DEFINED GTEST_INCLUDE_DIR)
+else()
+    if(NOT GTEST_INCLUDE_DIR)
         set(GTEST_INCLUDE_DIR ${GTEST_ROOT}/include)
     endif()
-
-    if(NOT DEFINED GTEST_LIBRARIES)
+    
+    if(NOT GTEST_LIBRARIES)
         set(GTEST_LIBRARIES ${GTEST_ROOT}/lib)
     endif()
 endif()
@@ -57,12 +57,14 @@ target_include_directories(${PROJECT_NAME}
                             PUBLIC include
                             PUBLIC ${BOOST_INCLUDEDIR})
 
-find_package(Boost 1.74 COMPONENTS system filesystem REQUIRED)
+find_package(Boost 1.75 COMPONENTS system filesystem REQUIRED)
 
 if(FDCORE_BUILD_TESTS)
-    find_package(GTest REQUIRED COMPONENTS gtest)
-    set(THREADS_PREFER_PTHREAD_FLAG ON)
-    find_package(Threads REQUIRED)
+    if(NOT GTEST_FOUND)
+        find_package(GTest REQUIRED COMPONENTS gtest)
+        set(THREADS_PREFER_PTHREAD_FLAG ON)
+        find_package(Threads REQUIRED)
+    endif()
 
     add_library(${PROJECT_NAME}_test_plugin SHARED test/test_Plugin.cpp)
 
