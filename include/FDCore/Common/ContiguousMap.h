@@ -100,7 +100,7 @@ namespace FDCore
          * @param key the key to hash
          * @return an hash value for a given key
          */
-        size_t hashKey(key_type key) const { return m_hasher(key); }
+        size_t hashKey(const key_type &key) const { return m_hasher(key); }
 
         /**
          * @brief Get the allocator object
@@ -319,19 +319,7 @@ namespace FDCore
         template<typename... Args>
         iterator emplace(const key_type &key, Args &&... args)
         {
-            size_t hash = m_hasher(key);
-            auto low_it = lower_bound_impl(begin(), end(), hash, m_hasher);
-            if(low_it == end())
-                return m_container.insert(end(), std::make_pair(key, value_type { args... }));
-
-            auto it = upper_bound_impl(low_it, end(), hash, m_hasher);
-            if(it == end())
-                return m_container.insert(end(), std::make_pair(key, value_type { args... }));
-
-            if(m_hasher(key) >= m_hasher(it->first))
-                ++it;
-
-            return m_container.insert(it, std::make_pair(key, value_type { args... }));
+            return insert(std::make_pair(key, value_type { args... }));
         }
 
         iterator erase(const_iterator pos) { return m_container.erase(pos); }
