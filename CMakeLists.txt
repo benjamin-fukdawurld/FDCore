@@ -39,6 +39,7 @@ set(SRC_FILES
     src/Common/ThreadPool.cpp
     src/Common/FileUtils.cpp
     src/Log/Logger.cpp
+    src/ApplicationManagement/AbstractApplication.cpp
     src/ResourceManagement/IResource.cpp
     src/ResourceManagement/AbstractResource.cpp
     src/ResourceManagement/ResourceManager.cpp
