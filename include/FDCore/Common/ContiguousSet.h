@@ -55,9 +55,9 @@ namespace FDCore
         explicit ContiguousSet(const Hash &hash = Hash(),
                                const equal_type &equal = equal_type(),
                                const Allocator &alloc = Allocator()) :
+            m_container(alloc),
             m_hasher(hash),
-            m_equal(equal),
-            m_container(alloc)
+            m_equal(equal)
         {
         }
 
@@ -86,6 +86,13 @@ namespace FDCore
                           return m_hasher(a) < m_hasher(b);
                       });
         }
+
+        /**
+         * @brief Returns an hash value for a given value
+         * @param value the value to hash
+         * @return an hash value for a given value
+         */
+        size_t hashItem(const value_type &value) const { return m_hasher(value); }
 
         /**
          * @brief Get the allocator object
@@ -252,48 +259,53 @@ namespace FDCore
         iterator insert(const value_type &value)
         {
             size_t hash = m_hasher(value);
-            auto it = lower_bound_impl(begin(), end(), hash, m_hasher);
+            auto low_it = lower_bound_impl(begin(), end(), hash, m_hasher);
+            if(low_it == end())
+                return m_container.insert(end(), value);
+
+            auto it = upper_bound_impl(low_it, end(), hash, m_hasher);
             if(it == end())
                 return m_container.insert(end(), value);
 
-            it = upper_bound_impl(it, end(), hash, m_hasher);
-            if(it == end())
-                return m_container.insert(end(), value);
+            if(m_hasher(value) >= m_hasher(*it))
+                ++it;
 
-            --it;
             return m_container.insert(it, value);
         }
 
         iterator insert(value_type &&value)
         {
             size_t hash = m_hasher(value);
-            auto it = lower_bound_impl(begin(), end(), hash, m_hasher);
+            auto low_it = lower_bound_impl(begin(), end(), hash, m_hasher);
+            if(low_it == end())
+                return m_container.insert(end(), std::move(value));
+
+            auto it = upper_bound_impl(low_it, end(), hash, m_hasher);
             if(it == end())
                 return m_container.insert(end(), std::move(value));
 
-            it = upper_bound_impl(it, end(), hash, m_hasher);
-            if(it == end())
-                return m_container.insert(end(), std::move(value));
+            if(m_hasher(value) >= m_hasher(*it))
+                ++it;
 
-            --it;
             return m_container.insert(it, std::move(value));
         }
 
         template<typename... Args>
         iterator emplace(Args &&... args)
         {
-            value_type val { args... };
-            size_t hash = m_hasher(val);
-            auto it = lower_bound_impl(begin(), end(), hash, m_hasher);
-            if(it == end())
-                return m_container.insert(end(), std::move(val));
+            return insert(value_type { args... });
+        }
 
-            it = upper_bound_impl(it, end(), hash, m_hasher);
-            if(it == end())
-                return m_container.insert(end(), std::move(val));
+        bool erase(const value_type &value)
+        {
+            iterator it = std::find(begin(), end(), value);
+            if(it != end())
+            {
+                m_container.erase(it);
+                return true;
+            }
 
-            --it;
-            return m_container.insert(it, std::move(val));
+            return false;
         }
 
         iterator erase(const_iterator pos) { return m_container.erase(pos); }
@@ -456,7 +468,7 @@ namespace FDCore
         bool binary_search(const_iterator first, const_iterator last, size_t hash) const
         {
             first = lower_bound(first, last, hash);
-            return (!(first == last) && !(hash < m_hasher(first)));
+            return (!(first == last) && !(hash < m_hasher(*first)));
         }
 
         bool binary_search(const_iterator first, const_iterator last, const value_type &value) const
@@ -646,8 +658,8 @@ namespace FDCore
             {
                 it = first;
                 step = count / 2;
-                std::advance(it, step);
-                if(hasher(*it) < hash)
+                size_t h = hasher(*it);
+                if(h < hash)
                 {
                     first = ++it;
                     count -= step + 1;

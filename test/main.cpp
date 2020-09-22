@@ -1,4 +1,5 @@
 #include "ContiguousMap_test.h"
+#include "ContiguousSet_test.h"
 #include "test_PluginApi.h"
 
 #include <FDCore/ApplicationManagement/AbstractApplication.h>
