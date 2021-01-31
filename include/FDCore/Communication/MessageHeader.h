@@ -1,9 +1,7 @@
 #ifndef FDCORE_COMMUNICATION_MESSAGEHEADER_H
 #define FDCORE_COMMUNICATION_MESSAGEHEADER_H
 
-#include <Common/Span.h>
-#include <cstdint>
-#include <numeric>
+#include <FDCore/Common/Span.h>
 #include <string_view>
 #include <unordered_map>
 #include <vector>
@@ -14,46 +12,23 @@ namespace FDCore
     {
       private:
         std::unordered_map<std::string, std::vector<uint8_t>> m_fields;
+        uint32_t m_payloadLength;
 
       public:
-        MessageHeader() = default;
+        MessageHeader() : MessageHeader(0) {}
+        MessageHeader(uint32_t payloadLength) : m_payloadLength(payloadLength) {}
 
-        const std::vector<uint8_t> getFiled(std::string_view name) const
+        bool hasField(std::string_view name) const;
+        const std::vector<uint8_t> &getFiled(std::string_view name) const;
+        void setFiled(std::string_view name, const Span<uint8_t> &value);
 
-          size_t size() const
-        {
-            typedef std::unordered_map<std::string, std::vector<uint8_t>>::const_iterator iterator;
-            return std::accumulate<iterator, size_t>(
-              m_fields.begin(), m_fields.end(), 4,
-              [](size_t total, const std::pair<std::string, std::vector<uint8_t>> *field)
-                -> size_t { return total + field->first.size() + 1 + field->second.size() });
-        }
+        uint32_t getPayloadLength() const { return m_payloadLength; }
+        void setPayloadLength(uint32_t length) { m_payloadLength = length; }
 
-        uint32_t write(Span<uint8_t> &output, uint32_t payloadLength)
-        {
-            uint8_t *current = output.data + 5;
-            memcpy(current, &payloadLength, 4);
-            for(auto &field: m_fields)
-            {
-                size_t s = field.first.size() + 1;
-                memcpy(current, field.first.data, s);
-                current += s;
-                memcpy(current, &field.second.size, 4);
-                current += 4;
-                memcpy(current, field.second.data, field.second.size);
-                current += field.second.size;
-            }
+        size_t size() const;
 
-            uint32_t length = current - output.data;
-            memcpy(output.data, &length, 4);
-            return length;
-        }
-
-        uint32_t read(const Span<uint8_t> &input)
-        {
-            uint32_t result = 0;
-            uint8_t *current = input.data + 9;
-        }
+        uint32_t write(Span<uint8_t> &output, uint32_t payloadLength);
+        uint32_t read(const Span<uint8_t> &input);
     };
 } // namespace FDCore
 

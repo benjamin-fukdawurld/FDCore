@@ -35,49 +35,49 @@ else()
 endif()
 
 set(HEADER_FILES
-    include/ApplicationManagement/AbstractApplication.h
+    include/FDCore/ApplicationManagement/AbstractApplication.h
 #
-    include/Common/CallOnEdit.h
-    include/Common/Comparison.h
-    include/Common/ContiguousMap.h
-    include/Common/ContiguousSet.h
-    include/Common/CopyOnWrite.h
-    include/Common/CRTPTrait.h
-    include/Common/EnumFlag.h
-    include/Common/FileUtils.h
-    include/Common/Identifiable.h
-    include/Common/Macros.h
-    include/Common/NonCopyableTrait.h
-    include/Common/Object.h
-    include/Common/ObjectGuard.h
-    include/Common/Singleton.h
-    include/Common/Span.h
-    include/Common/ThreadPool.h
-    include/Common/TypeInformation.h
+    include/FDCore/Common/CallOnEdit.h
+    include/FDCore/Common/Comparison.h
+    include/FDCore/Common/ContiguousMap.h
+    include/FDCore/Common/ContiguousSet.h
+    include/FDCore/Common/CopyOnWrite.h
+    include/FDCore/Common/CRTPTrait.h
+    include/FDCore/Common/EnumFlag.h
+    include/FDCore/Common/FileUtils.h
+    include/FDCore/Common/Identifiable.h
+    include/FDCore/Common/Macros.h
+    include/FDCore/Common/NonCopyableTrait.h
+    include/FDCore/Common/Object.h
+    include/FDCore/Common/ObjectGuard.h
+    include/FDCore/Common/Singleton.h
+    include/FDCore/Common/Span.h
+    include/FDCore/Common/ThreadPool.h
+    include/FDCore/Common/TypeInformation.h
 #
-    include/Communication/MessageHeader.h
-    include/Communication/Request.h
-    include/Communication/RequestType.h
+    include/FDCore/Communication/MessageHeader.h
+    include/FDCore/Communication/Request.h
+    include/FDCore/Communication/RequestType.h
 #
-    include/DynamicVariable/AbstractValue.h
-    include/DynamicVariable/DynamicVariable.h
-    include/DynamicVariable/PrimitiveValue.h
-    include/DynamicVariable/ValueType.h
+    include/FDCore/DynamicVariable/AbstractValue.h
+    include/FDCore/DynamicVariable/DynamicVariable.h
+    include/FDCore/DynamicVariable/PrimitiveValue.h
+    include/FDCore/DynamicVariable/ValueType.h
 #
-    include/Log/AbstractLogger.h
-    include/Log/Logger.h
-    include/Log/LogLevel.h
+    include/FDCore/Log/AbstractLogger.h
+    include/FDCore/Log/Logger.h
+    include/FDCore/Log/LogLevel.h
 #
-    include/PluginManagement/AbstractPlugin.h
-    include/PluginManagement/Plugin.h
-    include/PluginManagement/PluginBinder.h
-    include/PluginManagement/PluginManager.h
-    include/PluginManagement/PluginResource.h
+    include/FDCore/PluginManagement/AbstractPlugin.h
+    include/FDCore/PluginManagement/Plugin.h
+    include/FDCore/PluginManagement/PluginBinder.h
+    include/FDCore/PluginManagement/PluginManager.h
+    include/FDCore/PluginManagement/PluginResource.h
 #
-    include/ResourceManagement/AbstractResource.h
-    include/ResourceManagement/IResource.h
-    include/ResourceManagement/ResourceManager.h
-    include/ResourceManagement/StrategyResource.h
+    include/FDCore/ResourceManagement/AbstractResource.h
+    include/FDCore/ResourceManagement/IResource.h
+    include/FDCore/ResourceManagement/ResourceManager.h
+    include/FDCore/ResourceManagement/StrategyResource.h
 )
 
 set(SRC_FILES
@@ -86,6 +86,9 @@ set(SRC_FILES
     src/Common/FileUtils.cpp
     src/Common/Object.cpp
     src/Common/ThreadPool.cpp
+#
+
+    src/Communication/MessageHeader.cpp
 #
     src/DynamicVariable/DynamicVariable.cpp
 #
@@ -113,6 +116,7 @@ target_include_directories(${PROJECT_NAME}
 find_package(Boost 1.75 COMPONENTS system filesystem REQUIRED)
 
 if(FDCORE_BUILD_TESTS)
+    enable_testing()
     if(NOT GTEST_FOUND)
         find_package(GTest REQUIRED COMPONENTS gtest)
         set(THREADS_PREFER_PTHREAD_FLAG ON)
@@ -145,7 +149,6 @@ if(FDCORE_BUILD_TESTS)
     target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
     target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME}_test_plugin)
 
-    enable_testing()
     include(GoogleTest)
     gtest_discover_tests(${PROJECT_NAME}_test)
 endif()
