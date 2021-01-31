@@ -89,7 +89,7 @@ namespace FDCore
       private:
         bool importWithoutData()
         {
-            m_plugin = boost::dll::import<PluginApi>(m_library, getResourceName().data());
+            m_plugin = boost::dll::import_symbol<PluginApi>(m_library, getResourceName().data());
 
             return m_plugin.get() != 0;
         }
@@ -99,7 +99,7 @@ namespace FDCore
             if(entryPoint->isAlias)
                 m_plugin = boost::dll::import_alias<PluginApi>(m_library, entryPoint->symbolName);
             else
-                m_plugin = boost::dll::import<PluginApi>(m_library, entryPoint->symbolName);
+                m_plugin = boost::dll::import_symbol<PluginApi>(m_library, entryPoint->symbolName);
 
             return m_plugin.get() != 0;
         }
@@ -111,7 +111,7 @@ namespace FDCore
                 factory =
                   boost::dll::import_alias<PluginFactory>(m_library, entryPoint->symbolName);
             else
-                factory = boost::dll::import<PluginFactory>(m_library, entryPoint->symbolName);
+                factory = boost::dll::import_symbol<PluginFactory>(m_library, entryPoint->symbolName);
 
             if(!factory)
                 return false;
