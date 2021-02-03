@@ -1,7 +1,6 @@
-#include "ContiguousMap_test.h"
-#include "ContiguousSet_test.h"
-#include "Plugin_test.h"
-#include "test_PluginApi.h"
+#include "Common/Common_test.h"
+#include "PluginManagement/Plugin_test.h"
+#include "PluginManagement/test_PluginApi.h"
 
 #include <FDCore/ApplicationManagement/AbstractApplication.h>
 #include <FDCore/Common/ContiguousSet.h>
@@ -16,7 +15,7 @@
 #include <string>
 
 generateTypeCode(FDCore::Plugin<FDCore::PluginApi>);
-class Application : public FDCore::AbstractApplication
+/*class Application : public FDCore::AbstractApplication
 {
   private:
     std::vector<FDCore::AbstractPlugin *> m_plugins;
@@ -101,7 +100,7 @@ int Application::run(int, char **)
     return AbstractApplication::ExitSuccess;
 }
 
-void Application::addPlugin(FDCore::AbstractPlugin *plugin) { m_plugins.push_back(plugin); }
+void Application::addPlugin(FDCore::AbstractPlugin *plugin) { m_plugins.push_back(plugin); }*/
 
 int main(int argc, char **argv)
 {

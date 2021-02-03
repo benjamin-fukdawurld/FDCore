@@ -4,6 +4,7 @@
 #include "test_PluginApi.h"
 
 #include <FDCore/PluginManagement/Plugin.h>
+#include <gtest/gtest.h>
 
 TEST(Plugin_test, test_loading)
 {
@@ -22,13 +23,13 @@ TEST(Plugin_test, test_loading)
     FAIL() << R"(Googletest code seems unable to load the plugin correctly.
     It might be caused by the instantiation of the plugin global variable
     that is not done yet at the moment the code is executed)";
-        EXPECT_EQ(plugin->str, "string");
+    EXPECT_EQ(plugin->str, "string");
 
-        EXPECT_EQ(plugin->f_i(), 1);
-        EXPECT_NEAR(plugin->f_f(), 3.14159f / 3, 0.00001f);
-        EXPECT_FALSE(plugin->f_b());
-        EXPECT_EQ(plugin->f_c(), 'd');
-        EXPECT_EQ(plugin->f_str(), "f_string result");
+    EXPECT_EQ(plugin->f_i(), 1);
+    EXPECT_NEAR(plugin->f_f(), 3.14159f / 3, 0.00001f);
+    EXPECT_FALSE(plugin->f_b());
+    EXPECT_EQ(plugin->f_c(), 'd');
+    EXPECT_EQ(plugin->f_str(), "f_string result");
 
     plugin.release();
 }
