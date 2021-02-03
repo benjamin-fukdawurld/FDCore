@@ -9,7 +9,13 @@ namespace FDCore
     {
       public:
         AbstractValue() = default;
-        virtual ~AbstractValue() = default;
+        AbstractValue(AbstractValue &&) = default;
+        AbstractValue(const AbstractValue &) = default;
+
+        virtual ~AbstractValue() noexcept = default;
+
+        AbstractValue &operator=(AbstractValue &&) = default;
+        AbstractValue &operator=(const AbstractValue &) = default;
 
         virtual ValueType getValueType() const = 0;
         virtual bool isType(ValueType type) const { return type == getValueType(); }

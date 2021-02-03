@@ -12,6 +12,14 @@ namespace FDCore
         std::shared_ptr<AbstractValue> m_value;
 
         DynamicVariable();
+        DynamicVariable(ValueType type);
+
+        ValueType getValueType() const
+        {
+            return !m_value ? ValueType::None : m_value->getValueType();
+        }
+
+        bool isType(ValueType type) const { return type == getValueType(); }
     };
 
 } // namespace FDCore
