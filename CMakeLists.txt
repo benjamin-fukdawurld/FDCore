@@ -16,7 +16,7 @@ else()
     if(NOT DEFINED BOOST_INCLUDEDIR)
         set(BOOST_INCLUDEDIR ${BOOST_ROOT}/include)
     endif()
-    
+
     if(NOT DEFINED BOOST_LIBRARYDIR)
         set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib)
     endif()
@@ -28,7 +28,7 @@ else()
     if(NOT GTEST_INCLUDE_DIR)
         set(GTEST_INCLUDE_DIR ${GTEST_ROOT}/include)
     endif()
-    
+
     if(NOT GTEST_LIBRARIES)
         set(GTEST_LIBRARIES ${GTEST_ROOT}/lib)
     endif()
@@ -60,8 +60,11 @@ set(HEADER_FILES
     include/FDCore/Communication/RequestType.h
 #
     include/FDCore/DynamicVariable/AbstractValue.h
+    include/FDCore/DynamicVariable/BoolValue.h
     include/FDCore/DynamicVariable/DynamicVariable.h
-    include/FDCore/DynamicVariable/PrimitiveValue.h
+    include/FDCore/DynamicVariable/FloatValue.h
+    include/FDCore/DynamicVariable/IntValue.h
+    include/FDCore/DynamicVariable/StringType.h
     include/FDCore/DynamicVariable/ValueType.h
 #
     include/FDCore/Log/AbstractLogger.h
@@ -104,9 +107,9 @@ set(SRC_FILES
 )
 
 if(FDCORE_BUILD_STATIC)
-    add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
+    add_library(${PROJECT_NAME} STATIC ${SRC_FILES} ${HEADER_FILES})
 else()
-    add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
+    add_library(${PROJECT_NAME} SHARED ${SRC_FILES} ${HEADER_FILES})
 endif()
 
 target_include_directories(${PROJECT_NAME}
@@ -123,7 +126,7 @@ if(FDCORE_BUILD_TESTS)
         find_package(Threads REQUIRED)
     endif()
 
-    add_library(${PROJECT_NAME}_test_plugin SHARED test/test_Plugin.cpp)
+    add_library(${PROJECT_NAME}_test_plugin SHARED test/PluginManagement/test_Plugin.cpp)
 
     target_include_directories(${PROJECT_NAME}_test_plugin
                                 PUBLIC include
