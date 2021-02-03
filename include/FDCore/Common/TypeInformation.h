@@ -9,7 +9,7 @@
         template<>                                                              \
         struct TypeCodeHelper<type>                                             \
         {                                                                       \
-            static constexpr const char code[] = name;                          \
+            static constexpr const char *const code = name;                     \
             static size_t hash()                                                \
             {                                                                   \
                 static const size_t hash = std::hash<std::string_view>()(code); \
@@ -23,8 +23,8 @@
 #define generateTemplateTypeCodeWithName(type, template_type, name)             \
     namespace FDCore                                                            \
     {                                                                           \
-        template<typename template_type>                                        \
-        struct TypeCodeHelper<type<template_type>>                              \
+        template<typename(template_type)>                                       \
+          struct TypeCodeHelper<(type) < (template_type)> >                     \
         {                                                                       \
             static constexpr const char code[] = name;                          \
             static size_t hash()                                                \
@@ -37,7 +37,7 @@
 
 #define generateTemplateTypeName_str(name) #name
 #define generateTemplateTypeName(type, template_type) \
-    generateTemplateTypeName_str(type<template_type>)
+    generateTemplateTypeName_str((type) < template_type >)
 #define generateTemplateTypeCode(type, template_type)     \
     generateTemplateTypeCodeWithName(type, template_type, \
                                      generateTemplateTypeName(type, template_type))
