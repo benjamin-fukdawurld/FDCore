@@ -64,7 +64,7 @@ set(HEADER_FILES
     include/FDCore/DynamicVariable/DynamicVariable.h
     include/FDCore/DynamicVariable/FloatValue.h
     include/FDCore/DynamicVariable/IntValue.h
-    include/FDCore/DynamicVariable/StringType.h
+    include/FDCore/DynamicVariable/StringValue.h
     include/FDCore/DynamicVariable/ValueType.h
 #
     include/FDCore/Log/AbstractLogger.h

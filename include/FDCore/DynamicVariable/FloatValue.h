@@ -53,6 +53,60 @@ namespace FDCore
             return static_cast<T>(m_value);
         }
 
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, bool> operator==(
+          const T &value) const
+        {
+            return m_value == static_cast<FloatType>(value);
+        }
+
+        bool operator==(const FloatValue &value) const { return m_value == value.m_value; }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, bool> operator!=(
+          const T &value) const
+        {
+            return m_value != static_cast<FloatType>(value);
+        }
+
+        bool operator!=(const FloatValue &value) const { return m_value != value.m_value; }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, bool> operator<=(
+          const T &value) const
+        {
+            return m_value <= static_cast<FloatType>(value);
+        }
+
+        bool operator<=(const FloatValue &value) const { return m_value <= value.m_value; }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, bool> operator<(
+          const T &value) const
+        {
+            return m_value < static_cast<FloatType>(value);
+        }
+
+        bool operator<(const FloatValue &value) const { return m_value < value.m_value; }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, bool> operator>=(
+          const T &value) const
+        {
+            return m_value >= static_cast<FloatType>(value);
+        }
+
+        bool operator>=(const FloatValue &value) const { return m_value >= value.m_value; }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, bool> operator>(
+          const T &value) const
+        {
+            return m_value > static_cast<FloatType>(value);
+        }
+
+        bool operator>(const FloatValue &value) const { return m_value > value.m_value; }
+
         FloatValue operator-() { return FloatValue(-m_value); }
 
         FloatValue operator+() { return FloatValue(m_value); }

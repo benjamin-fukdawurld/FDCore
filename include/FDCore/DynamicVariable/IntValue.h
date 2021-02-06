@@ -53,9 +53,65 @@ namespace FDCore
             return static_cast<T>(m_value);
         }
 
-        IntValue operator-() { return IntValue(-m_value); }
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator==(
+          const T &value) const
+        {
+            return m_value == static_cast<IntType>(value);
+        }
 
-        IntValue operator+() { return IntValue(m_value); }
+        bool operator==(const IntValue &value) const { return m_value == value.m_value; }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator!=(
+          const T &value) const
+        {
+            return m_value != static_cast<IntType>(value);
+        }
+
+        bool operator!=(const IntValue &value) const { return m_value != value.m_value; }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator<=(
+          const T &value) const
+        {
+            return m_value <= static_cast<IntType>(value);
+        }
+
+        bool operator<=(const IntValue &value) const { return m_value <= value.m_value; }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator<(
+          const T &value) const
+        {
+            return m_value < static_cast<IntType>(value);
+        }
+
+        bool operator<(const IntValue &value) const { return m_value < value.m_value; }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator>=(
+          const T &value) const
+        {
+            return m_value >= static_cast<IntType>(value);
+        }
+
+        bool operator>=(const IntValue &value) const { return m_value >= value.m_value; }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator>(
+          const T &value) const
+        {
+            return m_value > static_cast<IntType>(value);
+        }
+
+        bool operator>(const IntValue &value) const { return m_value > value.m_value; }
+
+        IntValue operator-() const { return IntValue(-m_value); }
+
+        IntValue operator~() const { return IntValue(~m_value); }
+
+        IntValue operator+() const { return IntValue(m_value); }
 
         IntValue &operator++()
         {
@@ -63,11 +119,7 @@ namespace FDCore
             return *this;
         }
 
-        IntValue &operator++(int)
-        {
-            m_value++;
-            return *this;
-        }
+        IntValue operator++(int) { return IntValue(m_value++); }
 
         IntValue &operator--()
         {
@@ -75,11 +127,7 @@ namespace FDCore
             return *this;
         }
 
-        IntValue &operator--(int)
-        {
-            m_value--;
-            return *this;
-        }
+        IntValue operator--(int) { return IntValue(m_value--); }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> &operator+=(
@@ -111,21 +159,27 @@ namespace FDCore
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> operator+(
-          const T &value)
+          const T &value) const
         {
             return IntValue(m_value + static_cast<IntType>(value));
         }
 
-        IntValue operator+(const IntValue &value) { return IntValue(m_value + value.m_value); }
+        IntValue operator+(const IntValue &value) const
+        {
+            return IntValue(m_value + value.m_value);
+        }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> operator-(
-          const T &value)
+          const T &value) const
         {
             return IntValue(m_value - static_cast<IntType>(value));
         }
 
-        IntValue operator-(const IntValue &value) { return IntValue(m_value - value.m_value); }
+        IntValue operator-(const IntValue &value) const
+        {
+            return IntValue(m_value - value.m_value);
+        }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> &operator*=(
@@ -157,21 +211,27 @@ namespace FDCore
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> operator*(
-          const T &value)
+          const T &value) const
         {
             return IntValue(m_value * static_cast<IntType>(value));
         }
 
-        IntValue operator*(const IntValue &value) { return IntValue(m_value * value.m_value); }
+        IntValue operator*(const IntValue &value) const
+        {
+            return IntValue(m_value * value.m_value);
+        }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> operator/(
-          const T &value)
+          const T &value) const
         {
             return IntValue(m_value / static_cast<IntType>(value));
         }
 
-        IntValue operator/(const IntValue &value) { return IntValue(m_value / value.m_value); }
+        IntValue operator/(const IntValue &value) const
+        {
+            return IntValue(m_value / value.m_value);
+        }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> &operator%=(
@@ -188,14 +248,189 @@ namespace FDCore
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> operator%(
-          const T &value)
+          const T &value) const
         {
             return IntValue(m_value % static_cast<IntType>(value));
         }
 
-        IntValue operator%(const IntValue &value) { return IntValue(m_value % value.m_value); }
+        IntValue operator%(const IntValue &value) const
+        {
+            return IntValue(m_value % value.m_value);
+        }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> &operator<<=(
+          const T &value)
+        {
+            m_value <<= static_cast<IntType>(value);
+            return *this;
+        }
+
+        IntValue &operator<<=(const IntValue &value)
+        {
+            m_value <<= value.m_value;
+            return *this;
+        }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> &operator>>=(
+          const T &value)
+        {
+            m_value >>= static_cast<IntType>(value);
+            return *this;
+        }
+
+        IntValue &operator>>=(const IntValue &value)
+        {
+            m_value >>= value.m_value;
+            return *this;
+        }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> operator<<(
+          const T &value) const
+        {
+            return IntValue(m_value << static_cast<IntType>(value));
+        }
+
+        IntValue operator<<(const IntValue &value) const
+        {
+            return IntValue(m_value << value.m_value);
+        }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> operator>>(
+          const T &value) const
+        {
+            return IntValue(m_value >> static_cast<IntType>(value));
+        }
+
+        IntValue operator>>(const IntValue &value) const
+        {
+            return IntValue(m_value >> value.m_value);
+        }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> &operator&=(
+          const T &value)
+        {
+            m_value &= static_cast<IntType>(value);
+            return *this;
+        }
+
+        IntValue &operator&=(const IntValue &value)
+        {
+            m_value &= value.m_value;
+            return *this;
+        }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> operator&(
+          const T &value) const
+        {
+            return IntValue(m_value & static_cast<IntType>(value));
+        }
+
+        IntValue operator&(const IntValue &value) const
+        {
+            return IntValue(m_value & value.m_value);
+        }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> &operator|=(
+          const T &value)
+        {
+            m_value |= static_cast<IntType>(value);
+            return *this;
+        }
+
+        IntValue &operator|=(const IntValue &value)
+        {
+            m_value |= value.m_value;
+            return *this;
+        }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> operator|(
+          const T &value) const
+        {
+            return IntValue(m_value | static_cast<IntType>(value));
+        }
+
+        IntValue operator|(const IntValue &value) const
+        {
+            return IntValue(m_value | value.m_value);
+        }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> &operator^=(
+          const T &value)
+        {
+            m_value ^= static_cast<IntType>(value);
+            return *this;
+        }
+
+        IntValue &operator^=(const IntValue &value)
+        {
+            m_value ^= value.m_value;
+            return *this;
+        }
+
+        template<typename T>
+        std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> operator^(
+          const T &value) const
+        {
+            return IntValue(m_value ^ static_cast<IntType>(value));
+        }
+
+        IntValue operator^(const IntValue &value) const
+        {
+            return IntValue(m_value ^ value.m_value);
+        }
     };
 } // namespace FDCore
+
+template<typename T>
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator==(
+  const T &value, const FDCore::IntValue &other)
+{
+    return other == value;
+}
+
+template<typename T>
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator!=(
+  const T &value, const FDCore::IntValue &other)
+{
+    return other != value;
+}
+
+template<typename T>
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator<=(
+  const T &value, const FDCore::IntValue &other)
+{
+    return value <= static_cast<T>(other);
+}
+
+template<typename T>
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator<(
+  const T &value, const FDCore::IntValue &other)
+{
+    return value < static_cast<T>(other);
+}
+
+template<typename T>
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator>=(
+  const T &value, const FDCore::IntValue &other)
+{
+    return value >= static_cast<T>(other);
+}
+
+template<typename T>
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator>(
+  const T &value, const FDCore::IntValue &other)
+{
+    return value > static_cast<T>(other);
+}
 
 template<typename T>
 std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> &operator+=(
@@ -267,14 +502,44 @@ std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> operator%
     return value % static_cast<T>(other);
 }
 
-template<typename StreamType>
-StreamType &operator<<(StreamType &stream, const FDCore::IntValue &value)
+template<typename T>
+std::enable_if_t<std::is_integral_v<T>, T> operator<<=(const T &value,
+                                                       const FDCore::IntValue &other)
 {
-    return stream << static_cast<const FDCore::IntValue::IntType &>(value);
+    return value <<= static_cast<const FDCore::IntValue::IntType &>(other);
+}
+
+template<typename T>
+std::enable_if_t<std::is_integral_v<T>, T> operator<<(const T &value, const FDCore::IntValue &other)
+{
+    return value << static_cast<const FDCore::IntValue::IntType &>(other);
+}
+
+template<typename T>
+std::enable_if_t<std::is_integral_v<T>, T> &operator>>=(const T &value, FDCore::IntValue &other)
+{
+
+    return value >>= static_cast<const FDCore::IntValue::IntType &>(other);
+}
+
+template<typename T>
+std::enable_if_t<std::is_integral_v<T>, T> &operator>>(const T &value, FDCore::IntValue &other)
+{
+
+    return value >> static_cast<const FDCore::IntValue::IntType &>(other);
 }
 
 template<typename StreamType>
-StreamType &operator>>(StreamType &stream, FDCore::IntValue &value)
+std::enable_if_t<!std::is_integral_v<StreamType>, StreamType> &operator<<(
+  StreamType &stream, const FDCore::IntValue &value)
+{
+    stream << static_cast<const FDCore::IntValue::IntType &>(value);
+    return stream;
+}
+
+template<typename StreamType>
+std::enable_if_t<!std::is_integral_v<StreamType>, StreamType> &operator>>(StreamType &stream,
+                                                                          FDCore::IntValue &value)
 {
     FDCore::IntValue::IntType tmp;
     stream >> tmp;

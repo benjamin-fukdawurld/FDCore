@@ -33,22 +33,38 @@ namespace FDCore
 
         bool operator!() const { return !m_value; }
 
+        bool operator==(bool other) const { return m_value == other; }
+        bool operator==(const BoolValue &other) const { return m_value == other.m_value; }
+
+        bool operator!=(bool other) const { return m_value != other; }
+        bool operator!=(const BoolValue &other) const { return m_value != other.m_value; }
+
         bool operator&&(bool other) const { return m_value && other; }
         bool operator&&(const BoolValue &other) const { return m_value && other.m_value; }
 
         bool operator||(bool other) const { return m_value || other; }
         bool operator||(const BoolValue &other) const { return m_value || other.m_value; }
+
+        bool operator^(bool other) const { return m_value ^ other; }
+        bool operator^(const BoolValue &other) const { return m_value ^ other.m_value; }
     };
 } // namespace FDCore
 
-bool operator&&(bool a, const FDCore::BoolValue &b) { return b && a; }
+inline bool operator==(bool a, const FDCore::BoolValue &b) { return b == a; }
 
-bool operator||(bool a, const FDCore::BoolValue &b) { return b || a; }
+inline bool operator!=(bool a, const FDCore::BoolValue &b) { return b != a; }
+
+inline bool operator&&(bool a, const FDCore::BoolValue &b) { return b && a; }
+
+inline bool operator||(bool a, const FDCore::BoolValue &b) { return b || a; }
+
+inline bool operator^(bool a, const FDCore::BoolValue &b) { return b ^ a; }
 
 template<typename StreamType>
 StreamType &operator<<(StreamType &stream, const FDCore::BoolValue &value)
 {
-    return stream << static_cast<bool>(value);
+    stream << static_cast<bool>(value);
+    return stream;
 }
 
 template<typename StreamType>
