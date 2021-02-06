@@ -1,8 +1,5 @@
-#include <FDCore/DynamicVariable/BoolValue.h>
 #include <FDCore/DynamicVariable/DynamicVariable.h>
-#include <FDCore/DynamicVariable/FloatValue.h>
-#include <FDCore/DynamicVariable/IntValue.h>
-#include <FDCore/DynamicVariable/StringValue.h>
+#include <utility>
 
 using namespace FDCore;
 
@@ -13,23 +10,43 @@ FDCore::DynamicVariable::DynamicVariable(FDCore::ValueType type)
 {
     switch(type)
     {
-        case ValueType::Boolean:
-            m_value = std::make_shared<BoolValue>();
+        case FDCore::ValueType::Boolean:
+            m_value = std::make_shared<FDCore::BoolValue>();
             break;
 
-        case ValueType::Integer:
-            m_value = std::make_shared<IntValue>();
+        case FDCore::ValueType::Integer:
+            m_value = std::make_shared<FDCore::IntValue>();
             break;
 
-        case ValueType::Float:
-            m_value = std::make_shared<FloatValue>();
+        case FDCore::ValueType::Float:
+            m_value = std::make_shared<FDCore::FloatValue>();
             break;
 
-        case ValueType::String:
-            m_value = std::make_shared<StringValue>();
+        case FDCore::ValueType::String:
+            m_value = std::make_shared<FDCore::StringValue>();
             break;
 
         default:
             break;
     }
+}
+
+
+FDCore::DynamicVariable &FDCore::DynamicVariable::operator=(FDCore::StringValue::StringType &&str)
+{
+    m_value = std::make_shared<FDCore::StringValue>(std::move(str));
+    return *this;
+}
+
+FDCore::DynamicVariable &FDCore::DynamicVariable::operator=(
+  const FDCore::StringValue::StringType &str)
+{
+    m_value = std::make_shared<FDCore::StringValue>(str);
+    return *this;
+}
+
+FDCore::DynamicVariable &FDCore::DynamicVariable::operator=(bool value)
+{
+    m_value = std::make_shared<FDCore::BoolValue>(value);
+    return *this;
 }
