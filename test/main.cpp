@@ -1,4 +1,5 @@
 #include "Common/Common_test.h"
+#include "DynamicVariable/DynamicVariable_test.h"
 #include "PluginManagement/Plugin_test.h"
 #include "PluginManagement/test_PluginApi.h"
 

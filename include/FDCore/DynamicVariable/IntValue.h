@@ -547,4 +547,46 @@ std::enable_if_t<!std::is_integral_v<StreamType>, StreamType> &operator>>(Stream
     return stream;
 }
 
+template<typename T>
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> &operator&=(
+  T &value, FDCore::IntValue &other)
+{
+    return value &= static_cast<T>(other);
+}
+
+template<typename T>
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> operator&(
+  const T &value, FDCore::IntValue &other)
+{
+    return value & static_cast<T>(other);
+}
+
+template<typename T>
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> &operator|=(
+  T &value, FDCore::IntValue &other)
+{
+    return value |= static_cast<T>(other);
+}
+
+template<typename T>
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> operator|(
+  const T &value, FDCore::IntValue &other)
+{
+    return value | static_cast<T>(other);
+}
+
+template<typename T>
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> &operator^=(
+  T &value, FDCore::IntValue &other)
+{
+    return value ^= static_cast<T>(other);
+}
+
+template<typename T>
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> operator^(
+  const T &value, FDCore::IntValue &other)
+{
+    return value ^ static_cast<T>(other);
+}
+
 #endif // FDCORE_INTVALUE_H

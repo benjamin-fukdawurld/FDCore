@@ -6,6 +6,8 @@
 #endif // FDCORE_FLOAT_TYPE
 
 #include <FDCore/DynamicVariable/AbstractValue.h>
+#include <math.h>
+#include <type_traits>
 
 namespace FDCore
 {
@@ -107,15 +109,16 @@ namespace FDCore
 
         bool operator>(const FloatValue &value) const { return m_value > value.m_value; }
 
-        FloatValue operator-() { return FloatValue(-m_value); }
+        FloatValue operator-() const { return FloatValue(-m_value); }
 
-        FloatValue operator+() { return FloatValue(m_value); }
+        FloatValue operator+() const { return FloatValue(m_value); }
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, FloatValue>
           &operator+=(const T &value)
         {
             m_value += static_cast<FloatType>(value);
+            return *this;
         }
 
         FloatValue &operator+=(const FloatValue &value)
@@ -145,7 +148,7 @@ namespace FDCore
             return FloatValue(m_value + static_cast<FloatType>(value));
         }
 
-        FloatValue operator+(const FloatValue &value)
+        FloatValue operator+(const FloatValue &value) const
         {
             return FloatValue(m_value + value.m_value);
         }
@@ -157,7 +160,7 @@ namespace FDCore
             return FloatValue(m_value - static_cast<FloatType>(value));
         }
 
-        FloatValue operator-(const FloatValue &value)
+        FloatValue operator-(const FloatValue &value) const
         {
             return FloatValue(m_value - value.m_value);
         }
@@ -197,7 +200,7 @@ namespace FDCore
             return FloatValue(m_value * static_cast<FloatType>(value));
         }
 
-        FloatValue operator*(const FloatValue &value)
+        FloatValue operator*(const FloatValue &value) const
         {
             return FloatValue(m_value * value.m_value);
         }
@@ -209,7 +212,7 @@ namespace FDCore
             return FloatValue(m_value / static_cast<FloatType>(value));
         }
 
-        FloatValue operator/(const FloatValue &value)
+        FloatValue operator/(const FloatValue &value) const
         {
             return FloatValue(m_value / value.m_value);
         }
@@ -279,13 +282,14 @@ std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>,
 template<typename StreamType>
 StreamType &operator<<(StreamType &stream, const FDCore::FloatValue &value)
 {
-    return stream << static_cast<const FDCore::FloatValue::FloatType &>(value);
+    stream << static_cast<const FDCore::FloatValue::FloatType &>(value);
+    return stream;
 }
 
 template<typename StreamType>
 StreamType &operator>>(StreamType &stream, FDCore::FloatValue &value)
 {
-    FDCore::FloatValue::FloatType tmp;
+    FDCore::FloatValue::FloatType tmp = NAN;
     stream >> tmp;
     value = tmp;
     return stream;

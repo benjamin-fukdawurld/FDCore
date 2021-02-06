@@ -52,6 +52,14 @@ namespace FDCore
             return *this;
         }
 
+        bool operator==(const StringValue &value) const { return m_value == value.m_value; }
+
+        bool operator==(const StringType &value) const { return m_value == value; }
+
+        bool operator!=(const StringValue &value) const { return m_value != value.m_value; }
+
+        bool operator!=(const StringType &value) const { return m_value != value; }
+
         StringValue &operator+=(const StringType &value)
         {
             m_value += value;
@@ -68,6 +76,18 @@ namespace FDCore
     };
 } // namespace FDCore
 
+inline bool operator==(const FDCore::StringValue::StringType &value,
+                       const FDCore::StringValue &other)
+{
+    return value == static_cast<FDCore::StringValue::StringType>(other);
+}
+
+inline bool operator!=(const FDCore::StringValue::StringType &value,
+                       const FDCore::StringValue &other)
+{
+    return value == static_cast<FDCore::StringValue::StringType>(other);
+}
+
 inline FDCore::StringValue::StringType &operator+=(FDCore::StringValue::StringType &value,
                                                    const FDCore::StringValue &other)
 {
@@ -83,7 +103,8 @@ inline FDCore::StringValue::StringType operator+(const FDCore::StringValue::Stri
 template<typename StreamType>
 StreamType &operator<<(StreamType &stream, const FDCore::StringValue &value)
 {
-    return stream << static_cast<FDCore::StringValue::StringType>(value);
+    stream << static_cast<FDCore::StringValue::StringType>(value);
+    return stream;
 }
 
 template<typename StreamType>
