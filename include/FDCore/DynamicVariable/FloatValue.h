@@ -143,7 +143,7 @@ namespace FDCore
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, FloatValue> operator+(
-          const T &value)
+          const T &value) const
         {
             return FloatValue(m_value + static_cast<FloatType>(value));
         }
@@ -155,7 +155,7 @@ namespace FDCore
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, FloatValue> operator-(
-          const T &value)
+          const T &value) const
         {
             return FloatValue(m_value - static_cast<FloatType>(value));
         }
@@ -195,7 +195,7 @@ namespace FDCore
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, FloatValue> operator*(
-          const T &value)
+          const T &value) const
         {
             return FloatValue(m_value * static_cast<FloatType>(value));
         }
@@ -207,7 +207,7 @@ namespace FDCore
 
         template<typename T>
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, FloatValue> operator/(
-          const T &value)
+          const T &value) const
         {
             return FloatValue(m_value / static_cast<FloatType>(value));
         }

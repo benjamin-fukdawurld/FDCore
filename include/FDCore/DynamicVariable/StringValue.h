@@ -19,6 +19,7 @@ namespace FDCore
     {
       public:
         typedef FDCORE_STRING_TYPE StringType;
+        typedef size_t SizeType;
 
       private:
         StringType m_value;
@@ -66,13 +67,25 @@ namespace FDCore
             return *this;
         }
 
-        StringValue operator+(const StringType &value) { return StringValue(m_value + value); }
+        StringValue operator+(const StringType &value) const
+        {
+            return StringValue(m_value + value);
+        }
 
-        StringType::size_type size() const { return m_value.size(); }
+        SizeType size() const { return m_value.size(); }
+        bool isEmpty() const { return m_value.empty(); }
 
         StringType::value_type &operator[](size_t pos) { return m_value[pos]; }
 
         const StringType::value_type &operator[](size_t pos) const { return m_value[pos]; }
+
+        void clear() { m_value.clear(); }
+
+        void append(const StringType &str) { m_value.append(str); }
+        StringValue subString(SizeType from, SizeType count)
+        {
+            return StringValue(m_value.substr(from, count));
+        }
     };
 } // namespace FDCore
 

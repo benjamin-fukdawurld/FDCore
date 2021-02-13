@@ -46,4 +46,24 @@ TEST(StringValue_test, test_stream_operators)
     ASSERT_EQ(value, test);
 }
 
+TEST(StringValue_test, test_member_functions)
+{
+    FDCore::StringValue::StringType test = TEST_STRING_VALUE;
+    FDCore::StringValue value;
+    ASSERT_TRUE(value.isEmpty());
+    ASSERT_FALSE(FDCore::StringValue(TEST_STRING_VALUE).isEmpty());
+    ASSERT_EQ(FDCore::StringValue(TEST_STRING_VALUE).size(), test.size());
+    value = TEST_STRING_VALUE;
+    ASSERT_FALSE(value.isEmpty());
+    value.clear();
+    ASSERT_TRUE(value.isEmpty());
+    value = test;
+    ASSERT_EQ(value[0], test[0]);
+    value.append(" string");
+    test.append(" string");
+    ASSERT_EQ(value, test);
+    ASSERT_EQ(value.subString(0, 4), test.substr(0, 4));
+}
+
+
 #endif // FDCORE_STRINGVALUE_TEST_H

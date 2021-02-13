@@ -237,7 +237,8 @@ namespace FDCore
         std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, IntValue> &operator%=(
           const T &value)
         {
-            return m_value %= static_cast<IntType>(value);
+            m_value %= static_cast<IntType>(value);
+            return *this;
         }
 
         IntValue &operator%=(const IntValue &value)

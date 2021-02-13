@@ -59,9 +59,13 @@ set(HEADER_FILES
     include/FDCore/Communication/Request.h
     include/FDCore/Communication/RequestType.h
 #
+    include/FDCore/DynamicVariable/AbstractArrayValue.h
     include/FDCore/DynamicVariable/AbstractValue.h
+    include/FDCore/DynamicVariable/ArrayValue.h
     include/FDCore/DynamicVariable/BoolValue.h
+    include/FDCore/DynamicVariable/DynamicVariable_fwd.h
     include/FDCore/DynamicVariable/DynamicVariable.h
+    include/FDCore/DynamicVariable/DynamicVariable_conversion.h
     include/FDCore/DynamicVariable/FloatValue.h
     include/FDCore/DynamicVariable/IntValue.h
     include/FDCore/DynamicVariable/StringValue.h
@@ -94,6 +98,7 @@ set(SRC_FILES
     src/Communication/MessageHeader.cpp
 #
     src/DynamicVariable/DynamicVariable.cpp
+    src/DynamicVariable/ArrayValue.cpp
 #
     src/Log/Logger.cpp
 #

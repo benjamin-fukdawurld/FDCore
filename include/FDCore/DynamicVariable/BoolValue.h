@@ -31,7 +31,7 @@ namespace FDCore
 
         explicit operator bool() const { return m_value; }
 
-        bool operator!() const { return !m_value; }
+        BoolValue operator!() const { return BoolValue(!m_value); }
 
         bool operator==(bool other) const { return m_value == other; }
         bool operator==(const BoolValue &other) const { return m_value == other.m_value; }
@@ -45,7 +45,20 @@ namespace FDCore
         bool operator||(bool other) const { return m_value || other; }
         bool operator||(const BoolValue &other) const { return m_value || other.m_value; }
 
+        BoolValue &operator^=(bool other)
+        {
+            m_value ^= static_cast<int>(other);
+            return *this;
+        }
+
         bool operator^(bool other) const { return m_value ^ other; }
+
+        BoolValue &operator^=(const BoolValue &other)
+        {
+            m_value ^= static_cast<int>(other.m_value);
+            return *this;
+        }
+
         bool operator^(const BoolValue &other) const { return m_value ^ other.m_value; }
     };
 } // namespace FDCore
