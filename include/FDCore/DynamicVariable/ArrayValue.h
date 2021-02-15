@@ -6,6 +6,9 @@
     #define FDCORE_CONTAINER_TYPE std::vector
 #endif // FDCORE_CONTAINER_TYPE
 
+#include <iterator>
+#include <optional>
+
 #include <FDCore/DynamicVariable/AbstractArrayValue.h>
 
 namespace FDCore
@@ -41,6 +44,42 @@ namespace FDCore
         void insert(AbstractValue::Ptr value, SizeType pos) override;
         AbstractValue::Ptr removeAt(SizeType pos) override;
         void clear() override { m_values.clear(); }
+    };
+
+    template<template<typename> typename Container, typename T>
+    struct is_AbstractValue_constructible<Container<T>,
+                                          std::enable_if_t<is_AbstractValue_constructible_v<T>, T>>
+    {
+        constexpr static bool value = true;
+
+        static AbstractValue::Ptr toValue(const Container<T> &value)
+        {
+            auto arr = std::make_unique<ArrayValue>(new ArrayValue(value));
+            for(const auto &cell: value)
+                arr->push(is_AbstractValue_constructible<T>::toValue(cell));
+
+            return AbstractValue::Ptr(arr.release());
+        }
+
+        static std::optional<T> fromValue(const AbstractValue::Ptr &value)
+        {
+            if(!value->isType(ValueType::Array))
+                return std::nullopt;
+
+            Container<T> result;
+            const ArrayValue &arr = static_cast<const ArrayValue &>(*value);
+            std::back_insert_iterator<Container<T>> it(result);
+            for(ArrayValue::SizeType i = 0, imax = arr.size(); i < imax; ++i)
+            {
+                std::optional<T> current = is_AbstractValue_constructible<T>::fromValue(arr[i]);
+                if(!current.has_value())
+                    return std::nullopt;
+
+                it = *current;
+            }
+
+            return result;
+        }
     };
 } // namespace FDCore
 

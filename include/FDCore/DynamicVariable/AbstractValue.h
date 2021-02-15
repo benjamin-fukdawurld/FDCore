@@ -3,8 +3,19 @@
 
 #include <FDCore/DynamicVariable/ValueType.h>
 #include <memory>
+
 namespace FDCore
 {
+    template<typename T, typename U = void>
+    struct is_AbstractValue_constructible
+    {
+        constexpr static bool value = false;
+    };
+
+    template<class T>
+    inline constexpr bool is_AbstractValue_constructible_v =
+      is_AbstractValue_constructible<T>::value;
+
     class AbstractValue
     {
       public:

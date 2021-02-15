@@ -3,6 +3,8 @@
 
 #include <FDCore/DynamicVariable/AbstractValue.h>
 
+#include <optional>
+
 namespace FDCore
 {
     class BoolValue : public AbstractValue
@@ -59,7 +61,29 @@ namespace FDCore
             return *this;
         }
 
-        bool operator^(const BoolValue &other) const { return m_value ^ other.m_value; }
+        BoolValue operator^(const BoolValue &other) const
+        {
+            return BoolValue(m_value ^ other.m_value);
+        }
+    };
+
+    template<>
+    struct is_AbstractValue_constructible<bool>
+    {
+        constexpr static bool value = true;
+
+        static AbstractValue::Ptr toValue(bool value)
+        {
+            return AbstractValue::Ptr(new BoolValue(value));
+        }
+
+        static std::optional<bool> fromValue(const AbstractValue::Ptr &value)
+        {
+            if(value->isType(ValueType::Boolean))
+                return static_cast<bool>(static_cast<const BoolValue &>(*value));
+
+            return std::nullopt;
+        }
     };
 } // namespace FDCore
 

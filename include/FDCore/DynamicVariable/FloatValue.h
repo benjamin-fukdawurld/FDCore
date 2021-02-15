@@ -217,6 +217,25 @@ namespace FDCore
             return FloatValue(m_value / value.m_value);
         }
     };
+
+    template<typename T>
+    struct is_AbstractValue_constructible<T, std::enable_if_t<std::is_floating_point_v<T>>>
+    {
+        constexpr static bool value = true;
+
+        static AbstractValue::Ptr toValue(const T &value)
+        {
+            return AbstractValue::Ptr(new FloatValue(value));
+        }
+
+        static std::optional<T> fromValue(const AbstractValue::Ptr &value)
+        {
+            if(value->isType(ValueType::Float))
+                return static_cast<T>(static_cast<const FloatValue &>(*value));
+
+            return std::nullopt;
+        }
+    };
 } // namespace FDCore
 
 template<typename T>

@@ -1,25 +1,24 @@
 #ifndef FDCORE_DYNAMICVARIABLE_H
 #define FDCORE_DYNAMICVARIABLE_H
 
+#include <math.h>
+
 #include <FDCore/DynamicVariable/DynamicVariable_conversion.h>
 #include <FDCore/DynamicVariable/DynamicVariable_fwd.h>
-#include <math.h>
 
 namespace FDCore
 {
-    template<typename T>
-    std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, DynamicVariable>
-      &DynamicVariable::operator=(const T &value)
+    template<typename T, typename U>
+    DynamicVariable::DynamicVariable(const T &value, U /*unused*/) :
+        DynamicVariable(is_DynamicVariable_constructible<T>::toVariable(value))
     {
-        m_value = std::make_shared<FDCore::IntValue>(value);
-        return *this;
     }
 
     template<typename T>
-    std::enable_if_t<std::is_floating_point_v<T>, DynamicVariable> &DynamicVariable::operator=(
-      const T &value)
+    std::enable_if_t<is_DynamicVariable_constructible<T>::value, DynamicVariable>
+      &DynamicVariable::operator=(const T &value)
     {
-        m_value = std::make_shared<FDCore::FloatValue>(value);
+        m_value = is_AbstractValue_constructible<T>::toValue(value);
         return *this;
     }
 
@@ -27,150 +26,211 @@ namespace FDCore
     void DynamicVariable::convert(
       std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> &result) const
     {
-        assert(isType(ValueType::Integer) || isType(ValueType::Float));
-        if(getValueType() == ValueType::Integer)
+        if(isType(ValueType::Integer))
         {
             result = static_cast<T>(toInteger());
         }
-
-        result = static_cast<T>(toFloat());
+        else if(isType(ValueType::Float))
+        {
+            result = static_cast<T>(toFloat());
+        }
+        else
+        {
+            throw generateCastException(__func__);
+        }
     }
 
     template<typename T>
     void DynamicVariable::convert(std::enable_if_t<std::is_floating_point_v<T>, T> &result) const
     {
-        assert(isType(ValueType::Integer) || isType(ValueType::Float));
-        if(getValueType() == ValueType::Integer)
+        if(isType(ValueType::Integer))
         {
             result = static_cast<T>(static_cast<IntType>(toInteger()));
         }
-
-        result = static_cast<T>(toFloat());
+        else if(isType(ValueType::Float))
+        {
+            result = static_cast<T>(toFloat());
+        }
+        else
+        {
+            throw generateCastException(__func__);
+        }
     }
 
     template<typename T>
     std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> DynamicVariable::
       operator==(const T &value) const
     {
-        assert(isType(ValueType::Integer) || isType(ValueType::Float));
-        if(getValueType() == ValueType::Integer)
+        if(isType(ValueType::Integer))
         {
             return toInteger() == value;
         }
 
-        return toFloat() == value;
+        if(isType(ValueType::Float))
+        {
+            return toFloat() == value;
+        }
+
+        throw generateCastException(__func__);
     }
 
     template<typename T>
     std::enable_if_t<!std::is_same_v<T, bool> && std::is_floating_point_v<T>, bool>
       DynamicVariable::operator==(const T &value) const
     {
-        assert(isType(ValueType::Float));
-        return toFloat() == value;
+        if(isType(ValueType::Float))
+        {
+            return toFloat() == value;
+        }
+
+        throw generateCastException(__func__);
     }
 
     template<typename T>
     std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> DynamicVariable::
       operator!=(const T &value) const
     {
-        assert(isType(ValueType::Integer) || isType(ValueType::Float));
-        if(getValueType() == ValueType::Integer)
+        if(isType(ValueType::Integer))
         {
             return toInteger() != value;
         }
 
-        return toFloat() != value;
+        if(isType(ValueType::Float))
+        {
+            return toFloat() != value;
+        }
+
+        throw generateCastException(__func__);
     }
 
     template<typename T>
     std::enable_if_t<!std::is_same_v<T, bool> && std::is_floating_point_v<T>, bool>
       DynamicVariable::operator!=(const T &value) const
     {
-        assert(isType(ValueType::Float));
-        return toFloat() != value;
+        if(isType(ValueType::Float))
+        {
+            return toFloat() != value;
+        }
+
+        throw generateCastException(__func__);
     }
 
     template<typename T>
     std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> DynamicVariable::
       operator<=(const T &value) const
     {
-        assert(isType(ValueType::Integer) || isType(ValueType::Float));
-        if(getValueType() == ValueType::Integer)
+        if(isType(ValueType::Integer))
         {
             return toInteger() <= value;
         }
 
-        return toFloat() <= value;
+        if(isType(ValueType::Float))
+        {
+            return toFloat() <= value;
+        }
+
+        throw generateCastException(__func__);
     }
 
     template<typename T>
     std::enable_if_t<!std::is_same_v<T, bool> && std::is_floating_point_v<T>, bool>
       DynamicVariable::operator<=(const T &value) const
     {
-        assert(isType(ValueType::Float));
-        return toFloat() <= value;
+        if(isType(ValueType::Float))
+        {
+            return toFloat() <= value;
+        }
+
+        throw generateCastException(__func__);
     }
 
     template<typename T>
     std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> DynamicVariable::
       operator<(const T &value) const
     {
-        assert(isType(ValueType::Integer) || isType(ValueType::Float));
-        if(getValueType() == ValueType::Integer)
+        if(isType(ValueType::Integer))
         {
             return toInteger() < value;
         }
 
-        return toFloat() < value;
+        if(isType(ValueType::Float))
+        {
+            return toFloat() < value;
+        }
+
+        throw generateCastException(__func__);
     }
 
     template<typename T>
     std::enable_if_t<!std::is_same_v<T, bool> && std::is_floating_point_v<T>, bool>
       DynamicVariable::operator<(const T &value) const
     {
-        assert(isType(ValueType::Float));
-        return toFloat() < value;
+        if(isType(ValueType::Integer))
+        {
+            return static_cast<IntType>(toInteger()) < value;
+        }
+
+        if(isType(ValueType::Float))
+        {
+            return toFloat() < value;
+        }
+
+        throw generateCastException(__func__);
     }
 
     template<typename T>
     std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> DynamicVariable::
       operator>=(const T &value) const
     {
-        assert(isType(ValueType::Integer) || isType(ValueType::Float));
-        if(getValueType() == ValueType::Integer)
+        if(isType(ValueType::Integer))
         {
             return toInteger() >= value;
         }
 
-        return toFloat() >= value;
+        if(isType(ValueType::Float))
+        {
+            return toFloat() >= value;
+        }
+
+        throw generateCastException(__func__);
     }
 
     template<typename T>
     std::enable_if_t<!std::is_same_v<T, bool> && std::is_floating_point_v<T>, bool>
       DynamicVariable::operator>=(const T &value) const
     {
-        assert(isType(ValueType::Float));
-        return toFloat() >= value;
+        if(isType(ValueType::Float))
+        {
+            return toFloat() >= value;
+        }
+
+        throw generateCastException(__func__);
     }
 
     template<typename T>
     std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> DynamicVariable::
       operator>(const T &value) const
     {
-        assert(isType(ValueType::Integer) || isType(ValueType::Float));
-        if(getValueType() == ValueType::Integer)
+        if(isType(ValueType::Integer))
         {
             return toInteger() > value;
         }
 
-        return toFloat() > value;
+        if(isType(ValueType::Float))
+        {
+            return toFloat() > value;
+        }
+
+        throw generateCastException(__func__);
     }
 
     template<typename T>
     std::enable_if_t<!std::is_same_v<T, bool> && std::is_floating_point_v<T>, bool>
       DynamicVariable::operator>(const T &value) const
     {
-        assert(isType(ValueType::Float));
+        if(!isType(ValueType::Float))
+            throw generateCastException(__func__);
+
         return toFloat() > value;
     }
 
@@ -193,8 +253,7 @@ namespace FDCore
             }
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -205,7 +264,7 @@ namespace FDCore
         switch(getValueType())
         {
             case ValueType::Integer:
-                *this = FDCore::FloatValue(static_cast<IntType>(toInteger()) + value);
+                *this = FloatValue(static_cast<IntType>(toInteger()) + value);
                 return *this;
 
             case ValueType::Float:
@@ -213,8 +272,7 @@ namespace FDCore
                 return *this;
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -237,8 +295,7 @@ namespace FDCore
             }
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -249,7 +306,7 @@ namespace FDCore
         switch(getValueType())
         {
             case ValueType::Integer:
-                *this = FDCore::FloatValue(static_cast<IntType>(toInteger()) - value);
+                *this = FloatValue(static_cast<IntType>(toInteger()) - value);
                 return *this;
 
             case ValueType::Float:
@@ -257,8 +314,7 @@ namespace FDCore
                 return *this;
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -274,8 +330,7 @@ namespace FDCore
                 return toFloat() + static_cast<FloatType>(value);
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -286,14 +341,13 @@ namespace FDCore
         switch(getValueType())
         {
             case ValueType::Integer:
-                return FDCore::FloatValue(static_cast<IntType>(toInteger()) + value);
+                return FloatValue(static_cast<IntType>(toInteger()) + value);
 
             case ValueType::Float:
                 return toFloat() + value;
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -310,8 +364,7 @@ namespace FDCore
                 return toFloat() - static_cast<FloatType>(value);
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -322,14 +375,13 @@ namespace FDCore
         switch(getValueType())
         {
             case ValueType::Integer:
-                return FDCore::FloatValue(static_cast<IntType>(toInteger()) - value);
+                return FloatValue(static_cast<IntType>(toInteger()) - value);
 
             case ValueType::Float:
                 return toFloat() - value;
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -337,7 +389,9 @@ namespace FDCore
     std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, DynamicVariable>
       &DynamicVariable::operator%=(const T &value)
     {
-        assert(isType(ValueType::Integer));
+        if(!isType(ValueType::Integer))
+            throw generateCastException(__func__);
+
         toInteger() %= value;
         return *this;
     }
@@ -346,7 +400,9 @@ namespace FDCore
     std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, DynamicVariable>
       DynamicVariable::operator%(const T &value) const
     {
-        assert(isType(ValueType::Integer));
+        if(!isType(ValueType::Integer))
+            throw generateCastException(__func__);
+
         return toInteger() % value;
     }
 
@@ -369,8 +425,7 @@ namespace FDCore
             }
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -381,7 +436,7 @@ namespace FDCore
         switch(getValueType())
         {
             case ValueType::Integer:
-                *this = FDCore::FloatValue(static_cast<IntType>(toInteger()) * value);
+                *this = FloatValue(static_cast<IntType>(toInteger()) * value);
                 return *this;
 
             case ValueType::Float:
@@ -389,8 +444,7 @@ namespace FDCore
                 return *this;
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -407,8 +461,7 @@ namespace FDCore
                 return toFloat() * static_cast<FloatType>(value);
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -419,14 +472,13 @@ namespace FDCore
         switch(getValueType())
         {
             case ValueType::Integer:
-                return FDCore::FloatValue(static_cast<IntType>(toInteger()) * value);
+                return FloatValue(static_cast<IntType>(toInteger()) * value);
 
             case ValueType::Float:
                 return toFloat() * value;
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -449,8 +501,7 @@ namespace FDCore
             }
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -461,7 +512,7 @@ namespace FDCore
         switch(getValueType())
         {
             case ValueType::Integer:
-                *this = FDCore::FloatValue(static_cast<IntType>(toInteger()) / value);
+                *this = FloatValue(static_cast<IntType>(toInteger()) / value);
                 return *this;
 
             case ValueType::Float:
@@ -469,8 +520,7 @@ namespace FDCore
                 return *this;
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -487,8 +537,7 @@ namespace FDCore
                 return toFloat() / static_cast<FloatType>(value);
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -499,14 +548,13 @@ namespace FDCore
         switch(getValueType())
         {
             case ValueType::Integer:
-                return FDCore::FloatValue(static_cast<IntType>(toInteger()) / value);
+                return FloatValue(static_cast<IntType>(toInteger()) / value);
 
             case ValueType::Float:
                 return toFloat() / value;
 
             default:
-                assert("Unsupported operation");
-                return *this;
+                throw generateCastException(__func__);
         }
     }
 
@@ -525,7 +573,7 @@ namespace FDCore
     {
         switch(getValueType())
         {
-            case FDCore::ValueType::Boolean:
+            case ValueType::Boolean:
             {
                 bool tmp = 0;
                 stream >> tmp;
@@ -533,24 +581,24 @@ namespace FDCore
                 break;
             }
 
-            case FDCore::ValueType::Integer:
+            case ValueType::Integer:
             {
-                FDCore::DynamicVariable::IntType tmp = 0;
+                DynamicVariable::IntType tmp = 0;
                 stream >> tmp;
                 *this = tmp;
                 break;
             }
 
-            case FDCore::ValueType::Float:
+            case ValueType::Float:
             {
-                FDCore::DynamicVariable::FloatType tmp = NAN;
+                DynamicVariable::FloatType tmp = NAN;
                 stream >> tmp;
                 *this = tmp;
                 break;
             }
 
             default:
-                break;
+                throw generateCastException(__func__);
         }
     }
 
@@ -559,118 +607,120 @@ namespace FDCore
     {
         switch(getValueType())
         {
-            case FDCore::ValueType::Boolean:
-                stream << toBool();
+            case ValueType::Boolean:
+                operator<<(stream, toBool());
                 break;
 
-            case FDCore::ValueType::Integer:
-                stream << toInteger();
+            case ValueType::Integer:
+                ::operator<<(stream, toInteger());
                 break;
 
-            case FDCore::ValueType::Float:
-                stream << toFloat();
+            case ValueType::Float:
+                ::operator<<(stream, toFloat());
                 break;
 
             default:
-                break;
+                throw generateCastException(__func__);
         }
     }
 
 } // namespace FDCore
 
+
+
 template<typename T>
-std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator==(
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, bool> operator==(
   const T &value, const FDCore::DynamicVariable &other)
 {
     return other == value;
 }
 
 template<typename T>
-std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator!=(
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, bool> operator!=(
   const T &value, const FDCore::DynamicVariable &other)
 {
     return other != value;
 }
 
 template<typename T>
-std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator<=(
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, bool> operator<=(
   const T &value, const FDCore::DynamicVariable &other)
 {
     return value <= static_cast<T>(other);
 }
 
 template<typename T>
-std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator<(
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, bool> operator<(
   const T &value, const FDCore::DynamicVariable &other)
 {
     return value < static_cast<T>(other);
 }
 
 template<typename T>
-std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator>=(
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, bool> operator>=(
   const T &value, const FDCore::DynamicVariable &other)
 {
     return value >= static_cast<T>(other);
 }
 
 template<typename T>
-std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, bool> operator>(
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, bool> operator>(
   const T &value, const FDCore::DynamicVariable &other)
 {
     return value > static_cast<T>(other);
 }
 
 template<typename T>
-std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> &operator+=(
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, T> &operator+=(
   T &value, const FDCore::DynamicVariable &other)
 {
     return value += static_cast<T>(other);
 }
 
 template<typename T>
-std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> &operator-=(
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, T> &operator-=(
   T &value, const FDCore::DynamicVariable &other)
 {
     return value -= static_cast<T>(other);
 }
 
 template<typename T>
-std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> operator+(
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, T> operator+(
   const T &value, const FDCore::DynamicVariable &other)
 {
     return value + static_cast<T>(other);
 }
 
 template<typename T>
-std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> operator-(
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, T> operator-(
   const T &value, const FDCore::DynamicVariable &other)
 {
     return value - static_cast<T>(other);
 }
 
 template<typename T>
-std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> &operator*=(
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, T> &operator*=(
   T &value, const FDCore::DynamicVariable &other)
 {
     return value *= static_cast<T>(other);
 }
 
 template<typename T>
-std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> &operator/=(
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, T> &operator/=(
   T &value, const FDCore::DynamicVariable &other)
 {
     return value /= static_cast<T>(other);
 }
 
 template<typename T>
-std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> operator*(
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, T> operator*(
   const T &value, const FDCore::DynamicVariable &other)
 {
     return value * static_cast<T>(other);
 }
 
 template<typename T>
-std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> operator/(
+std::enable_if_t<!std::is_same_v<T, bool> && std::is_arithmetic_v<T>, T> operator/(
   const T &value, const FDCore::DynamicVariable &other)
 {
     return value / static_cast<T>(other);
@@ -762,19 +812,81 @@ std::enable_if_t<!std::is_same_v<T, bool> && std::is_integral_v<T>, T> operator^
     return value ^ static_cast<T>(other);
 }
 
-std::basic_ostream<FDCore::DynamicVariable::StringType::value_type> &operator<<(
-  std::basic_ostream<FDCore::DynamicVariable::StringType::value_type> &stream,
-  const FDCore::DynamicVariable &value)
+template<typename StreamType>
+std::enable_if_t<!std::is_integral_v<StreamType> &&
+                   !std::is_same_v<FDCore::DynamicVariable, StreamType>,
+                 StreamType>
+  &operator<<(StreamType &stream, const FDCore::DynamicVariable &value)
 {
-    value.write<std::basic_ostream<FDCore::DynamicVariable::StringType::value_type>>(stream);
+    switch(value.getValueType())
+    {
+        case FDCore::ValueType::Boolean:
+            stream << static_cast<bool>(value);
+            break;
+
+        case FDCore::ValueType::Integer:
+            stream << static_cast<FDCore::DynamicVariable::IntType>(value);
+            break;
+
+        case FDCore::ValueType::Float:
+            stream << static_cast<FDCore::DynamicVariable::FloatType>(value);
+            break;
+
+        case FDCore::ValueType::String:
+            stream << static_cast<FDCore::DynamicVariable::StringType>(value);
+            break;
+
+        default:
+            break;
+    }
+
     return stream;
 }
 
-std::basic_istream<FDCore::DynamicVariable::StringType::value_type> &operator>>(
-  std::basic_istream<FDCore::DynamicVariable::StringType::value_type> &stream,
-  FDCore::DynamicVariable &value)
+template<typename StreamType>
+std::enable_if_t<!std::is_integral_v<StreamType> &&
+                   !std::is_same_v<FDCore::DynamicVariable, StreamType>,
+                 StreamType>
+  &operator>>(StreamType &stream, FDCore::DynamicVariable &value)
 {
-    value.read<std::basic_istream<FDCore::DynamicVariable::StringType::value_type>>(stream);
+    switch(value.getValueType())
+    {
+        case FDCore::ValueType::Boolean:
+        {
+            bool tmp = 0;
+            stream >> tmp;
+            value = tmp;
+            break;
+        }
+
+        case FDCore::ValueType::Integer:
+        {
+            FDCore::DynamicVariable::IntType tmp = 0;
+            stream >> tmp;
+            value = tmp;
+            break;
+        }
+
+        case FDCore::ValueType::Float:
+        {
+            FDCore::DynamicVariable::FloatType tmp = NAN;
+            stream >> tmp;
+            value = tmp;
+            break;
+        }
+
+        case FDCore::ValueType::String:
+        {
+            FDCore::DynamicVariable::StringType tmp = "";
+            stream >> tmp;
+            value = tmp;
+            break;
+        }
+
+        default:
+            break;
+    }
+
     return stream;
 }
 

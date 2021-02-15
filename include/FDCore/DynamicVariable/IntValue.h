@@ -389,6 +389,27 @@ namespace FDCore
             return IntValue(m_value ^ value.m_value);
         }
     };
+
+    template<typename T>
+    struct is_AbstractValue_constructible<
+      T,
+      std::enable_if_t<!std::is_same_v<bool, T> && std::is_integral_v<T>>>
+    {
+        constexpr static bool value = true;
+
+        static AbstractValue::Ptr toValue(const T &value)
+        {
+            return AbstractValue::Ptr(new IntValue(value));
+        }
+
+        static std::optional<T> fromValue(const AbstractValue::Ptr &value)
+        {
+            if(value->isType(ValueType::Integer))
+                return static_cast<T>(static_cast<const IntValue &>(*value));
+
+            return std::nullopt;
+        }
+    };
 } // namespace FDCore
 
 template<typename T>

@@ -3,10 +3,13 @@
 
 #ifndef FDCORE_STRING_TYPE
     #include <string>
+    #include <string_view>
     #ifndef FDCORE_USE_WIDE_STRING
         #define FDCORE_STRING_TYPE std::string
+        #define FDCORE_STRING_VIEW_TYPE std::string_view
     #else
         #define FDCORE_STRING_TYPE std::wstring
+        #define FDCORE_STRING_VIEW_TYPE std::wstring_view
     #endif // FDCORE_USE_WIDE_STRING
 #endif     // FDCORE_STRING_TYPE
 
@@ -19,6 +22,7 @@ namespace FDCore
     {
       public:
         typedef FDCORE_STRING_TYPE StringType;
+        typedef FDCORE_STRING_VIEW_TYPE StringViewType;
         typedef size_t SizeType;
 
       private:
@@ -28,9 +32,7 @@ namespace FDCore
         StringValue() = default;
         StringValue(StringValue &&) = default;
         StringValue(const StringValue &) = default;
-
-        explicit StringValue(StringType &&value) : m_value(std::move(value)) {}
-        explicit StringValue(const StringType &value) : m_value(value) {}
+        explicit StringValue(StringViewType value) : m_value(value) {}
 
         ~StringValue() noexcept override = default;
 
@@ -41,13 +43,7 @@ namespace FDCore
 
         explicit operator const StringType &() const { return m_value; }
 
-        StringValue &operator=(StringType &&value)
-        {
-            m_value = std::move(value);
-            return *this;
-        }
-
-        StringValue &operator=(const StringType &value)
+        StringValue &operator=(StringViewType value)
         {
             m_value = value;
             return *this;
@@ -55,21 +51,21 @@ namespace FDCore
 
         bool operator==(const StringValue &value) const { return m_value == value.m_value; }
 
-        bool operator==(const StringType &value) const { return m_value == value; }
+        bool operator==(StringViewType value) const { return m_value == value; }
 
         bool operator!=(const StringValue &value) const { return m_value != value.m_value; }
 
-        bool operator!=(const StringType &value) const { return m_value != value; }
+        bool operator!=(StringType value) const { return m_value != value; }
 
-        StringValue &operator+=(const StringType &value)
+        StringValue &operator+=(StringViewType value)
         {
             m_value += value;
             return *this;
         }
 
-        StringValue operator+(const StringType &value) const
+        StringValue operator+(StringViewType value) const
         {
-            return StringValue(m_value + value);
+            return StringValue(m_value + value.data());
         }
 
         SizeType size() const { return m_value.size(); }
@@ -81,10 +77,30 @@ namespace FDCore
 
         void clear() { m_value.clear(); }
 
-        void append(const StringType &str) { m_value.append(str); }
+        void append(StringViewType str) { m_value.append(str); }
         StringValue subString(SizeType from, SizeType count)
         {
             return StringValue(m_value.substr(from, count));
+        }
+    };
+
+    template<>
+    struct is_AbstractValue_constructible<StringValue::StringType>
+    {
+        constexpr static bool value = true;
+
+        static AbstractValue::Ptr toValue(const StringValue::StringType &value)
+        {
+            return AbstractValue::Ptr(new StringValue(value));
+        }
+
+        static std::optional<StringValue::StringType> fromValue(const AbstractValue::Ptr &value)
+        {
+            if(value->isType(ValueType::String))
+                return static_cast<StringValue::StringType>(
+                  static_cast<const StringValue &>(*value));
+
+            return std::nullopt;
         }
     };
 } // namespace FDCore

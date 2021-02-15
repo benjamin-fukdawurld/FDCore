@@ -31,6 +31,32 @@ DynamicVariable::DynamicVariable(ValueType type)
             break;
 
         default:
+            throw generateCastException(__func__);
+    }
+}
+
+DynamicVariable::DynamicVariable(const DynamicVariable &other)
+{
+    switch(other.getValueType())
+    {
+        case ValueType::Boolean:
+            m_value.reset(new BoolValue(other.toBool()));
+            break;
+
+        case ValueType::Integer:
+            m_value.reset(new IntValue(other.toInteger()));
+            break;
+
+        case ValueType::Float:
+            m_value.reset(new FloatValue(other.toFloat()));
+            break;
+
+        case ValueType::String:
+            m_value.reset(new StringValue(other.toString()));
+            break;
+
+        default:
+            m_value = other.m_value;
             break;
     }
 }
@@ -39,21 +65,9 @@ DynamicVariable::DynamicVariable(const AbstractValue::Ptr &value) : m_value(valu
 
 DynamicVariable::DynamicVariable(AbstractValue::Ptr &&value) : m_value(std::move(value)) {}
 
-DynamicVariable &DynamicVariable::operator=(StringType &&str)
+DynamicVariable &DynamicVariable::operator=(StringViewType str)
 {
     m_value = std::make_shared<StringValue>(std::move(str));
-    return *this;
-}
-
-DynamicVariable &DynamicVariable::operator=(const StringType &str)
-{
-    m_value = std::make_shared<StringValue>(str);
-    return *this;
-}
-
-DynamicVariable &DynamicVariable::operator=(bool value)
-{
-    m_value = std::make_shared<BoolValue>(value);
     return *this;
 }
 
@@ -71,31 +85,41 @@ DynamicVariable &DynamicVariable::operator=(const ArrayType &arr)
 
 DynamicVariable::operator bool() const
 {
-    assert(isType(ValueType::Boolean));
+    if(!isType(ValueType::Boolean))
+        throw generateCastException(__func__);
+
     return static_cast<bool>(toBool());
 }
 
 DynamicVariable::operator const StringType &() const
 {
-    assert(isType(ValueType::String));
+    if(!isType(ValueType::String))
+        throw generateCastException(__func__);
+
     return static_cast<const StringType &>(toString());
 }
 
 DynamicVariable::operator const ArrayType &() const
 {
-    assert(isType(ValueType::Array));
+    if(!isType(ValueType::Array))
+        throw generateCastException(__func__);
+
     return static_cast<const ArrayType &>(static_cast<const ArrayValue &>(toArray()));
 }
 
 DynamicVariable::operator StringType() const
 {
-    assert(isType(ValueType::String));
+    if(!isType(ValueType::String))
+        throw generateCastException(__func__);
+
     return static_cast<StringType>(toString());
 }
 
 DynamicVariable::operator ArrayType() const
 {
-    assert(isType(ValueType::Array));
+    if(!isType(ValueType::Array))
+        throw generateCastException(__func__);
+
     return static_cast<ArrayType>(static_cast<const ArrayValue &>(toArray()));
 }
 
@@ -125,10 +149,8 @@ bool DynamicVariable::operator==(const DynamicVariable &value) const
             return toString() == value.toString();
 
         default:
-            break;
+            throw generateCastException(__func__);
     }
-
-    return false;
 }
 
 bool DynamicVariable::operator!=(const DynamicVariable &value) const
@@ -157,10 +179,8 @@ bool DynamicVariable::operator!=(const DynamicVariable &value) const
             return toString() != value.toString();
 
         default:
-            break;
+            throw generateCastException(__func__);
     }
-
-    return true;
 }
 
 bool DynamicVariable::operator==(std::nullptr_t) const { return isType(ValueType::None); }
@@ -177,73 +197,93 @@ bool DynamicVariable::operator!=(bool value) const
     return !isType(ValueType::Boolean) || toBool() != value;
 }
 
-bool DynamicVariable::operator==(const StringType &value) const
+bool DynamicVariable::operator==(StringViewType value) const
 {
     return isType(ValueType::String) && toString() == value;
 }
 
-bool DynamicVariable::operator!=(const StringType &value) const
+bool DynamicVariable::operator!=(StringViewType value) const
 {
-    return !isType(ValueType::String) || toString() != value;
+    return !isType(ValueType::String) || !(toString() == value);
 }
 
 DynamicVariable DynamicVariable::operator-() const
 {
-    assert(isType(ValueType::Integer) || isType(ValueType::Float));
-    if(getValueType() == ValueType::Integer)
+    if(isType(ValueType::Integer))
     {
         return DynamicVariable(-toInteger());
     }
 
-    return DynamicVariable(-toFloat());
+    if(isType(ValueType::Float))
+    {
+        return DynamicVariable(-toFloat());
+    }
+
+    throw generateCastException(__func__);
 }
 
 DynamicVariable DynamicVariable::operator~() const
 {
-    assert(isType(ValueType::Integer));
+    if(!isType(ValueType::Integer))
+        throw generateCastException(__func__);
+
     return DynamicVariable(~toInteger());
 }
 
 DynamicVariable DynamicVariable::operator+() const
 {
-    assert(isType(ValueType::Integer) || isType(ValueType::Float));
-    if(getValueType() == ValueType::Integer)
+    if(isType(ValueType::Integer))
     {
         return DynamicVariable(+toInteger());
     }
 
-    return DynamicVariable(+toFloat());
+    if(isType(ValueType::Float))
+    {
+        return DynamicVariable(+toFloat());
+    }
+
+    throw generateCastException(__func__);
 }
 
 DynamicVariable &DynamicVariable::operator++()
 {
-    assert(isType(ValueType::Integer));
+    if(!isType(ValueType::Integer))
+        throw generateCastException(__func__);
+
     ++toInteger();
     return *this;
 }
 
 DynamicVariable DynamicVariable::operator++(int)
 {
-    assert(isType(ValueType::Integer));
+    if(!isType(ValueType::Integer))
+        throw generateCastException(__func__);
+
     return DynamicVariable(toInteger()++);
 }
 
 DynamicVariable &DynamicVariable::operator--()
 {
-    assert(isType(ValueType::Integer));
+    if(!isType(ValueType::Integer))
+        throw generateCastException(__func__);
+
     --toInteger();
     return *this;
 }
 
 DynamicVariable DynamicVariable::operator--(int)
 {
-    assert(isType(ValueType::Integer));
+    if(!isType(ValueType::Integer))
+        throw generateCastException(__func__);
+
     return DynamicVariable(toInteger()--);
 }
 
-DynamicVariable &DynamicVariable::operator+=(const StringType &value)
+DynamicVariable &DynamicVariable::operator+=(StringViewType value)
 {
-    assert(isType(ValueType::String));
+    if(!isType(ValueType::String))
+        throw generateCastException(__func__);
+
     toString() += value;
     return *this;
 }
@@ -262,11 +302,8 @@ DynamicVariable &DynamicVariable::operator+=(const DynamicVariable &value)
             return *this += static_cast<StringType>(value.toString());
 
         default:
-            break;
+            throw generateCastException(__func__);
     }
-
-    assert("Unsupported action");
-    return *this;
 }
 
 DynamicVariable &DynamicVariable::operator-=(const DynamicVariable &value)
@@ -280,16 +317,15 @@ DynamicVariable &DynamicVariable::operator-=(const DynamicVariable &value)
             return *this -= static_cast<FloatType>(value.toFloat());
 
         default:
-            break;
+            throw generateCastException(__func__);
     }
-
-    assert("Unsupported action");
-    return *this;
 }
 
-DynamicVariable DynamicVariable::operator+(const StringType &value) const
+DynamicVariable DynamicVariable::operator+(StringViewType value) const
 {
-    assert(isType(ValueType::String));
+    if(!isType(ValueType::String))
+        throw generateCastException(__func__);
+
     return toString() + value;
 }
 
@@ -307,11 +343,8 @@ DynamicVariable DynamicVariable::operator+(const DynamicVariable &value) const
             return *this + static_cast<StringType>(value.toString());
 
         default:
-            break;
+            throw generateCastException(__func__);
     }
-
-    assert("Unsupported action");
-    return *this;
 }
 
 DynamicVariable DynamicVariable::operator-(const DynamicVariable &value) const
@@ -325,11 +358,8 @@ DynamicVariable DynamicVariable::operator-(const DynamicVariable &value) const
             return *this - static_cast<FloatType>(value.toFloat());
 
         default:
-            break;
+            throw generateCastException(__func__);
     }
-
-    assert("Unsupported action");
-    return *this;
 }
 
 DynamicVariable &DynamicVariable::operator*=(const DynamicVariable &value)
@@ -343,11 +373,8 @@ DynamicVariable &DynamicVariable::operator*=(const DynamicVariable &value)
             return *this *= static_cast<FloatType>(value.toFloat());
 
         default:
-            break;
+            throw generateCastException(__func__);
     }
-
-    assert("Unsupported action");
-    return *this;
 }
 
 DynamicVariable DynamicVariable::operator*(const DynamicVariable &value) const
@@ -361,11 +388,8 @@ DynamicVariable DynamicVariable::operator*(const DynamicVariable &value) const
             return *this * static_cast<FloatType>(value.toFloat());
 
         default:
-            break;
+            throw generateCastException(__func__);
     }
-
-    assert("Unsupported action");
-    return *this;
 }
 
 DynamicVariable &DynamicVariable::operator/=(const DynamicVariable &value)
@@ -379,11 +403,8 @@ DynamicVariable &DynamicVariable::operator/=(const DynamicVariable &value)
             return *this /= static_cast<FloatType>(value.toFloat());
 
         default:
-            break;
+            throw generateCastException(__func__);
     }
-
-    assert("Unsupported action");
-    return *this;
 }
 
 DynamicVariable DynamicVariable::operator/(const DynamicVariable &value) const
@@ -397,22 +418,23 @@ DynamicVariable DynamicVariable::operator/(const DynamicVariable &value) const
             return *this / static_cast<FloatType>(value.toFloat());
 
         default:
-            break;
+            throw generateCastException(__func__);
     }
-
-    assert("Unsupported action");
-    return *this;
 }
 
 DynamicVariable &DynamicVariable::operator%=(const DynamicVariable &value)
 {
-    assert(value.isType(ValueType::Integer));
+    if(!value.isType(ValueType::Integer))
+        throw generateCastException(__func__);
+
     return *this %= static_cast<IntType>(value.toInteger());
 }
 
 DynamicVariable DynamicVariable::operator%(const DynamicVariable &value) const
 {
-    assert(value.isType(ValueType::Integer));
+    if(!value.isType(ValueType::Integer))
+        throw generateCastException(__func__);
+
     return *this % static_cast<IntType>(value.toInteger());
 }
 
@@ -423,7 +445,12 @@ DynamicVariable::SizeType DynamicVariable::size() const
         return toArray().size();
     }
 
-    return toString().size();
+    if(isType(ValueType::String))
+    {
+        return toString().size();
+    }
+
+    throw generateCastException(__func__);
 }
 
 bool DynamicVariable::isEmpty() const
@@ -433,7 +460,12 @@ bool DynamicVariable::isEmpty() const
         return toArray().isEmpty();
     }
 
-    return toString().isEmpty();
+    if(isType(ValueType::String))
+    {
+        return toString().isEmpty();
+    }
+
+    throw generateCastException(__func__);
 }
 
 
@@ -444,7 +476,44 @@ DynamicVariable DynamicVariable::operator[](DynamicVariable::SizeType pos)
         return DynamicVariable(StringType(1, toString()[pos]));
     }
 
-    return DynamicVariable(toArray()[pos]);
+    if(isType(ValueType::Array))
+    {
+        return DynamicVariable(toArray()[pos]);
+    }
+
+    throw generateCastException(__func__);
+}
+
+
+DynamicVariable DynamicVariable::operator[](StringViewType member)
+{
+    if(!isType(ValueType::Object))
+        throw generateCastException(__func__);
+
+    return toObject()[member];
+}
+
+DynamicVariable DynamicVariable::get(StringViewType member)
+{
+    if(!isType(ValueType::Object))
+        throw generateCastException(__func__);
+
+    return toObject().get(member);
+}
+
+void DynamicVariable::set(StringViewType key, DynamicVariable value)
+{
+    if(!isType(ValueType::Object))
+        throw generateCastException(__func__);
+
+    return toObject().set(key, value.m_value);
+}
+void DynamicVariable::unset(StringViewType key)
+{
+    if(!isType(ValueType::Object))
+        throw generateCastException(__func__);
+
+    return toObject().unset(key);
 }
 
 void DynamicVariable::push(const DynamicVariable &value) { toArray().push(value.m_value); }
@@ -461,9 +530,23 @@ DynamicVariable DynamicVariable::removeAt(DynamicVariable::SizeType pos)
     return toArray().removeAt(pos);
 }
 
-void DynamicVariable::clear() { toArray().clear(); }
+void DynamicVariable::clear()
+{
+    if(isType(ValueType::Array))
+    {
+        toArray().clear();
+    }
+    else if(isType(ValueType::String))
+    {
+        toString().clear();
+    }
+    else
+    {
+        throw generateCastException(__func__);
+    }
+}
 
-void DynamicVariable::append(const StringType &str) { toString().append(str); }
+void DynamicVariable::append(StringViewType str) { toString().append(str); }
 
 DynamicVariable DynamicVariable::subString(DynamicVariable::SizeType from,
                                            DynamicVariable::SizeType count)

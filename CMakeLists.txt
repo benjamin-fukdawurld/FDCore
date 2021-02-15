@@ -60,6 +60,7 @@ set(HEADER_FILES
     include/FDCore/Communication/RequestType.h
 #
     include/FDCore/DynamicVariable/AbstractArrayValue.h
+    include/FDCore/DynamicVariable/AbstractObjectValue.h
     include/FDCore/DynamicVariable/AbstractValue.h
     include/FDCore/DynamicVariable/ArrayValue.h
     include/FDCore/DynamicVariable/BoolValue.h
@@ -68,6 +69,7 @@ set(HEADER_FILES
     include/FDCore/DynamicVariable/DynamicVariable_conversion.h
     include/FDCore/DynamicVariable/FloatValue.h
     include/FDCore/DynamicVariable/IntValue.h
+    include/FDCore/DynamicVariable/ObjectValue.h
     include/FDCore/DynamicVariable/StringValue.h
     include/FDCore/DynamicVariable/ValueType.h
 #
