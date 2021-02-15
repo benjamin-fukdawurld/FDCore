@@ -39,7 +39,7 @@ DerivePointerAlignment: false
 
 FixNamespaceComments: true
 
-IncludeBlocks: Regroup
+IncludeBlocks: Preserve
 IndentCaseBlocks: false
 IndentCaseLabels: true
 IndentExternBlock: Indent
